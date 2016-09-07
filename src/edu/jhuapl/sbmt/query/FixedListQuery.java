@@ -1,6 +1,6 @@
 package edu.jhuapl.sbmt.query;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeSet;
 
 import org.joda.time.DateTime;
@@ -38,18 +38,18 @@ public class FixedListQuery extends QueryBase
     }
 
     @Override
-    public ArrayList<ArrayList<String>> runQuery(
+    public List<List<String>> runQuery(
             String type,
             DateTime startDate,
             DateTime stopDate,
-            ArrayList<Boolean> filtersChecked,
-            ArrayList<Boolean> camerasChecked,
+            List<Boolean> filtersChecked,
+            List<Boolean> camerasChecked,
             double startDistance,
             double stopDistance,
             double startResolution,
             double stopResolution,
             String searchString,
-            ArrayList<Integer> polygonTypes,
+            List<Integer> polygonTypes,
             double fromIncidence,
             double toIncidence,
             double fromEmission,
@@ -72,7 +72,7 @@ public class FixedListQuery extends QueryBase
                 imageListPrefix = "infofiles-corrected";
         }
 
-        ArrayList<ArrayList<String>> result = getResultsFromFileListOnServer(rootPath + "/" + imageListPrefix + "/imagelist.txt", rootPath + "/images/");
+        List<List<String>> result = getResultsFromFileListOnServer(rootPath + "/" + imageListPrefix + "/imagelist.txt", rootPath + "/images/");
 
         return result;
     }

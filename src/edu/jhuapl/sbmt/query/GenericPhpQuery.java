@@ -2,6 +2,7 @@ package edu.jhuapl.sbmt.query;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.TreeSet;
 
 import org.joda.time.DateTime;
@@ -31,24 +32,24 @@ public class GenericPhpQuery extends QueryBase
         return rootPath + "/images";
     }
 
-    private void changePathToFullPath(ArrayList<String> result)
+    private void changePathToFullPath(List<String> result)
     {
         result.set(0, rootPath + "/images/" + result.get(0));
     }
 
     @Override
-    public ArrayList<ArrayList<String>> runQuery(
+    public List<List<String>> runQuery(
             String type,
             DateTime startDate,
             DateTime stopDate,
-            ArrayList<Boolean> filtersChecked,
-            ArrayList<Boolean> camerasChecked,
+            List<Boolean> filtersChecked,
+            List<Boolean> camerasChecked,
             double startDistance,
             double stopDistance,
             double startResolution,
             double stopResolution,
             String searchString,
-            ArrayList<Integer> polygonTypes,
+            List<Integer> polygonTypes,
             double fromIncidence,
             double toIncidence,
             double fromEmission,
@@ -70,7 +71,7 @@ public class GenericPhpQuery extends QueryBase
                     rootPath + "/images/");
         }
 
-        ArrayList<ArrayList<String>> results = new ArrayList<ArrayList<String>>();
+        List<List<String>> results = new ArrayList<List<String>>();
 
         double minIncidence = Math.min(fromIncidence, toIncidence);
         double maxIncidence = Math.max(fromIncidence, toIncidence);
@@ -107,7 +108,7 @@ public class GenericPhpQuery extends QueryBase
 
             if (results != null && results.size() > 0)
             {
-                for (ArrayList<String> res : results)
+                for (List<String> res : results)
                 {
                     this.changePathToFullPath(res);
                 }
@@ -115,7 +116,7 @@ public class GenericPhpQuery extends QueryBase
             return results;
         }
 
-        ArrayList<Integer> filters = new ArrayList<Integer>();
+        List<Integer> filters = new ArrayList<Integer>();
         for (int i=0; i<filtersChecked.size(); ++i)
         {
             if (filtersChecked.get(i))
@@ -126,7 +127,7 @@ public class GenericPhpQuery extends QueryBase
         if (!filtersChecked.isEmpty() && filters.isEmpty())
             return results;
 
-        ArrayList<Integer> cameras = new ArrayList<Integer>();
+        List<Integer> cameras = new ArrayList<Integer>();
         for (int i=0; i<camerasChecked.size(); ++i)
         {
             if (camerasChecked.get(i))
@@ -191,7 +192,7 @@ public class GenericPhpQuery extends QueryBase
 
             results = doQuery("searchimages.php", constructUrlArguments(args));
 
-            for (ArrayList<String> res : results)
+            for (List<String> res : results)
             {
                 this.changePathToFullPath(res);
             }

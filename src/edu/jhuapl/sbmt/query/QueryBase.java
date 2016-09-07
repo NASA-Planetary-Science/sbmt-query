@@ -9,6 +9,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.TreeSet;
 
 import org.joda.time.DateTime;
@@ -31,9 +32,9 @@ abstract public class QueryBase
         return null;
     }
 
-    protected ArrayList<ArrayList<String>> doQuery(String phpScript, String data)
+    protected List<List<String>> doQuery(String phpScript, String data)
     {
-        ArrayList<ArrayList<String>> results = new ArrayList<ArrayList<String>>();
+        List<List<String>> results = new ArrayList<List<String>>();
 
         try
         {
@@ -59,7 +60,7 @@ abstract public class QueryBase
                     continue;
 
                 String[] tokens = line.split("\\s+");
-                ArrayList<String> words = new ArrayList<String>();
+                List<String> words = new ArrayList<String>();
                 for (String word : tokens)
                     words.add(word);
                 results.add(words);
@@ -93,14 +94,14 @@ abstract public class QueryBase
         return str;
     }
 
-    protected ArrayList<ArrayList<String>> getResultsFromFileListOnServer(
+    protected List<List<String>> getResultsFromFileListOnServer(
             String pathToFileListOnServer,
             String pathToImageFolderOnServer)
     {
         if (!pathToImageFolderOnServer.endsWith("/"))
             pathToImageFolderOnServer += "/";
 
-        ArrayList<ArrayList<String>> results = new ArrayList<ArrayList<String>>();
+        List<List<String>> results = new ArrayList<List<String>>();
 
         File file = FileCache.getFileFromServer(pathToFileListOnServer);
 
@@ -108,11 +109,11 @@ abstract public class QueryBase
         {
             try
             {
-                ArrayList<String> lines = FileUtil.getFileLinesAsStringList(file.getAbsolutePath());
+                List<String> lines = FileUtil.getFileLinesAsStringList(file.getAbsolutePath());
                 for (String line : lines)
                 {
                     String[] vals = line.trim().split("\\s+");
-                    ArrayList<String> res = new ArrayList<String>();
+                    List<String> res = new ArrayList<String>();
                     res.add(pathToImageFolderOnServer + vals[0]);
                     res.add(new Long(new DateTime(vals[1], DateTimeZone.UTC).getMillis()).toString());
                     results.add(res);
@@ -158,18 +159,18 @@ abstract public class QueryBase
      * @param limbType
      * @return
      */
-    abstract public ArrayList<ArrayList<String>> runQuery(
+    abstract public List<List<String>> runQuery(
             String type,
             DateTime startDate,
             DateTime stopDate,
-            ArrayList<Boolean> filtersChecked,
-            ArrayList<Boolean> camerasChecked,
+            List<Boolean> filtersChecked,
+            List<Boolean> camerasChecked,
             double startDistance,
             double stopDistance,
             double startResolution,
             double stopResolution,
             String searchString,
-            ArrayList<Integer> polygonTypes,
+            List<Integer> polygonTypes,
             double fromIncidence,
             double toIncidence,
             double fromEmission,

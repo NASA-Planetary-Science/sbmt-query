@@ -2,6 +2,7 @@ package edu.jhuapl.sbmt.query.eros;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.TreeSet;
 
 import org.joda.time.DateTime;
@@ -17,7 +18,7 @@ public class NisQuery extends QueryBase
 {
     private static NisQuery ref = null;
 
-    private String getNisPath(ArrayList<String> result)
+    private String getNisPath(List<String> result)
     {
         int id = Integer.parseInt(result.get(0));
         int year = Integer.parseInt(result.get(1));
@@ -72,18 +73,18 @@ public class NisQuery extends QueryBase
      * @param startDate
      * @param endDate
      */
-    public ArrayList<ArrayList<String>> runQuery(
+    public List<List<String>> runQuery(
             String type,
             DateTime startDate,
             DateTime stopDate,
-            ArrayList<Boolean> filtersChecked,
-            ArrayList<Boolean> camerasChecked,
+            List<Boolean> filtersChecked,
+            List<Boolean> camerasChecked,
             double startDistance,
             double stopDistance,
             double startResolution,
             double stopResolution,
             String searchString,
-            ArrayList<Integer> polygonTypes,
+            List<Integer> polygonTypes,
             double fromIncidence,
             double toIncidence,
             double fromEmission,
@@ -98,10 +99,10 @@ public class NisQuery extends QueryBase
         return null;
     }
 
-    public ArrayList<String> runQueryNIS(
+    public List<String> runQueryNIS(
             DateTime startDate,
             DateTime stopDate,
-            ArrayList<Integer> filters,
+            List<Integer> filters,
             boolean iofdbl,
             boolean cifdbl,
             double startDistance,
@@ -109,7 +110,7 @@ public class NisQuery extends QueryBase
             double startResolution,
             double stopResolution,
             String searchString,
-            ArrayList<Integer> polygonTypes,
+            List<Integer> polygonTypes,
             double fromIncidence,
             double toIncidence,
             double fromEmission,
@@ -120,8 +121,8 @@ public class NisQuery extends QueryBase
             ImageSource msiSource,
             int limbType)
     {
-        ArrayList<String> matchedImages = new ArrayList<String>();
-        ArrayList<ArrayList<String>> results = null;
+        List<String> matchedImages = new ArrayList<String>();
+        List<List<String>> results = null;
 
         double minIncidence = Math.min(fromIncidence, toIncidence);
         double maxIncidence = Math.max(fromIncidence, toIncidence);
@@ -170,7 +171,7 @@ public class NisQuery extends QueryBase
 
             results = doQuery("searchnis.php", constructUrlArguments(args));
 
-            for (ArrayList<String> res : results)
+            for (List<String> res : results)
             {
                 String path = this.getNisPath(res);
 
