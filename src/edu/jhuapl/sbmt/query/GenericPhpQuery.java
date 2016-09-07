@@ -7,7 +7,7 @@ import java.util.TreeSet;
 
 import org.joda.time.DateTime;
 
-import edu.jhuapl.sbmt.app.SmallBodyViewConfig;
+import edu.jhuapl.sbmt.client.SmallBodyViewConfig;
 import edu.jhuapl.sbmt.model.image.ImageSource;
 
 public class GenericPhpQuery extends QueryBase
