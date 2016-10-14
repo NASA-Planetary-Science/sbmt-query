@@ -61,6 +61,12 @@ public class NisQuery extends QueryBase
     }
 
     @Override
+    public String getGalleryPath()
+    {
+        return null;
+    }
+
+    @Override
     public String getImagesPath()
     {
         return null;

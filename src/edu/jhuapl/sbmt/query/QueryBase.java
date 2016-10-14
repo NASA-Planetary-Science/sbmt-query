@@ -96,10 +96,14 @@ abstract public class QueryBase
 
     protected List<List<String>> getResultsFromFileListOnServer(
             String pathToFileListOnServer,
-            String pathToImageFolderOnServer)
+            String pathToImageFolderOnServer,
+            String pathToGalleryFolderOnServer)
     {
         if (!pathToImageFolderOnServer.endsWith("/"))
             pathToImageFolderOnServer += "/";
+
+        if (pathToGalleryFolderOnServer != null && !pathToGalleryFolderOnServer.endsWith("/"))
+            pathToGalleryFolderOnServer += "/";
 
         List<List<String>> results = new ArrayList<List<String>>();
 
@@ -116,6 +120,14 @@ abstract public class QueryBase
                     List<String> res = new ArrayList<String>();
                     res.add(pathToImageFolderOnServer + vals[0]);
                     res.add(new Long(new DateTime(vals[1], DateTimeZone.UTC).getMillis()).toString());
+                    if(pathToGalleryFolderOnServer == null)
+                    {
+                        res.add(null);
+                    }
+                    else
+                    {
+                        res.add(pathToGalleryFolderOnServer + vals[0]);
+                    }
                     results.add(res);
                 }
             }
@@ -129,6 +141,8 @@ abstract public class QueryBase
     }
 
     abstract public String getImagesPath();
+
+    abstract public String getGalleryPath();
 
     /**
      * Run a query and return an array containing the results. The returned array

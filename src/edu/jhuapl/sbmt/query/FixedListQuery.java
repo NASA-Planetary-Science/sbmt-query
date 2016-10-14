@@ -14,21 +14,37 @@ import edu.jhuapl.sbmt.model.image.ImageSource;
 public class FixedListQuery extends QueryBase
 {
     private String rootPath;
+    private String galleryPath;
     private String imageListPrefix;
     private boolean multiSource;
 
     public FixedListQuery(String rootPath)
     {
-        this.rootPath = rootPath;
-        imageListPrefix = "";
-        this.multiSource = false;
+        this(rootPath, null, false);
+    }
+
+    public FixedListQuery(String rootPath, String galleryPath)
+    {
+        this(rootPath, galleryPath, false);
     }
 
     public FixedListQuery(String rootPath, boolean multiSource)
     {
+        this(rootPath, null, multiSource);
+    }
+
+    public FixedListQuery(String rootPath, String galleryPath, boolean multiSource)
+    {
         this.rootPath = rootPath;
+        this.galleryPath = galleryPath;
         this.imageListPrefix = "";
         this.multiSource = multiSource;
+    }
+
+    @Override
+    public String getGalleryPath()
+    {
+        return galleryPath;
     }
 
     @Override
@@ -72,7 +88,7 @@ public class FixedListQuery extends QueryBase
                 imageListPrefix = "infofiles-corrected";
         }
 
-        List<List<String>> result = getResultsFromFileListOnServer(rootPath + "/" + imageListPrefix + "/imagelist.txt", rootPath + "/images/");
+        List<List<String>> result = getResultsFromFileListOnServer(rootPath + "/" + imageListPrefix + "/imagelist.txt", rootPath + "/images/", galleryPath);
 
         return result;
     }

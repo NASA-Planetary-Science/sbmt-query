@@ -14,22 +14,45 @@ public class GenericPhpQuery extends QueryBase
 {
     private String rootPath;
     private String tablePrefix;
-
+    private String galleryPath;
 
     public GenericPhpQuery clone()
     {
-        return new GenericPhpQuery(rootPath, tablePrefix);
+        return new GenericPhpQuery(rootPath, tablePrefix, galleryPath);
     }
 
     public GenericPhpQuery(String rootPath, String tablePrefix)
     {
+        this(rootPath, tablePrefix, null);
+    }
+
+    public GenericPhpQuery(String rootPath, String tablePrefix, String galleryPath)
+    {
         this.rootPath = rootPath;
         this.tablePrefix = tablePrefix.toLowerCase();
+        this.galleryPath = galleryPath;
     }
 
     public String getImagesPath()
     {
         return rootPath + "/images";
+    }
+
+    public String getGalleryPath()
+    {
+        return galleryPath;
+    }
+
+    private void setGalleryFullPath(List<String> result)
+    {
+        if(galleryPath == null)
+        {
+            result.add(null);
+        }
+        else
+        {
+            result.add(galleryPath + "/" + result.get(0));
+        }
     }
 
     private void changePathToFullPath(List<String> result)
@@ -63,12 +86,12 @@ public class GenericPhpQuery extends QueryBase
         if (imageSource == ImageSource.CORRECTED)
         {
             return getResultsFromFileListOnServer(rootPath + "/sumfiles-corrected/imagelist.txt",
-                    rootPath + "/images/");
+                    rootPath + "/images/", galleryPath);
         }
         else if (imageSource == ImageSource.CORRECTED_SPICE)
         {
             return getResultsFromFileListOnServer(rootPath + "/infofiles-corrected/imagelist.txt",
-                    rootPath + "/images/");
+                    rootPath + "/images/", galleryPath);
         }
 
         List<List<String>> results = new ArrayList<List<String>>();
@@ -110,6 +133,7 @@ public class GenericPhpQuery extends QueryBase
             {
                 for (List<String> res : results)
                 {
+                    this.setGalleryFullPath(res);
                     this.changePathToFullPath(res);
                 }
             }
@@ -194,6 +218,7 @@ public class GenericPhpQuery extends QueryBase
 
             for (List<String> res : results)
             {
+                this.setGalleryFullPath(res);
                 this.changePathToFullPath(res);
             }
         }
