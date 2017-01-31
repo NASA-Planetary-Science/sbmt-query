@@ -141,12 +141,6 @@ public class GenericPhpQuery extends QueryBase
             return results;
         }
 
-        // No need to do a search if no cameras or filters were selected
-        if(camerasSelected.isEmpty() || filtersSelected.isEmpty())
-        {
-            return results;
-        }
-
         try
         {
             double minScDistance = Math.min(startDistance, stopDistance);
@@ -176,9 +170,11 @@ public class GenericPhpQuery extends QueryBase
             {
                 // Sum of products (hierarchical) search: (CAMERA 1 AND FILTER 1) OR ... OR (CAMERA N AND FILTER N)
                 args.put("sumOfProductsSearch", "1");
-                Integer[] camerasSelectedArray = (Integer[])camerasSelected.toArray();
-                Integer[] filtersSelectedArray = (Integer[])filtersSelected.toArray();
+                Integer[] camerasSelectedArray = camerasSelected.toArray(new Integer[0]);
+                Integer[] filtersSelectedArray = filtersSelected.toArray(new Integer[0]);
                 int numProducts = camerasSelectedArray.length;
+
+                // Populate search parameters
                 args.put("numProducts", new Integer(numProducts).toString());
                 for(int i=0; i<numProducts; i++)
                 {
@@ -190,6 +186,8 @@ public class GenericPhpQuery extends QueryBase
             {
                 // Product of sums (legacy) search: (CAMERA 1 OR ... OR CAMERA N) AND (FILTER 1 OR ... FILTER M)
                 args.put("sumOfProductsSearch", "0");
+
+                // Populate search parameters
                 for(Integer c : camerasSelected)
                 {
                     args.put("cameraType"+(c+1), "1");
