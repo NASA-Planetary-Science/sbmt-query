@@ -213,8 +213,7 @@ public class GenericPhpQuery extends QueryBase
                 args.put("cubes", cubes);
             }
 
-            results = doQuery("searchimages-beta.php", constructUrlArguments(args));
-            System.err.println("REMINDER: Currently using searchimages-beta.php");
+            results = doQuery("searchimages.php", constructUrlArguments(args));
 
             for (List<String> res : results)
             {
