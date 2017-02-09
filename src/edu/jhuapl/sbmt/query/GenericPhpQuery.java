@@ -65,8 +65,9 @@ public class GenericPhpQuery extends QueryBase
             String type,
             DateTime startDate,
             DateTime stopDate,
-            List<Boolean> filtersChecked,
-            List<Boolean> camerasChecked,
+            boolean sumOfProductsSearch,
+            List<Integer> camerasSelected,
+            List<Integer> filtersSelected,
             double startDistance,
             double stopDistance,
             double startResolution,
@@ -91,6 +92,11 @@ public class GenericPhpQuery extends QueryBase
         else if (imageSource == ImageSource.CORRECTED_SPICE)
         {
             return getResultsFromFileListOnServer(rootPath + "/infofiles-corrected/imagelist.txt",
+                    rootPath + "/images/", galleryPath);
+        }
+        else if (imageSource == ImageSource.GASKELL_UPDATED)
+        {
+            return getResultsFromFileListOnServer(rootPath + "/sumfiles_to_be_delivered/imagelist.txt",
                     rootPath + "/images/", galleryPath);
         }
 
@@ -140,28 +146,6 @@ public class GenericPhpQuery extends QueryBase
             return results;
         }
 
-        List<Integer> filters = new ArrayList<Integer>();
-        for (int i=0; i<filtersChecked.size(); ++i)
-        {
-            if (filtersChecked.get(i))
-            {
-                filters.add(i+1);
-            }
-        }
-        if (!filtersChecked.isEmpty() && filters.isEmpty())
-            return results;
-
-        List<Integer> cameras = new ArrayList<Integer>();
-        for (int i=0; i<camerasChecked.size(); ++i)
-        {
-            if (camerasChecked.get(i))
-            {
-                cameras.add(i+1);
-            }
-        }
-        if (!camerasChecked.isEmpty() && cameras.isEmpty())
-            return results;
-
         try
         {
             double minScDistance = Math.min(startDistance, stopDistance);
@@ -185,19 +169,38 @@ public class GenericPhpQuery extends QueryBase
             args.put("minPhase", String.valueOf(minPhase));
             args.put("maxPhase", String.valueOf(maxPhase));
             args.put("limbType", String.valueOf(limbType));
-            for (int i=1; i<=filtersChecked.size(); ++i)
+
+            // Populate args for camera and filter search
+            if(sumOfProductsSearch)
             {
-                if (filters.contains(i))
-                    args.put("filterType"+i, "1");
-                else
-                    args.put("filterType"+i, "0");
+                // Sum of products (hierarchical) search: (CAMERA 1 AND FILTER 1) OR ... OR (CAMERA N AND FILTER N)
+                args.put("sumOfProductsSearch", "1");
+                Integer[] camerasSelectedArray = camerasSelected.toArray(new Integer[0]);
+                Integer[] filtersSelectedArray = filtersSelected.toArray(new Integer[0]);
+                int numProducts = camerasSelectedArray.length;
+
+                // Populate search parameters
+                args.put("numProducts", new Integer(numProducts).toString());
+                for(int i=0; i<numProducts; i++)
+            {
+                    args.put("cameraType"+i, new Integer(camerasSelectedArray[i]+1).toString());
+                    args.put("filterType"+i, new Integer(filtersSelectedArray[i]+1).toString());
+                }
             }
-            for (int i=1; i<=camerasChecked.size(); ++i)
-            {
-                if (cameras.contains(i))
-                    args.put("cameraType"+i, "1");
                 else
-                    args.put("cameraType"+i, "0");
+            {
+                // Product of sums (legacy) search: (CAMERA 1 OR ... OR CAMERA N) AND (FILTER 1 OR ... FILTER M)
+                args.put("sumOfProductsSearch", "0");
+
+                // Populate search parameters
+                for(Integer c : camerasSelected)
+                {
+                    args.put("cameraType"+(c+1), "1");
+            }
+                for(Integer f : filtersSelected)
+            {
+                    args.put("filterType"+(f+1), "1");
+                }
             }
             if (cubeList != null && cubeList.size() > 0)
             {
