@@ -79,12 +79,14 @@ public class NisQuery extends QueryBase
      * @param startDate
      * @param endDate
      */
+    @Override
     public List<List<String>> runQuery(
             String type,
             DateTime startDate,
             DateTime stopDate,
-            List<Boolean> filtersChecked,
-            List<Boolean> camerasChecked,
+            boolean sumOfProductsSearch,
+            List<Integer> camerasSelected,
+            List<Integer> filtersSelected,
             double startDistance,
             double stopDistance,
             double startResolution,
