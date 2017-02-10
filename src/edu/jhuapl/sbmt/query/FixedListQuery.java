@@ -3,6 +3,8 @@ package edu.jhuapl.sbmt.query;
 import java.util.List;
 import java.util.TreeSet;
 
+import javax.swing.JOptionPane;
+
 import org.joda.time.DateTime;
 
 import edu.jhuapl.sbmt.model.image.ImageSource;
@@ -88,6 +90,12 @@ public class FixedListQuery extends QueryBase
             else if (imageSource == ImageSource.CORRECTED_SPICE)
                 imageListPrefix = "infofiles-corrected";
         }
+
+        // Let user know that search uses fixed list and ignores search parameters
+        JOptionPane.showMessageDialog(null,
+                "Search uses a fixed list and ignores selected search parameters.",
+                "Notification",
+                JOptionPane.INFORMATION_MESSAGE);
 
         List<List<String>> result = getResultsFromFileListOnServer(rootPath + "/" + imageListPrefix + "/imagelist.txt", rootPath + "/images/", galleryPath);
 

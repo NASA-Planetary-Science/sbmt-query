@@ -2,15 +2,19 @@ package edu.jhuapl.sbmt.query;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeSet;
+
+import javax.swing.JOptionPane;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -67,6 +71,14 @@ abstract public class QueryBase
             }
 
             in.close();
+        }
+        catch (UnknownHostException e)
+        {
+            // We will reach this if SBMT is unable to connect to server
+            JOptionPane.showMessageDialog(null,
+                    "Search returned no results because SBMT is unable to connect to server.",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
         }
         catch (IOException e)
         {
@@ -130,6 +142,14 @@ abstract public class QueryBase
                     }
                     results.add(res);
                 }
+            }
+            catch (FileNotFoundException e)
+            {
+                // We will reach this if SBMT is unable to connect to server
+                JOptionPane.showMessageDialog(null,
+                        "Search returned no results because SBMT is unable to connect to server.",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
             }
             catch (IOException e)
             {

@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.TreeSet;
 
+import javax.swing.JOptionPane;
+
 import org.joda.time.DateTime;
 
 import edu.jhuapl.sbmt.client.SmallBodyViewConfig;
@@ -86,11 +88,23 @@ public class GenericPhpQuery extends QueryBase
     {
         if (imageSource == ImageSource.CORRECTED)
         {
+            // Let user know that search uses fixed list and ignores search parameters
+            JOptionPane.showMessageDialog(null,
+                    "Search uses a fixed list and ignores selected search parameters.",
+                    "Notification",
+                    JOptionPane.INFORMATION_MESSAGE);
+
             return getResultsFromFileListOnServer(rootPath + "/sumfiles-corrected/imagelist.txt",
                     rootPath + "/images/", galleryPath);
         }
         else if (imageSource == ImageSource.CORRECTED_SPICE)
         {
+            // Let user know that search uses fixed list and ignores search parameters
+            JOptionPane.showMessageDialog(null,
+                    "Search uses a fixed list and ignores selected search parameters.",
+                    "Notification",
+                    JOptionPane.INFORMATION_MESSAGE);
+
             return getResultsFromFileListOnServer(rootPath + "/infofiles-corrected/imagelist.txt",
                     rootPath + "/images/", galleryPath);
         }
