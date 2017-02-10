@@ -108,6 +108,11 @@ public class GenericPhpQuery extends QueryBase
             return getResultsFromFileListOnServer(rootPath + "/infofiles-corrected/imagelist.txt",
                     rootPath + "/images/", galleryPath);
         }
+        else if (imageSource == ImageSource.GASKELL_UPDATED)
+        {
+            return getResultsFromFileListOnServer(rootPath + "/sumfiles_to_be_delivered/imagelist.txt",
+                    rootPath + "/images/", galleryPath);
+        }
 
         List<List<String>> results = new ArrayList<List<String>>();
 
@@ -191,12 +196,12 @@ public class GenericPhpQuery extends QueryBase
                 // Populate search parameters
                 args.put("numProducts", new Integer(numProducts).toString());
                 for(int i=0; i<numProducts; i++)
-                {
+            {
                     args.put("cameraType"+i, new Integer(camerasSelectedArray[i]+1).toString());
                     args.put("filterType"+i, new Integer(filtersSelectedArray[i]+1).toString());
                 }
             }
-            else
+                else
             {
                 // Product of sums (legacy) search: (CAMERA 1 OR ... OR CAMERA N) AND (FILTER 1 OR ... FILTER M)
                 args.put("sumOfProductsSearch", "0");
@@ -205,13 +210,12 @@ public class GenericPhpQuery extends QueryBase
                 for(Integer c : camerasSelected)
                 {
                     args.put("cameraType"+(c+1), "1");
-                }
+            }
                 for(Integer f : filtersSelected)
-                {
+            {
                     args.put("filterType"+(f+1), "1");
                 }
             }
-
             if (cubeList != null && cubeList.size() > 0)
             {
                 String cubes = "";
