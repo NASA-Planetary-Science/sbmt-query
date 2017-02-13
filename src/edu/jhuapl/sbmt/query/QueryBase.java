@@ -111,6 +111,12 @@ abstract public class QueryBase
             String pathToImageFolderOnServer,
             String pathToGalleryFolderOnServer)
     {
+        // Let user know that search uses fixed list and ignores search parameters
+        JOptionPane.showMessageDialog(null,
+                "Search uses a fixed list and ignores selected search parameters.",
+                "Notification",
+                JOptionPane.INFORMATION_MESSAGE);
+
         if (!pathToImageFolderOnServer.endsWith("/"))
             pathToImageFolderOnServer += "/";
 
@@ -147,7 +153,7 @@ abstract public class QueryBase
             {
                 // We will reach this if SBMT is unable to connect to server
                 JOptionPane.showMessageDialog(null,
-                        "Search returned no results because SBMT is unable to connect to server.",
+                        "Search returned no results because SBMT is unable to retrieve image list from server.",
                         "Error",
                         JOptionPane.ERROR_MESSAGE);
             }

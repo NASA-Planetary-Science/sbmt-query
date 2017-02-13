@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.TreeSet;
 
-import javax.swing.JOptionPane;
-
 import org.joda.time.DateTime;
 
 import edu.jhuapl.sbmt.client.SmallBodyViewConfig;
@@ -88,31 +86,19 @@ public class GenericPhpQuery extends QueryBase
     {
         if (imageSource == ImageSource.CORRECTED)
         {
-            // Let user know that search uses fixed list and ignores search parameters
-            JOptionPane.showMessageDialog(null,
-                    "Search uses a fixed list and ignores selected search parameters.",
-                    "Notification",
-                    JOptionPane.INFORMATION_MESSAGE);
-
             return getResultsFromFileListOnServer(rootPath + "/sumfiles-corrected/imagelist.txt",
                     rootPath + "/images/", galleryPath);
         }
         else if (imageSource == ImageSource.CORRECTED_SPICE)
         {
-            // Let user know that search uses fixed list and ignores search parameters
-            JOptionPane.showMessageDialog(null,
-                    "Search uses a fixed list and ignores selected search parameters.",
-                    "Notification",
-                    JOptionPane.INFORMATION_MESSAGE);
-
             return getResultsFromFileListOnServer(rootPath + "/infofiles-corrected/imagelist.txt",
                     rootPath + "/images/", galleryPath);
         }
-        else if (imageSource == ImageSource.GASKELL_UPDATED)
+        /*else if (imageSource == ImageSource.GASKELL_UPDATED)
         {
             return getResultsFromFileListOnServer(rootPath + "/sumfiles_to_be_delivered/imagelist.txt",
                     rootPath + "/images/", galleryPath);
-        }
+        }*/
 
         List<List<String>> results = new ArrayList<List<String>>();
 
@@ -123,22 +109,14 @@ public class GenericPhpQuery extends QueryBase
         double minPhase = Math.min(fromPhase, toPhase);
         double maxPhase = Math.max(fromPhase, toPhase);
 
-        String imagesDatabase = "";
-        String cubesDatabase = "";
-        if (imageSource == ImageSource.GASKELL)
+        // Get table name.  Examples: erosimages_gaskell, amicacubes_pds_beta
+        String imagesDatabase = tablePrefix + "images_" + imageSource.getDatabaseTableName();
+        String cubesDatabase = tablePrefix + "cubes_" + imageSource.getDatabaseTableName();
+        if(SmallBodyViewConfig.betaMode)
         {
-            imagesDatabase = tablePrefix + "images_gaskell";
-            cubesDatabase = tablePrefix + "cubes_gaskell";
+            imagesDatabase += "_beta";
+            cubesDatabase += "_beta";
         }
-        else
-        {
-            imagesDatabase = tablePrefix + "images_pds";
-            cubesDatabase = tablePrefix + "cubes_pds";
-        }
-
-        String tablePostfix = SmallBodyViewConfig.betaMode ? "_beta" : "";
-        imagesDatabase += tablePostfix;
-        cubesDatabase += tablePostfix;
 
         if (searchString != null)
         {
