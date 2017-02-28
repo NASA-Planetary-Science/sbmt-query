@@ -8,7 +8,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -72,16 +71,13 @@ abstract public class QueryBase
 
             in.close();
         }
-        catch (UnknownHostException e)
+        catch (IOException e)
         {
             // We will reach this if SBMT is unable to connect to server
             JOptionPane.showMessageDialog(null,
                     "Search returned no results because SBMT is unable to connect to server.",
                     "Error",
                     JOptionPane.ERROR_MESSAGE);
-        }
-        catch (IOException e)
-        {
             e.printStackTrace();
         }
 
