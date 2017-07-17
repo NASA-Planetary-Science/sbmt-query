@@ -30,6 +30,7 @@ import edu.jhuapl.sbmt.model.image.ImageSource;
  */
 abstract public class QueryBase
 {
+    @Override
     public QueryBase clone()
     {
         return null;
@@ -37,7 +38,7 @@ abstract public class QueryBase
 
     protected List<List<String>> doQuery(String phpScript, String data)
     {
-        List<List<String>> results = new ArrayList<List<String>>();
+        List<List<String>> results = new ArrayList<>();
 
         try
         {
@@ -63,7 +64,7 @@ abstract public class QueryBase
                     continue;
 
                 String[] tokens = line.split("\\s+");
-                List<String> words = new ArrayList<String>();
+                List<String> words = new ArrayList<>();
                 for (String word : tokens)
                     words.add(word);
                 results.add(words);
@@ -119,7 +120,7 @@ abstract public class QueryBase
         if (pathToGalleryFolderOnServer != null && !pathToGalleryFolderOnServer.endsWith("/"))
             pathToGalleryFolderOnServer += "/";
 
-        List<List<String>> results = new ArrayList<List<String>>();
+        List<List<String>> results = new ArrayList<>();
 
         File file = FileCache.getFileFromServer(pathToFileListOnServer);
 
@@ -131,7 +132,7 @@ abstract public class QueryBase
                 for (String line : lines)
                 {
                     String[] vals = line.trim().split("\\s+");
-                    List<String> res = new ArrayList<String>();
+                    List<String> res = new ArrayList<>();
                     res.add(pathToImageFolderOnServer + vals[0]);
                     res.add(new Long(new DateTime(vals[1], DateTimeZone.UTC).getMillis()).toString());
                     if(pathToGalleryFolderOnServer == null)
@@ -152,6 +153,7 @@ abstract public class QueryBase
                         "Search returned no results because SBMT is unable to retrieve image list from server.",
                         "Error",
                         JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
             }
             catch (IOException e)
             {
