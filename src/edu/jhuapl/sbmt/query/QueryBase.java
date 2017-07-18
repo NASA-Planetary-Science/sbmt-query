@@ -185,6 +185,14 @@ abstract public class QueryBase
         return results;
     }
 
+    /**
+     * Add the supplied search results to the image inventory for this small body configuration/instrument.
+     * New results (dates) supersede previous results for the same image file.
+     * Following a call to this method, the image inventory file will thus contain a union of all the search
+     * results ever made. Note that this inventory includes all files that were found in a search, whether
+     * or not those files have every actually been displayed and cached.
+     * @param newResults the results to add
+     */
     protected void updateImageInventory(List<List<String>> newResults)
     {
         SortedMap<String, String> newInventory = getImageInventory();
@@ -232,6 +240,13 @@ abstract public class QueryBase
         }
     }
 
+    /**
+     * Return the list of cached images with their associated time stamps. Note this will list
+     * only files that a) actually exist in the user's cache and b) are listed in the
+     * image inventory.
+     * @param pathToImageFolder the folder where the image list and images are located
+     * @return the image list
+     */
     protected List<List<String>> getCachedImageList(
             String pathToImageFolder
             )
@@ -280,12 +295,21 @@ abstract public class QueryBase
         return result;
     }
 
+    /**
+     * Return the full path name of the inventory file.
+     * @return the inventory file name
+     */
     protected String getImageInventoryFileName()
     {
         String imagesPath = getImagesPath();
         return Configuration.getCacheDir() + imagesPath.substring(0, imagesPath.lastIndexOf(File.separator)) + File.separator + "imageInventory.txt";
     }
 
+    /**
+     * Return the current content of the image inventory file. Note this inventory
+     * should be a superset of the image files that are locally cached.
+     * @return the image inventory
+     */
     protected SortedMap<String, String> getImageInventory()
     {
         SortedMap<String, String> inventory = new TreeMap<>();
