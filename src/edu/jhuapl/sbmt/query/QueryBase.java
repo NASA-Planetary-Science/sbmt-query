@@ -16,6 +16,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -152,17 +155,18 @@ abstract public class QueryBase
                 List<String> lines = FileUtil.getFileLinesAsStringList(file.getAbsolutePath());
                 for (String line : lines)
                 {
-                    String[] vals = line.trim().split("\\s+");
+                    List<String> vals = Lists.newArrayList(line.trim().split("\\s+"));
+                    String timeString = interpretTimeSubStrings(vals.subList(1, vals.size()));
                     List<String> res = new ArrayList<>();
-                    res.add(pathToImageFolderOnServer + vals[0]);
-                    res.add(new Long(new DateTime(vals[1], DateTimeZone.UTC).getMillis()).toString());
+                    res.add(pathToImageFolderOnServer + vals.get(0));
+                    res.add(new Long(new DateTime(timeString, DateTimeZone.UTC).getMillis()).toString());
                     if(pathToGalleryFolderOnServer == null)
                     {
                         res.add(null);
                     }
                     else
                     {
-                        res.add(pathToGalleryFolderOnServer + vals[0]);
+                        res.add(pathToGalleryFolderOnServer + vals.get(0));
                     }
                     results.add(res);
                 }
@@ -183,6 +187,34 @@ abstract public class QueryBase
         }
 
         return results;
+    }
+
+    private static final DateTimeFormatter YYYY_MM_DD = DateTimeFormatter.ofPattern("YYYY MM DD HH:MM:SS");
+    private static final DateTimeFormatter YYYY_MMM_DD = DateTimeFormatter.ofPattern("YYYY MMM DD HH:MM:SS");
+    private static final DateTimeFormatter OUTPUT_TIME_FORMAT = DateTimeFormatter.ofPattern("YYYY-MM-DD HH:MM:SS");
+
+    private String interpretTimeSubStrings(List<String> vals)
+    {
+        if (vals.isEmpty()) return null;
+        if (vals.size() == 1) return vals.get(0);
+        String timeString = String.join (" ", vals.subList(1, vals.size()));
+        try
+        {
+            LocalDate date = LocalDate.parse(timeString, YYYY_MMM_DD);
+            return date.format(OUTPUT_TIME_FORMAT).replace(" ", "T");
+        }
+        catch (@SuppressWarnings("unused") DateTimeParseException e)
+        {
+        }
+        try
+        {
+            LocalDate date = LocalDate.parse(timeString, YYYY_MM_DD);
+            return date.format(OUTPUT_TIME_FORMAT).replace(" ", "T");
+        }
+        catch (@SuppressWarnings("unused") DateTimeParseException e)
+        {
+        }
+        return null;
     }
 
     /**
