@@ -225,4 +225,8 @@ public class GenericPhpQuery extends QueryBase
         return results;
     }
 
+    public String getTablePrefix()
+    {
+        return tablePrefix;
+    }
 }
