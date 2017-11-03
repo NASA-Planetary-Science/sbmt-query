@@ -33,7 +33,7 @@ public class GenericPhpQuery extends QueryBase
         this.galleryPath = galleryPath;
     }
 
-    public String getImagesPath()
+    public String getDataPath()
     {
         return rootPath + "/images";
     }
