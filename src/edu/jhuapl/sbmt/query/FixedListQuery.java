@@ -13,10 +13,10 @@ import edu.jhuapl.sbmt.model.image.ImageSource;
  */
 public class FixedListQuery extends QueryBase
 {
-    private String rootPath;
-    private String galleryPath;
-    private String imageListPrefix;
-    private boolean multiSource;
+    protected String rootPath;
+    protected String galleryPath;
+    protected String spectrumListPrefix;
+    protected boolean multiSource;
 
     public FixedListQuery(String rootPath)
     {
@@ -37,7 +37,7 @@ public class FixedListQuery extends QueryBase
     {
         this.rootPath = rootPath;
         this.galleryPath = galleryPath;
-        this.imageListPrefix = "";
+        this.spectrumListPrefix = "";
         this.multiSource = multiSource;
     }
 
@@ -48,7 +48,7 @@ public class FixedListQuery extends QueryBase
     }
 
     @Override
-    public String getImagesPath()
+    public String getDataPath()
     {
         return rootPath + "/images";
     }
@@ -77,19 +77,19 @@ public class FixedListQuery extends QueryBase
             ImageSource imageSource,
             int limbType)
     {
-        imageListPrefix = "";
+        spectrumListPrefix = "";
 
         if (multiSource)
         {
             if (imageSource == ImageSource.GASKELL)
-                imageListPrefix = "sumfiles";
+                spectrumListPrefix = "sumfiles";
             if (imageSource == ImageSource.CORRECTED)
-                imageListPrefix = "sumfiles-corrected";
+                spectrumListPrefix = "sumfiles-corrected";
             else if (imageSource == ImageSource.CORRECTED_SPICE)
-                imageListPrefix = "infofiles-corrected";
+                spectrumListPrefix = "infofiles-corrected";
         }
 
-        List<List<String>> result = getResultsFromFileListOnServer(rootPath + "/" + imageListPrefix + "/imagelist.txt", rootPath + "/images/", galleryPath);
+        List<List<String>> result = getResultsFromFileListOnServer(rootPath + "/" + spectrumListPrefix + "/imagelist.txt", rootPath + "/images/", galleryPath);
 
         return result;
     }

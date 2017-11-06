@@ -104,7 +104,7 @@ abstract public class QueryBase
         }
 
         if (listCachedImages)
-            results = getCachedResults(getImagesPath());
+            results = getCachedResults(getDataPath());
 
         return results;
     }
@@ -307,7 +307,7 @@ abstract public class QueryBase
      */
     protected String getImageInventoryFileName()
     {
-        String imagesPath = getImagesPath();
+        String imagesPath = getDataPath();
         if (imagesPath == null) return null;
         return Configuration.getCacheDir() + imagesPath.substring(0, imagesPath.lastIndexOf(File.separator)) + File.separator + "imageInventory.txt";
     }
@@ -392,7 +392,7 @@ abstract public class QueryBase
         return filesFound;
     }
 
-    abstract public String getImagesPath();
+    abstract public String getDataPath();
 
     abstract public String getGalleryPath();
 
