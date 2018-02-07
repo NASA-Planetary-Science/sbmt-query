@@ -39,6 +39,7 @@ import com.google.common.collect.Lists;
 import edu.jhuapl.saavtk.util.Configuration;
 import edu.jhuapl.saavtk.util.FileCache;
 import edu.jhuapl.saavtk.util.FileUtil;
+import edu.jhuapl.saavtk.util.SafePaths;
 import edu.jhuapl.sbmt.model.image.ImageSource;
 
 
@@ -309,7 +310,7 @@ abstract public class QueryBase
     {
         String imagesPath = getDataPath();
         if (imagesPath == null) return null;
-        return Configuration.getCacheDir() + imagesPath.substring(0, imagesPath.lastIndexOf(File.separator)) + File.separator + "imageInventory.txt";
+        return SafePaths.getString(Configuration.getCacheDir(), "imageInventory.txt");
     }
 
     /**
