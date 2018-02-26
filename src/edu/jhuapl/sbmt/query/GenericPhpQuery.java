@@ -7,14 +7,17 @@ import java.util.TreeSet;
 
 import org.joda.time.DateTime;
 
+import edu.jhuapl.saavtk.util.FileCache;
+import edu.jhuapl.saavtk.util.FileCache.FileInfo;
+import edu.jhuapl.saavtk.util.FileCache.FileInfo.YesOrNo;
 import edu.jhuapl.sbmt.client.SmallBodyViewConfig;
 import edu.jhuapl.sbmt.model.image.ImageSource;
 
 public class GenericPhpQuery extends QueryBase
 {
-    private String rootPath;
-    private String tablePrefix;
-    private String galleryPath;
+    private final String rootPath;
+    private final String tablePrefix;
+    private final String galleryPath;
 
     public GenericPhpQuery clone()
     {
@@ -30,6 +33,14 @@ public class GenericPhpQuery extends QueryBase
     {
         this.rootPath = rootPath;
         this.tablePrefix = tablePrefix.toLowerCase();
+        if (galleryPath != null)
+        {
+            FileInfo info = FileCache.getFileInfoFromServer(galleryPath);
+            if (!info.isExistsLocally() && !info.isExistsOnServer().equals(YesOrNo.YES))
+            {
+                galleryPath = null;
+            }
+        }
         this.galleryPath = galleryPath;
     }
 

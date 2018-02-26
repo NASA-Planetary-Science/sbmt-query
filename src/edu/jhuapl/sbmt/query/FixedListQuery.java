@@ -5,6 +5,9 @@ import java.util.TreeSet;
 
 import org.joda.time.DateTime;
 
+import edu.jhuapl.saavtk.util.FileCache;
+import edu.jhuapl.saavtk.util.FileCache.FileInfo;
+import edu.jhuapl.saavtk.util.FileCache.FileInfo.YesOrNo;
 import edu.jhuapl.sbmt.model.image.ImageSource;
 
 /**
@@ -13,10 +16,10 @@ import edu.jhuapl.sbmt.model.image.ImageSource;
  */
 public class FixedListQuery extends QueryBase
 {
-    protected String rootPath;
-    protected String galleryPath;
+    protected final String rootPath;
+    protected final String galleryPath;
     protected String spectrumListPrefix;
-    protected boolean multiSource;
+    protected final boolean multiSource;
 
     public FixedListQuery(String rootPath)
     {
@@ -36,6 +39,14 @@ public class FixedListQuery extends QueryBase
     public FixedListQuery(String rootPath, String galleryPath, boolean multiSource)
     {
         this.rootPath = rootPath;
+        if (galleryPath != null)
+        {
+            FileInfo info = FileCache.getFileInfoFromServer(galleryPath);
+            if (!info.isExistsLocally() && !info.isExistsOnServer().equals(YesOrNo.YES))
+            {
+                galleryPath = null;
+            }
+        }
         this.galleryPath = galleryPath;
         this.spectrumListPrefix = "";
         this.multiSource = multiSource;
