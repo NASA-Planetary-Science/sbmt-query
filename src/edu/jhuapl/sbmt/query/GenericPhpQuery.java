@@ -221,6 +221,7 @@ public class GenericPhpQuery extends QueryBase
         catch (Exception e)
         {
             e.printStackTrace();
+            results = getResultsFromFileListOnServer(rootPath + "/imagelist.txt", getDataPath(), getGalleryPath());
         }
 
         return results;
