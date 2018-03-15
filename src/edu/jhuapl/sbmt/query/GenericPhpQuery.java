@@ -7,9 +7,6 @@ import java.util.TreeSet;
 
 import org.joda.time.DateTime;
 
-import edu.jhuapl.saavtk.util.FileCache;
-import edu.jhuapl.saavtk.util.FileCache.FileInfo;
-import edu.jhuapl.saavtk.util.FileCache.FileInfo.YesOrNo;
 import edu.jhuapl.sbmt.client.SmallBodyViewConfig;
 import edu.jhuapl.sbmt.model.image.ImageSource;
 
@@ -17,11 +14,11 @@ public class GenericPhpQuery extends QueryBase
 {
     private final String rootPath;
     private final String tablePrefix;
-    private final String galleryPath;
 
+    @Override
     public GenericPhpQuery clone()
     {
-        return new GenericPhpQuery(rootPath, tablePrefix, galleryPath);
+        return (GenericPhpQuery) super.clone();
     }
 
     public GenericPhpQuery(String rootPath, String tablePrefix)
@@ -31,31 +28,21 @@ public class GenericPhpQuery extends QueryBase
 
     public GenericPhpQuery(String rootPath, String tablePrefix, String galleryPath)
     {
+        super(galleryPath);
         this.rootPath = rootPath;
         this.tablePrefix = tablePrefix.toLowerCase();
-        if (galleryPath != null)
-        {
-            FileInfo info = FileCache.getFileInfoFromServer(galleryPath);
-            if (!info.isExistsLocally() && !info.isExistsOnServer().equals(YesOrNo.YES))
-            {
-                galleryPath = null;
-            }
-        }
-        this.galleryPath = galleryPath;
     }
 
+    @Override
     public String getDataPath()
     {
         return rootPath + "/images";
     }
 
-    public String getGalleryPath()
+    // Append the full path to the image gallery to this search result.
+    private void addGalleryFullPath(List<String> result)
     {
-        return galleryPath;
-    }
-
-    private void setGalleryFullPath(List<String> result)
-    {
+        final String galleryPath = getGalleryPath();
         if(galleryPath == null)
         {
             result.add(null);
@@ -66,14 +53,16 @@ public class GenericPhpQuery extends QueryBase
         }
     }
 
-    private void changePathToFullPath(List<String> result)
+    // Convert the 0th element of the result (the path to the image)
+    // with the full path.
+    private void changeImagePathToFullPath(List<String> result)
     {
         result.set(0, rootPath + "/images/" + result.get(0));
     }
 
     @Override
     public List<List<String>> runQuery(
-            String type,
+            @SuppressWarnings("unused") String type,
             DateTime startDate,
             DateTime stopDate,
             boolean sumOfProductsSearch,
@@ -84,7 +73,7 @@ public class GenericPhpQuery extends QueryBase
             double startResolution,
             double stopResolution,
             String searchString,
-            List<Integer> polygonTypes,
+            @SuppressWarnings("unused") List<Integer> polygonTypes,
             double fromIncidence,
             double toIncidence,
             double fromEmission,
@@ -95,6 +84,7 @@ public class GenericPhpQuery extends QueryBase
             ImageSource imageSource,
             int limbType)
     {
+        final String galleryPath = getGalleryPath();
         if (imageSource == ImageSource.CORRECTED)
         {
             return getResultsFromFileListOnServer(rootPath + "/sumfiles-corrected/imagelist.txt",
@@ -111,7 +101,7 @@ public class GenericPhpQuery extends QueryBase
                     rootPath + "/images/", galleryPath);
         }*/
 
-        List<List<String>> results = new ArrayList<List<String>>();
+        List<List<String>> results = new ArrayList<>();
 
         double minIncidence = Math.min(fromIncidence, toIncidence);
         double maxIncidence = Math.max(fromIncidence, toIncidence);
@@ -131,7 +121,7 @@ public class GenericPhpQuery extends QueryBase
 
         if (searchString != null)
         {
-            HashMap<String, String> args = new HashMap<String, String>();
+            HashMap<String, String> args = new HashMap<>();
             args.put("imagesDatabase", imagesDatabase);
             args.put("imageSource", imageSource.toString());
             args.put("searchString", searchString);
@@ -142,8 +132,8 @@ public class GenericPhpQuery extends QueryBase
             {
                 for (List<String> res : results)
                 {
-                    this.setGalleryFullPath(res);
-                    this.changePathToFullPath(res);
+                    this.addGalleryFullPath(res);
+                    this.changeImagePathToFullPath(res);
                 }
             }
             return results;
@@ -156,7 +146,7 @@ public class GenericPhpQuery extends QueryBase
             double minResolution = Math.min(startResolution, stopResolution) / 1000.0;
             double maxResolution = Math.max(startResolution, stopResolution) / 1000.0;
 
-            HashMap<String, String> args = new HashMap<String, String>();
+            HashMap<String, String> args = new HashMap<>();
             args.put("imagesDatabase", imagesDatabase);
             args.put("cubesDatabase", cubesDatabase);
             args.put("minResolution", String.valueOf(minResolution));
@@ -224,8 +214,8 @@ public class GenericPhpQuery extends QueryBase
 
             for (List<String> res : results)
             {
-                this.setGalleryFullPath(res);
-                this.changePathToFullPath(res);
+                this.addGalleryFullPath(res);
+                this.changeImagePathToFullPath(res);
             }
         }
         catch (Exception e)

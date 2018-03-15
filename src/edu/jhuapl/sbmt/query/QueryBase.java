@@ -38,6 +38,8 @@ import com.google.common.collect.Lists;
 
 import edu.jhuapl.saavtk.util.Configuration;
 import edu.jhuapl.saavtk.util.FileCache;
+import edu.jhuapl.saavtk.util.FileCache.FileInfo;
+import edu.jhuapl.saavtk.util.FileCache.FileInfo.YesOrNo;
 import edu.jhuapl.saavtk.util.FileUtil;
 import edu.jhuapl.saavtk.util.SafePaths;
 import edu.jhuapl.sbmt.model.image.ImageSource;
@@ -47,12 +49,29 @@ import edu.jhuapl.sbmt.model.image.ImageSource;
  * This class represents a database storing information about all the
  * data. It also provides functions for querying the database.
  */
-abstract public class QueryBase
+public abstract class QueryBase implements Cloneable
 {
+    protected final String galleryPath;
+    protected Boolean galleryExists;
+
+    protected QueryBase(String galleryPath)
+    {
+        this.galleryPath = galleryPath;
+        this.galleryExists = null;
+    }
+
     @Override
     public QueryBase clone()
     {
-        return null;
+        try
+        {
+            return (QueryBase) super.clone();
+        }
+        catch (CloneNotSupportedException e)
+        {
+            // Can't happen.
+            throw new AssertionError(e);
+        }
     }
 
     protected List<List<String>> doQuery(String phpScript, String data)
@@ -393,9 +412,7 @@ abstract public class QueryBase
         return filesFound;
     }
 
-    abstract public String getDataPath();
-
-    abstract public String getGalleryPath();
+    public abstract String getDataPath();
 
     /**
      * Run a query and return an array containing the results. The returned array
@@ -426,7 +443,7 @@ abstract public class QueryBase
      * @param limbType
      * @return
      */
-    abstract public List<List<String>> runQuery(
+    public abstract List<List<String>> runQuery(
             String type,
             DateTime startDate,
             DateTime stopDate,
@@ -448,4 +465,21 @@ abstract public class QueryBase
             TreeSet<Integer> cubeList,
             ImageSource imageSource,
             int limbType);
+
+    public String getGalleryPath()
+    {
+        if (galleryExists == null)
+        {
+            galleryExists = Boolean.FALSE;
+            if (galleryPath != null)
+            {
+                FileInfo info = FileCache.getFileInfoFromServer(galleryPath);
+                if (info.isExistsLocally() || info.isExistsOnServer().equals(YesOrNo.YES))
+                {
+                    galleryExists = Boolean.TRUE;
+                }
+            }
+        }
+        return galleryExists ? galleryPath : null;
+    }
 }

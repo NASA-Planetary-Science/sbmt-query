@@ -5,9 +5,6 @@ import java.util.TreeSet;
 
 import org.joda.time.DateTime;
 
-import edu.jhuapl.saavtk.util.FileCache;
-import edu.jhuapl.saavtk.util.FileCache.FileInfo;
-import edu.jhuapl.saavtk.util.FileCache.FileInfo.YesOrNo;
 import edu.jhuapl.sbmt.model.image.ImageSource;
 
 /**
@@ -17,8 +14,6 @@ import edu.jhuapl.sbmt.model.image.ImageSource;
 public class FixedListQuery extends QueryBase
 {
     protected final String rootPath;
-    protected final String galleryPath;
-    protected String spectrumListPrefix;
     protected final boolean multiSource;
 
     public FixedListQuery(String rootPath)
@@ -38,24 +33,15 @@ public class FixedListQuery extends QueryBase
 
     public FixedListQuery(String rootPath, String galleryPath, boolean multiSource)
     {
+        super(galleryPath);
         this.rootPath = rootPath;
-        if (galleryPath != null)
-        {
-            FileInfo info = FileCache.getFileInfoFromServer(galleryPath);
-            if (!info.isExistsLocally() && !info.isExistsOnServer().equals(YesOrNo.YES))
-            {
-                galleryPath = null;
-            }
-        }
-        this.galleryPath = galleryPath;
-        this.spectrumListPrefix = "";
         this.multiSource = multiSource;
     }
 
     @Override
-    public String getGalleryPath()
+    public FixedListQuery clone()
     {
-        return galleryPath;
+        return (FixedListQuery) super.clone();
     }
 
     @Override
@@ -66,29 +52,29 @@ public class FixedListQuery extends QueryBase
 
     @Override
     public List<List<String>> runQuery(
-            String type,
-            DateTime startDate,
-            DateTime stopDate,
-            boolean sumOfProductsSearch,
-            List<Integer> camerasSelected,
-            List<Integer> filtersSelected,
-            double startDistance,
-            double stopDistance,
-            double startResolution,
-            double stopResolution,
-            String searchString,
-            List<Integer> polygonTypes,
-            double fromIncidence,
-            double toIncidence,
-            double fromEmission,
-            double toEmission,
-            double fromPhase,
-            double toPhase,
-            TreeSet<Integer> cubeList,
+            @SuppressWarnings("unused") String type,
+            @SuppressWarnings("unused") DateTime startDate,
+            @SuppressWarnings("unused") DateTime stopDate,
+            @SuppressWarnings("unused") boolean sumOfProductsSearch,
+            @SuppressWarnings("unused") List<Integer> camerasSelected,
+            @SuppressWarnings("unused") List<Integer> filtersSelected,
+            @SuppressWarnings("unused") double startDistance,
+            @SuppressWarnings("unused") double stopDistance,
+            @SuppressWarnings("unused") double startResolution,
+            @SuppressWarnings("unused") double stopResolution,
+            @SuppressWarnings("unused") String searchString,
+            @SuppressWarnings("unused") List<Integer> polygonTypes,
+            @SuppressWarnings("unused") double fromIncidence,
+            @SuppressWarnings("unused") double toIncidence,
+            @SuppressWarnings("unused") double fromEmission,
+            @SuppressWarnings("unused") double toEmission,
+            @SuppressWarnings("unused") double fromPhase,
+            @SuppressWarnings("unused") double toPhase,
+            @SuppressWarnings("unused") TreeSet<Integer> cubeList,
             ImageSource imageSource,
-            int limbType)
+            @SuppressWarnings("unused") int limbType)
     {
-        spectrumListPrefix = "";
+        String spectrumListPrefix = "";
 
         if (multiSource)
         {
@@ -100,7 +86,7 @@ public class FixedListQuery extends QueryBase
                 spectrumListPrefix = "infofiles-corrected";
         }
 
-        List<List<String>> result = getResultsFromFileListOnServer(rootPath + "/" + spectrumListPrefix + "/imagelist.txt", rootPath + "/images/", galleryPath);
+        List<List<String>> result = getResultsFromFileListOnServer(rootPath + "/" + spectrumListPrefix + "/imagelist.txt", rootPath + "/images/", getGalleryPath());
 
         return result;
     }
