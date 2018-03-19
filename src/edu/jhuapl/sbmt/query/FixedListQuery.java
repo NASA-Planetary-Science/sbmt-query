@@ -1,5 +1,6 @@
 package edu.jhuapl.sbmt.query;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -86,9 +87,23 @@ public class FixedListQuery extends QueryBase
                 spectrumListPrefix = "infofiles-corrected";
         }
 
-        List<List<String>> result = getResultsFromFileListOnServer(rootPath + "/" + spectrumListPrefix + "/imagelist.txt", rootPath + "/images/", getGalleryPath());
+        List<List<String>> results = getResultsFromFileListOnServer(rootPath + "/" + spectrumListPrefix + "/imagelist.txt", rootPath + "/images/", getGalleryPath());
 
-        return result;
+        if (searchString != null)
+        {
+            searchString = ".*/" + searchString;
+            List<List<String>> unfilteredResults = results;
+            results = new ArrayList<>();
+            for (List<String> result : unfilteredResults)
+            {
+                String name = result.get(0);
+                if (name.matches(searchString))
+                {
+                    results.add(result);
+                }
+            }
+        }
+        return results;
     }
 
 }
