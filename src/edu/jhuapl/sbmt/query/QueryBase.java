@@ -178,7 +178,9 @@ public abstract class QueryBase implements Cloneable
                     List<String> vals = Lists.newArrayList(line.trim().split("\\s+"));
                     String timeString = interpretTimeSubStrings(vals.subList(1, vals.size()));
                     List<String> res = new ArrayList<>();
-                    res.add(pathToImageFolderOnServer + vals.get(0));
+
+                    String imagePath = vals.get(0).replace(pathToImageFolderOnServer, "");
+                    res.add(pathToImageFolderOnServer + imagePath);
                     res.add(new Long(new DateTime(timeString, DateTimeZone.UTC).getMillis()).toString());
                     if(pathToGalleryFolderOnServer == null)
                     {
@@ -186,7 +188,7 @@ public abstract class QueryBase implements Cloneable
                     }
                     else
                     {
-                        res.add(pathToGalleryFolderOnServer + vals.get(0));
+                        res.add(pathToGalleryFolderOnServer + imagePath);
                     }
                     results.add(res);
                 }
