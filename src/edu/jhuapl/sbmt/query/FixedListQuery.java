@@ -91,7 +91,7 @@ public class FixedListQuery extends QueryBase
 
         if (searchString != null)
         {
-            searchString = ".*/" + searchString;
+            searchString = wildcardToPathRegex(searchString);
             List<List<String>> unfilteredResults = results;
             results = new ArrayList<>();
             for (List<String> result : unfilteredResults)
@@ -106,4 +106,32 @@ public class FixedListQuery extends QueryBase
         return results;
     }
 
+    private String wildcardToPathRegex(String wildcard)
+    {
+        StringBuilder builder = new StringBuilder();
+        builder.append("^.*/");
+        for (char c : wildcard.toCharArray())
+        {
+            switch(c) {
+            case '*':
+                builder.append(".*");
+                break;
+            case '?':
+                builder.append(".");
+                break;
+                // escape special regexp-characters
+            case '(': case ')': case '[': case ']': case '$':
+            case '^': case '.': case '{': case '}': case '|':
+            case '\\':
+                builder.append("\\");
+                builder.append(c);
+                break;
+            default:
+                builder.append(c);
+                break;
+            }
+        }
+        builder.append('$');
+        return builder.toString();
+    }
 }
