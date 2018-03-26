@@ -57,7 +57,11 @@ public class GenericPhpQuery extends QueryBase
     // with the full path.
     private void changeImagePathToFullPath(List<String> result)
     {
-        result.set(0, rootPath + "/images/" + result.get(0));
+        String fullPath = result.get(0);
+        if (!fullPath.contains("/"))
+        {
+            result.set(0, rootPath + "/images/" + fullPath);
+        }
     }
 
     @Override
