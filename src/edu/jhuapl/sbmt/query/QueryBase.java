@@ -74,48 +74,40 @@ public abstract class QueryBase implements Cloneable
         }
     }
 
-    protected List<List<String>> doQuery(String phpScript, String data)
+    protected List<List<String>> doQuery(String phpScript, String data) throws IOException
     {
         List<List<String>> results = new ArrayList<>();
 
-        try
+        URL u = new URL(Configuration.getQueryRootURL() + "/" + phpScript);
+        URLConnection conn = u.openConnection();
+        conn.setDoOutput(true);
+        conn.setUseCaches(false);
+        conn.setRequestProperty("User-Agent", "Mozilla/4.0");
+
+        OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+        wr.write(data);
+        wr.flush();
+
+        InputStreamReader isr = new InputStreamReader(conn.getInputStream());
+        BufferedReader in = new BufferedReader(isr);
+
+        String line;
+
+        while ((line = in.readLine()) != null)
         {
-            URL u = new URL(Configuration.getQueryRootURL() + "/" + phpScript);
-            URLConnection conn = u.openConnection();
-            conn.setDoOutput(true);
-            conn.setUseCaches(false);
-            conn.setRequestProperty("User-Agent", "Mozilla/4.0");
+            line = line.trim();
+            if (line.length() == 0)
+                continue;
 
-            OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-            wr.write(data);
-            wr.flush();
-
-            InputStreamReader isr = new InputStreamReader(conn.getInputStream());
-            BufferedReader in = new BufferedReader(isr);
-
-            String line;
-
-            while ((line = in.readLine()) != null)
-            {
-                line = line.trim();
-                if (line.length() == 0)
-                    continue;
-
-                String[] tokens = line.split("\\s+");
-                List<String> words = new ArrayList<>();
-                for (String word : tokens)
-                    words.add(word);
-                results.add(words);
-            }
-
-            in.close();
-            updateImageInventory(results);
+            String[] tokens = line.split("\\s+");
+            List<String> words = new ArrayList<>();
+            for (String word : tokens)
+                words.add(word);
+            results.add(words);
         }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-            results = getCachedResults(getDataPath());
-        }
+
+        in.close();
+        updateImageInventory(results);
 
         return results;
     }

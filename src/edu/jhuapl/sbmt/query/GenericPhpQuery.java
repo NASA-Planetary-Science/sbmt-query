@@ -110,26 +110,26 @@ public class GenericPhpQuery extends QueryBase
             cubesDatabase += "_beta";
         }
 
-        if (searchString != null)
-        {
-            HashMap<String, String> args = new HashMap<>();
-            args.put("imagesDatabase", imagesDatabase);
-            args.put("searchString", searchString);
-
-            results = doQuery("searchimages.php", constructUrlArguments(args));
-
-            if (results != null && results.size() > 0)
-            {
-                for (List<String> res : results)
-                {
-                    this.changeImagePathToFullPath(res);
-                }
-            }
-            return results;
-        }
-
         try
         {
+            if (searchString != null)
+            {
+                HashMap<String, String> args = new HashMap<>();
+                args.put("imagesDatabase", imagesDatabase);
+                args.put("searchString", searchString);
+
+                results = doQuery("searchimages.php", constructUrlArguments(args));
+
+                if (results != null && results.size() > 0)
+                {
+                    for (List<String> res : results)
+                    {
+                        this.changeImagePathToFullPath(res);
+                    }
+                }
+                return results;
+            }
+
             double minScDistance = Math.min(startDistance, stopDistance);
             double maxScDistance = Math.max(startDistance, stopDistance);
             double minResolution = Math.min(startResolution, stopResolution) / 1000.0;
