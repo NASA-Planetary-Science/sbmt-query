@@ -123,7 +123,6 @@ public class GenericPhpQuery extends QueryBase
         {
             HashMap<String, String> args = new HashMap<>();
             args.put("imagesDatabase", imagesDatabase);
-            args.put("imageSource", imageSource.toString());
             args.put("searchString", searchString);
 
             results = doQuery("searchimages.php", constructUrlArguments(args));
