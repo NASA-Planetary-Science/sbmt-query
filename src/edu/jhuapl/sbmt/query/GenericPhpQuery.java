@@ -39,20 +39,6 @@ public class GenericPhpQuery extends QueryBase
         return rootPath + "/images";
     }
 
-    // Append the full path to the image gallery to this search result.
-    private void addGalleryFullPath(List<String> result)
-    {
-        final String galleryPath = getGalleryPath();
-        if(galleryPath == null)
-        {
-            result.add(null);
-        }
-        else
-        {
-            result.add(galleryPath + "/" + result.get(0));
-        }
-    }
-
     // Convert the 0th element of the result (the path to the image)
     // with the full path.
     private void changeImagePathToFullPath(List<String> result)
@@ -131,7 +117,6 @@ public class GenericPhpQuery extends QueryBase
             {
                 for (List<String> res : results)
                 {
-                    this.addGalleryFullPath(res);
                     this.changeImagePathToFullPath(res);
                 }
             }
@@ -213,7 +198,6 @@ public class GenericPhpQuery extends QueryBase
 
             for (List<String> res : results)
             {
-                this.addGalleryFullPath(res);
                 this.changeImagePathToFullPath(res);
             }
         }
