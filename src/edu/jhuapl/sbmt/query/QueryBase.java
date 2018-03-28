@@ -77,7 +77,6 @@ public abstract class QueryBase implements Cloneable
     protected List<List<String>> doQuery(String phpScript, String data)
     {
         List<List<String>> results = new ArrayList<>();
-        boolean listCachedImages = false;
 
         try
         {
@@ -114,17 +113,9 @@ public abstract class QueryBase implements Cloneable
         }
         catch (IOException e)
         {
-            // We will reach this if SBMT is unable to connect to server
-            JOptionPane.showMessageDialog(null,
-                    "SBMT is unable to connect to server. Ignoring search parameters and listing all cached images.",
-                    "Warning",
-                    JOptionPane.WARNING_MESSAGE);
             e.printStackTrace();
-            listCachedImages = true;
-        }
-
-        if (listCachedImages)
             results = getCachedResults(getDataPath());
+        }
 
         return results;
     }
@@ -152,12 +143,6 @@ public abstract class QueryBase implements Cloneable
             String pathToImageFolderOnServer,
             String pathToGalleryFolderOnServer)
     {
-        // Let user know that search uses fixed list and ignores search parameters
-        JOptionPane.showMessageDialog(null,
-                "Search uses a fixed list and ignores selected search parameters.",
-                "Notification",
-                JOptionPane.INFORMATION_MESSAGE);
-
         if (!pathToImageFolderOnServer.endsWith("/"))
             pathToImageFolderOnServer += "/";
 
@@ -166,7 +151,18 @@ public abstract class QueryBase implements Cloneable
 
         List<List<String>> results = new ArrayList<>();
 
+        FileInfo info = FileCache.getFileInfoFromServer(pathToFileListOnServer);
+        if (!info.isURLAccessAuthorized().equals(YesOrNo.YES) || !info.isExistsOnServer().equals(YesOrNo.YES))
+        {
+            return getCachedResults(getDataPath());
+        }
         File file = FileCache.getFileFromServer(pathToFileListOnServer);
+
+        // Let user know that search uses fixed list and ignores search parameters
+        JOptionPane.showMessageDialog(null,
+                "Search uses a fixed list and ignores selected search parameters.",
+                "Notification",
+                JOptionPane.INFORMATION_MESSAGE);
 
         if (file != null)
         {
@@ -192,6 +188,7 @@ public abstract class QueryBase implements Cloneable
                     }
                     results.add(res);
                 }
+                updateImageInventory(results);
             }
             catch (FileNotFoundException e)
             {
@@ -306,11 +303,18 @@ public abstract class QueryBase implements Cloneable
             String pathToImageFolder
             )
     {
+        // We will reach this if SBMT is unable to connect to server
+        JOptionPane.showMessageDialog(null,
+                "SBMT had a problem while performing the search. Ignoring search parameters and listing all cached images.",
+                "Warning",
+                JOptionPane.WARNING_MESSAGE);
         final List<File> fileList = getCachedFiles(pathToImageFolder);
         final Map<String, File> filesFound = new TreeMap<>();
         for (File file: fileList)
         {
-            filesFound.put(file.getName(), file);
+            // Strip off the local cache part of the prefix.
+            String path = file.getPath().substring(Configuration.getCacheDir().length());
+            filesFound.put(path, file);
         }
 
         final List<List<String>> result = new ArrayList<>();
