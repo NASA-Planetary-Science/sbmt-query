@@ -39,20 +39,6 @@ public class GenericPhpQuery extends QueryBase
         return rootPath + "/images";
     }
 
-    // Append the full path to the image gallery to this search result.
-    private void addGalleryFullPath(List<String> result)
-    {
-        final String galleryPath = getGalleryPath();
-        if(galleryPath == null)
-        {
-            result.add(null);
-        }
-        else
-        {
-            result.add(galleryPath + "/" + result.get(0));
-        }
-    }
-
     // Convert the 0th element of the result (the path to the image)
     // with the full path, but only if the result does not already have
     // a full path.
@@ -128,7 +114,6 @@ public class GenericPhpQuery extends QueryBase
         {
             HashMap<String, String> args = new HashMap<>();
             args.put("imagesDatabase", imagesDatabase);
-            args.put("imageSource", imageSource.toString());
             args.put("searchString", searchString);
 
             results = doQuery("searchimages.php", constructUrlArguments(args));
@@ -137,7 +122,6 @@ public class GenericPhpQuery extends QueryBase
             {
                 for (List<String> res : results)
                 {
-                    this.addGalleryFullPath(res);
                     this.changeImagePathToFullPath(res);
                 }
             }
@@ -180,12 +164,12 @@ public class GenericPhpQuery extends QueryBase
                 // Populate search parameters
                 args.put("numProducts", new Integer(numProducts).toString());
                 for(int i=0; i<numProducts; i++)
-            {
+                {
                     args.put("cameraType"+i, new Integer(camerasSelectedArray[i]+1).toString());
                     args.put("filterType"+i, new Integer(filtersSelectedArray[i]+1).toString());
                 }
             }
-                else
+            else
             {
                 // Product of sums (legacy) search: (CAMERA 1 OR ... OR CAMERA N) AND (FILTER 1 OR ... FILTER M)
                 args.put("sumOfProductsSearch", "0");
@@ -194,9 +178,9 @@ public class GenericPhpQuery extends QueryBase
                 for(Integer c : camerasSelected)
                 {
                     args.put("cameraType"+(c+1), "1");
-            }
+                }
                 for(Integer f : filtersSelected)
-            {
+                {
                     args.put("filterType"+(f+1), "1");
                 }
             }
@@ -219,7 +203,6 @@ public class GenericPhpQuery extends QueryBase
 
             for (List<String> res : results)
             {
-                this.addGalleryFullPath(res);
                 this.changeImagePathToFullPath(res);
             }
         }
