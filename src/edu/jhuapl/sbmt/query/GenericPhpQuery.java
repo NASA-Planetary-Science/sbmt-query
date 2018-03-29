@@ -39,18 +39,6 @@ public class GenericPhpQuery extends QueryBase
         return rootPath + "/images";
     }
 
-    // Convert the 0th element of the result (the path to the image)
-    // with the full path, but only if the result does not already have
-    // a full path.
-    private void changeImagePathToFullPath(List<String> result)
-    {
-        String fullPath = result.get(0);
-        if (!fullPath.contains("/"))
-        {
-            result.set(0, rootPath + "/images/" + fullPath);
-        }
-    }
-
     @Override
     public List<List<String>> runQuery(
             @SuppressWarnings("unused") String type,
@@ -120,13 +108,6 @@ public class GenericPhpQuery extends QueryBase
 
                 results = doQuery("searchimages.php", constructUrlArguments(args));
 
-                if (results != null && results.size() > 0)
-                {
-                    for (List<String> res : results)
-                    {
-                        this.changeImagePathToFullPath(res);
-                    }
-                }
                 return results;
             }
 
@@ -201,10 +182,6 @@ public class GenericPhpQuery extends QueryBase
 
             results = doQuery("searchimages.php", constructUrlArguments(args));
 
-            for (List<String> res : results)
-            {
-                this.changeImagePathToFullPath(res);
-            }
         }
         catch (Exception e)
         {

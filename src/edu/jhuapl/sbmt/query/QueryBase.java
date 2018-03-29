@@ -107,6 +107,11 @@ public abstract class QueryBase implements Cloneable
         }
 
         in.close();
+        for (List<String> res : results)
+        {
+            changeImagePathToFullPath(res);
+        }
+
         updateImageInventory(results);
 
         return results;
@@ -152,7 +157,7 @@ public abstract class QueryBase implements Cloneable
 
         // Let user know that search uses fixed list and ignores search parameters
         JOptionPane.showMessageDialog(null,
-                "Search uses a fixed list and ignores selected search parameters.",
+                "Search uses a fixed list and ignores all but file name search parameters.",
                 "Notification",
                 JOptionPane.INFORMATION_MESSAGE);
 
@@ -479,5 +484,17 @@ public abstract class QueryBase implements Cloneable
             }
         }
         return galleryExists ? galleryPath : null;
+    }
+
+    // Convert the 0th element of the result (the path to the image)
+    // with the full path, but only if the result does not already have
+    // a full path.
+    private void changeImagePathToFullPath(List<String> result)
+    {
+        String fullPath = result.get(0);
+        if (!fullPath.contains("/"))
+        {
+            result.set(0, getDataPath() + "/" + fullPath);
+        }
     }
 }
