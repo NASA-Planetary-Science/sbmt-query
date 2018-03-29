@@ -175,14 +175,6 @@ public abstract class QueryBase implements Cloneable
                     String imagePath = vals.get(0).replace(pathToImageFolderOnServer, "");
                     res.add(pathToImageFolderOnServer + imagePath);
                     res.add(new Long(new DateTime(timeString, DateTimeZone.UTC).getMillis()).toString());
-                    if(pathToGalleryFolderOnServer == null)
-                    {
-                        res.add(null);
-                    }
-                    else
-                    {
-                        res.add(pathToGalleryFolderOnServer + imagePath);
-                    }
                     results.add(res);
                 }
                 updateImageInventory(results);
