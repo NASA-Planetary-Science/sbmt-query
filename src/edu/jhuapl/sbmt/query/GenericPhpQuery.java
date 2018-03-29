@@ -67,12 +67,12 @@ public class GenericPhpQuery extends QueryBase
         if (imageSource == ImageSource.CORRECTED)
         {
             return getResultsFromFileListOnServer(rootPath + "/sumfiles-corrected/imagelist.txt",
-                    rootPath + "/images/", galleryPath);
+                    rootPath + "/images/", galleryPath, searchString);
         }
         else if (imageSource == ImageSource.CORRECTED_SPICE)
         {
             return getResultsFromFileListOnServer(rootPath + "/infofiles-corrected/imagelist.txt",
-                    rootPath + "/images/", galleryPath);
+                    rootPath + "/images/", galleryPath, searchString);
         }
         /*else if (imageSource == ImageSource.GASKELL_UPDATED)
         {
@@ -186,7 +186,7 @@ public class GenericPhpQuery extends QueryBase
         catch (Exception e)
         {
             e.printStackTrace();
-            results = getResultsFromFileListOnServer(rootPath + "/imagelist.txt", getDataPath(), getGalleryPath());
+            results = getResultsFromFileListOnServer(rootPath + "/imagelist.txt", getDataPath(), getGalleryPath(), searchString);
         }
 
         return results;

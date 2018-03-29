@@ -138,6 +138,31 @@ public abstract class QueryBase implements Cloneable
     protected List<List<String>> getResultsFromFileListOnServer(
             String pathToFileListOnServer,
             String pathToImageFolderOnServer,
+            String pathToGalleryFolderOnServer,
+            String searchString)
+    {
+        List<List<String>> results = getResultsFromFileListOnServer(pathToFileListOnServer, pathToImageFolderOnServer, pathToGalleryFolderOnServer);
+
+        if (searchString != null && !searchString.isEmpty())
+        {
+            searchString = wildcardToPathRegex(searchString);
+            List<List<String>> unfilteredResults = results;
+            results = new ArrayList<>();
+            for (List<String> result : unfilteredResults)
+            {
+                String name = result.get(0);
+                if (name.matches(searchString))
+                {
+                    results.add(result);
+                }
+            }
+        }
+        return results;
+    }
+
+    private List<List<String>> getResultsFromFileListOnServer(
+            String pathToFileListOnServer,
+            String pathToImageFolderOnServer,
             String pathToGalleryFolderOnServer)
     {
         if (!pathToImageFolderOnServer.endsWith("/"))
@@ -195,6 +220,35 @@ public abstract class QueryBase implements Cloneable
         }
 
         return results;
+    }
+
+    private String wildcardToPathRegex(String wildcard)
+    {
+        StringBuilder builder = new StringBuilder();
+        builder.append("^.*/");
+        for (char c : wildcard.toCharArray())
+        {
+            switch(c) {
+            case '*':
+                builder.append(".*");
+                break;
+            case '?':
+                builder.append(".");
+                break;
+                // escape special regexp-characters
+            case '(': case ')': case '[': case ']': case '$':
+            case '^': case '.': case '{': case '}': case '|':
+            case '\\':
+                builder.append("\\");
+                builder.append(c);
+                break;
+            default:
+                builder.append(c);
+                break;
+            }
+        }
+        builder.append('$');
+        return builder.toString();
     }
 
     private static final DateTimeFormatter YYYY_MM_DD = DateTimeFormatter.ofPattern("YYYY MM DD HH:MM:SS");
