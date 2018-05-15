@@ -535,7 +535,7 @@ public abstract class QueryBase implements Cloneable
     // Convert the 0th element of the result (the path to the image)
     // with the full path, but only if the result does not already have
     // a full path.
-    private void changeImagePathToFullPath(List<String> result)
+    protected void changeImagePathToFullPath(List<String> result)
     {
         String fullPath = result.get(0);
         if (!fullPath.contains("/"))
