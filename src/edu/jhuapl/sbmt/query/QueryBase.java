@@ -186,7 +186,7 @@ public abstract class QueryBase implements Cloneable
                 "Notification",
                 JOptionPane.INFORMATION_MESSAGE);
 
-        if (file != null)
+        if (file.exists())
         {
             try
             {
