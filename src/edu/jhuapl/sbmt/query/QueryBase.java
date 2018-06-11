@@ -27,7 +27,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 import javax.swing.JOptionPane;
 
@@ -42,7 +41,6 @@ import edu.jhuapl.saavtk.util.FileCache.FileInfo;
 import edu.jhuapl.saavtk.util.FileCache.FileInfo.YesOrNo;
 import edu.jhuapl.saavtk.util.FileUtil;
 import edu.jhuapl.saavtk.util.SafePaths;
-import edu.jhuapl.sbmt.model.image.ImageSource;
 
 
 /**
@@ -51,7 +49,7 @@ import edu.jhuapl.sbmt.model.image.ImageSource;
  */
 public abstract class QueryBase implements Cloneable
 {
-    protected final String galleryPath;
+    protected String galleryPath;
     protected Boolean galleryExists;
 
     protected QueryBase(String galleryPath)
@@ -109,10 +107,10 @@ public abstract class QueryBase implements Cloneable
         in.close();
         for (List<String> res : results)
         {
-            changeImagePathToFullPath(res);
+            changeDataPathToFullPath(res);
         }
 
-        updateImageInventory(results);
+        updateDataInventory(results);
 
         return results;
     }
@@ -160,7 +158,7 @@ public abstract class QueryBase implements Cloneable
         return results;
     }
 
-    private List<List<String>> getResultsFromFileListOnServer(
+    protected List<List<String>> getResultsFromFileListOnServer(
             String pathToFileListOnServer,
             String pathToImageFolderOnServer,
             String pathToGalleryFolderOnServer)
@@ -172,7 +170,7 @@ public abstract class QueryBase implements Cloneable
             pathToGalleryFolderOnServer += "/";
 
         List<List<String>> results = new ArrayList<>();
-
+        System.out.println("QueryBase: getResultsFromFileListOnServer: path is " + pathToFileListOnServer);
         FileInfo info = FileCache.getFileInfoFromServer(pathToFileListOnServer);
         if (!info.isURLAccessAuthorized().equals(YesOrNo.YES) || !info.isExistsOnServer().equals(YesOrNo.YES))
         {
@@ -202,7 +200,7 @@ public abstract class QueryBase implements Cloneable
                     res.add(new Long(new DateTime(timeString, DateTimeZone.UTC).getMillis()).toString());
                     results.add(res);
                 }
-                updateImageInventory(results);
+                updateDataInventory(results);
             }
             catch (FileNotFoundException e)
             {
@@ -222,7 +220,7 @@ public abstract class QueryBase implements Cloneable
         return results;
     }
 
-    private String wildcardToPathRegex(String wildcard)
+    protected String wildcardToPathRegex(String wildcard)
     {
         StringBuilder builder = new StringBuilder();
         builder.append("^.*/");
@@ -255,7 +253,7 @@ public abstract class QueryBase implements Cloneable
     private static final DateTimeFormatter YYYY_MMM_DD = DateTimeFormatter.ofPattern("YYYY MMM DD HH:MM:SS");
     private static final DateTimeFormatter OUTPUT_TIME_FORMAT = DateTimeFormatter.ofPattern("YYYY-MM-DD HH:MM:SS");
 
-    private String interpretTimeSubStrings(List<String> vals)
+    protected String interpretTimeSubStrings(List<String> vals)
     {
         if (vals.isEmpty()) return null;
         if (vals.size() == 1) return vals.get(0);
@@ -280,16 +278,16 @@ public abstract class QueryBase implements Cloneable
     }
 
     /**
-     * Add the supplied search results to the image inventory for this small body configuration/instrument.
+     * Add the supplied search results to the data inventory for this small body configuration/instrument.
      * New results (dates) supersede previous results for the same image file.
      * Following a call to this method, the image inventory file will thus contain a union of all the search
      * results ever made. Note that this inventory includes all files that were found in a search, whether
      * or not those files have every actually been displayed and cached.
      * @param newResults the results to add
      */
-    protected void updateImageInventory(List<List<String>> newResults)
+    protected void updateDataInventory(List<List<String>> newResults)
     {
-        SortedMap<String, List<String>> inventory = getImageInventory();
+        SortedMap<String, List<String>> inventory = getDataInventory();
 
         // Add the new results, overwriting any that were previously cached; always assume newer is "better".
         for (List<String> each: newResults)
@@ -298,7 +296,7 @@ public abstract class QueryBase implements Cloneable
         }
 
         // Write the new inventory file.
-        String inventoryFileName = getImageInventoryFileName();
+        String inventoryFileName = getDataInventoryFileName();
         if (inventoryFileName != null) {
             PrintWriter writer = null;
             File newInventoryFile = null;
@@ -335,15 +333,15 @@ public abstract class QueryBase implements Cloneable
     }
 
     /**
-     * Return the list of cached results from previous image searches stored in the
-     * image inventory file. This particular implementation
+     * Return the list of cached results from previous data searches stored in the
+     * data inventory file. This particular implementation
      * assumes the first element in each result is the name of a file, and checks this
      * against a list of files that actually exist in the user's cache.
      * @param pathToImageFolder the folder where the image list and images are located
      * @return the image list
      */
     protected List<List<String>> getCachedResults(
-            String pathToImageFolder
+            String pathToDataFolder
             )
     {
         // We will reach this if SBMT is unable to connect to server
@@ -351,7 +349,7 @@ public abstract class QueryBase implements Cloneable
                 "SBMT had a problem while performing the search. Ignoring search parameters and listing all cached images.",
                 "Warning",
                 JOptionPane.WARNING_MESSAGE);
-        final List<File> fileList = getCachedFiles(pathToImageFolder);
+        final List<File> fileList = getCachedFiles(pathToDataFolder);
         final Map<String, File> filesFound = new TreeMap<>();
         for (File file: fileList)
         {
@@ -361,7 +359,7 @@ public abstract class QueryBase implements Cloneable
         }
 
         final List<List<String>> result = new ArrayList<>();
-        SortedMap<String, List<String>> inventory = getImageInventory();
+        SortedMap<String, List<String>> inventory = getDataInventory();
         for (Entry<String, List<String>> each: inventory.entrySet())
         {
             if (filesFound.containsKey(each.getKey()))
@@ -374,22 +372,22 @@ public abstract class QueryBase implements Cloneable
      * Return the full path name of the inventory file.
      * @return the inventory file name
      */
-    protected String getImageInventoryFileName()
+    protected String getDataInventoryFileName()
     {
-        String imagesPath = getDataPath();
-        if (imagesPath == null) return null;
-        return SafePaths.getString(Configuration.getCacheDir(), "imageInventory.txt");
+        String dataPath = getDataPath();
+        if (dataPath == null) return null;
+        return SafePaths.getString(Configuration.getCacheDir(), "dataInventory.txt");
     }
 
     /**
-     * Return the current content of the image inventory file. Note this inventory
-     * should be a superset of the image files that are locally cached.
-     * @return the image inventory
+     * Return the current content of the data inventory file. Note this inventory
+     * should be a superset of the data files that are locally cached.
+     * @return the data inventory
      */
-    protected SortedMap<String, List<String>> getImageInventory()
+    protected SortedMap<String, List<String>> getDataInventory()
     {
         SortedMap<String, List<String>> inventory = new TreeMap<>();
-        String inventoryFileName = getImageInventoryFileName();
+        String inventoryFileName = getDataInventoryFileName();
         if (inventoryFileName != null)
         {
             try
@@ -413,21 +411,21 @@ public abstract class QueryBase implements Cloneable
 
     /**
      * Return a list of files that actually exist on disk in the user's cache.
-     * @param pathToImageFolder
+     * @param pathToDataFolder
      * @return the map
      */
     protected List<File> getCachedFiles(
-            String pathToImageFolder
+            String pathToDataFolder
             )
     {
         final List<File> filesFound = new ArrayList<>();
-        if (pathToImageFolder != null)
+        if (pathToDataFolder != null)
         {
             try
             {
                 final int maxDepth = 10;
                 // Find actual files present.
-                Path start = Paths.get(Configuration.getCacheDir(), pathToImageFolder);
+                Path start = Paths.get(Configuration.getCacheDir(), pathToDataFolder);
                 Files.walkFileTree(start, EnumSet.allOf(FileVisitOption.class), maxDepth, new SimpleFileVisitor<Path>()
                 {
                     @Override
@@ -465,55 +463,12 @@ public abstract class QueryBase implements Cloneable
 
     /**
      * Run a query and return an array containing the results. The returned array
-     * is a list of list of strings where each a list in the containing list
-     * contains 2 elements. The first element is the path on the server to the
-     * FIT image file. The second is the start time of the image.
+     * is a list of Metadata objects that contain data specific to that instrument's
+     * query request, which is also encapsulated in a metadata bundle.
      *
-     * @param datatype
-     * @param startDate
-     * @param stopDate
-     * @param filters
-     * @param userDefined1
-     * @param userDefined2
-     * @param startDistance
-     * @param stopDistance
-     * @param startResolution
-     * @param stopResolution
-     * @param searchString
-     * @param polygonTypes
-     * @param fromIncidence
-     * @param toIncidence
-     * @param fromEmission
-     * @param toEmission
-     * @param fromPhase
-     * @param toPhase
-     * @param cubeList
-     * @param imageSource
-     * @param limbType
-     * @return
      */
-    public abstract List<List<String>> runQuery(
-            String type,
-            DateTime startDate,
-            DateTime stopDate,
-            boolean sumOfProductsSearch,
-            List<Integer> camerasSelected,
-            List<Integer> filtersSelected,
-            double startDistance,
-            double stopDistance,
-            double startResolution,
-            double stopResolution,
-            String searchString,
-            List<Integer> polygonTypes,
-            double fromIncidence,
-            double toIncidence,
-            double fromEmission,
-            double toEmission,
-            double fromPhase,
-            double toPhase,
-            TreeSet<Integer> cubeList,
-            ImageSource imageSource,
-            int limbType);
+    public abstract SearchResultsMetadata runQuery(SearchMetadata queryMetadata);
+
 
     public String getGalleryPath()
     {
@@ -532,10 +487,10 @@ public abstract class QueryBase implements Cloneable
         return galleryExists ? galleryPath : null;
     }
 
-    // Convert the 0th element of the result (the path to the image)
+    // Convert the 0th element of the result (the path to the data)
     // with the full path, but only if the result does not already have
     // a full path.
-    protected void changeImagePathToFullPath(List<String> result)
+    protected void changeDataPathToFullPath(List<String> result)
     {
         String fullPath = result.get(0);
         if (!fullPath.contains("/"))
