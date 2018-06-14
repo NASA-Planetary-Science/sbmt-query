@@ -25,18 +25,19 @@ public class FixedListSearchMetadata implements SearchMetadata
     static final Key<String> NAME = Key.of("Search Name");
     static final Key<String> FILE_LIST = Key.of("File list");
     static final Key<String> DATA_PATH = Key.of("Data path");
+    static final Key<String> ROOT_PATH = Key.of("Root path");
     static final Key<String> POINTING_SOURCE = Key.of("Pointing Source");
 
     FixedMetadata searchMetadata;
 
 
-    public static FixedListSearchMetadata of(String name, String filelist, String datapath, ImageSource pointingSource)
+    public static FixedListSearchMetadata of(String name, String filelist, String datapath, String rootPath, ImageSource pointingSource)
     {
-        FixedMetadata metadata = createMetadata(name, filelist, datapath, pointingSource);
+        FixedMetadata metadata = createMetadata(name, filelist, datapath, rootPath, pointingSource);
         return new FixedListSearchMetadata(metadata);
     }
 
-    private static FixedMetadata createMetadata(String name, String filelist, String datapath, ImageSource pointingSource)
+    private static FixedMetadata createMetadata(String name, String filelist, String datapath, String rootPath, ImageSource pointingSource)
     {
         Preconditions.checkNotNull(name);
         Preconditions.checkNotNull(filelist);
@@ -48,6 +49,7 @@ public class FixedListSearchMetadata implements SearchMetadata
 
         metadata.put(FixedListSearchMetadata.FILE_LIST, filelist);
         metadata.put(FixedListSearchMetadata.DATA_PATH, datapath);
+        metadata.put(FixedListSearchMetadata.ROOT_PATH, rootPath);
         metadata.put(FixedListSearchMetadata.POINTING_SOURCE, pointingSource.toString());
         return FixedMetadata.of(metadata);
     }
@@ -128,6 +130,11 @@ public class FixedListSearchMetadata implements SearchMetadata
     public String getDatapath()
     {
         return getMetadata().get(DATA_PATH);
+    }
+
+    public String getRootpath()
+    {
+        return getMetadata().get(ROOT_PATH);
     }
 
     public ImageSource getPointingSource()

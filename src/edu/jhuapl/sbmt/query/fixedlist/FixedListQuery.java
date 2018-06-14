@@ -13,8 +13,13 @@ import edu.jhuapl.sbmt.query.SearchResultsMetadata;
  */
 public class FixedListQuery extends FixedListQueryBase
 {
-    protected final String rootPath;
+    protected String rootPath;
     protected final boolean multiSource;
+
+    public FixedListQuery()
+    {
+        this(null, null, false);
+    }
 
     public FixedListQuery(String rootPath)
     {
@@ -56,6 +61,7 @@ public class FixedListQuery extends FixedListQueryBase
         FixedMetadata metadata = queryMetadata.getMetadata();
         String fileList = metadata.get(FixedListSearchMetadata.FILE_LIST);
         String dataPath = metadata.get(FixedListSearchMetadata.DATA_PATH);
+        rootPath = metadata.get(FixedListSearchMetadata.ROOT_PATH);
         String dataListPrefix = "";
 
         ImageSource imageSource = ImageSource.valueFor(metadata.get(FixedListSearchMetadata.POINTING_SOURCE));
@@ -65,11 +71,16 @@ public class FixedListQuery extends FixedListQueryBase
             dataListPrefix = "sumfiles-corrected";
         else if (imageSource == ImageSource.CORRECTED_SPICE)
             dataListPrefix = "infofiles-corrected";
-
-        System.out.println("FixedListQuery: runQuery: " + dataListPrefix + " " + fileList + " " + dataPath);
-        List<List<String>> results = getResultsFromFileListOnServer(rootPath + "/" + /*dataListPrefix + "/" +*/ fileList, rootPath + "/" + dataPath + "/", getGalleryPath());
+        System.out.println("FixedListQuery: runQuery: rootpath " + rootPath);
+        System.out.println("FixedListQuery: runQuery (prefix, filelist, datapath): " + dataListPrefix + " " + fileList + " " + dataPath);
+        List<List<String>> results = getResultsFromFileListOnServer(rootPath + "/" /*+ dataListPrefix + "/" */+ fileList, rootPath + "/" + dataPath + "/", getGalleryPath());
 
         return SearchResultsMetadata.of("", results);   //"" should really be a query name here, if applicable
+    }
+
+    public String getRootPath()
+    {
+        return rootPath;
     }
 
 //    @Override
