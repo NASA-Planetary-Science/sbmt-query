@@ -15,7 +15,7 @@ import edu.jhuapl.sbmt.query.SearchResultsMetadata;
 
 public class GenericPhpQuery extends DatabaseQueryBase
 {
-    private final String rootPath;
+
     private final String tablePrefix;
 
     @Override
@@ -35,6 +35,8 @@ public class GenericPhpQuery extends DatabaseQueryBase
         this.rootPath = rootPath;
         this.tablePrefix = tablePrefix.toLowerCase();
     }
+
+
 
     @Override
     public String getDataPath()
