@@ -170,7 +170,6 @@ public abstract class QueryBase implements Cloneable
             pathToGalleryFolderOnServer += "/";
 
         List<List<String>> results = new ArrayList<>();
-        System.out.println("QueryBase: getResultsFromFileListOnServer: path is " + pathToFileListOnServer);
         FileInfo info = FileCache.getFileInfoFromServer(pathToFileListOnServer);
         if (!info.isURLAccessAuthorized().equals(YesOrNo.YES) || !info.isExistsOnServer().equals(YesOrNo.YES))
         {
