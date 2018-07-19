@@ -8,6 +8,7 @@ import edu.jhuapl.sbmt.query.QueryBase;
  */
 public abstract class DatabaseQueryBase extends QueryBase
 {
+    protected String rootPath;
     protected final String galleryPath;
     protected Boolean galleryExists;
 
@@ -16,6 +17,12 @@ public abstract class DatabaseQueryBase extends QueryBase
         super(galleryPath);
         this.galleryPath = galleryPath;
         this.galleryExists = null;
+        this.rootPath = null;
+    }
+
+    public String getRootPath()
+    {
+        return rootPath;
     }
 
     @Override
