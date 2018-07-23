@@ -170,7 +170,6 @@ public abstract class QueryBase implements Cloneable
             pathToGalleryFolderOnServer += "/";
 
         List<List<String>> results = new ArrayList<>();
-        System.out.println("QueryBase: getResultsFromFileListOnServer: path is " + pathToFileListOnServer);
         FileInfo info = FileCache.getFileInfoFromServer(pathToFileListOnServer);
         if (!info.isURLAccessAuthorized().equals(YesOrNo.YES) || !info.isExistsOnServer().equals(YesOrNo.YES))
         {
@@ -346,7 +345,7 @@ public abstract class QueryBase implements Cloneable
     {
         // We will reach this if SBMT is unable to connect to server
         JOptionPane.showMessageDialog(null,
-                "SBMT had a problem while performing the search. Ignoring search parameters and listing all cached images.",
+                "SBMT had a problem while performing the search. Ignoring search parameters and listing all cached data products.",
                 "Warning",
                 JOptionPane.WARNING_MESSAGE);
         final List<File> fileList = getCachedFiles(pathToDataFolder);
