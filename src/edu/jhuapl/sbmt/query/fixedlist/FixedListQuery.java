@@ -70,6 +70,8 @@ public class FixedListQuery extends FixedListQueryBase
             dataListPrefix = "sumfiles";
         if (imageSource == ImageSource.CORRECTED)
             dataListPrefix = "sumfiles-corrected";
+        if (imageSource == ImageSource.SPICE)
+            dataListPrefix = "infofiles";
         else if (imageSource == ImageSource.CORRECTED_SPICE)
             dataListPrefix = "infofiles-corrected";
         System.out.println("FixedListQuery: runQuery: rootpath " + rootPath);
