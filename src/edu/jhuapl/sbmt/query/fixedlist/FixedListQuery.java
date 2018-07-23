@@ -74,7 +74,7 @@ public class FixedListQuery extends FixedListQueryBase
             dataListPrefix = "infofiles-corrected";
         System.out.println("FixedListQuery: runQuery: rootpath " + rootPath);
         System.out.println("FixedListQuery: runQuery (prefix, filelist, datapath): " + dataListPrefix + " " + fileList + " " + dataPath);
-        List<List<String>> results = getResultsFromFileListOnServer(rootPath + "/" /*+ dataListPrefix + "/" */+ fileList, rootPath + "/" + dataPath + "/", getGalleryPath());
+        List<List<String>> results = getResultsFromFileListOnServer(rootPath + "/" /*+ dataListPrefix + "/"*/ + fileList, rootPath + "/" + dataPath + "/", getGalleryPath());
 
         return SearchResultsMetadata.of("", results);   //"" should really be a query name here, if applicable
     }
