@@ -100,12 +100,17 @@ public class GenericPhpQuery extends DatabaseQueryBase
         double maxPhase = Math.max(fromPhase, toPhase);
 
         // Get table name.  Examples: erosimages_gaskell, amicacubes_pds_beta
-        String imagesDatabase = tablePrefix + "images_" + imageSource.getDatabaseTableName() + Configuration.getDatabaseSuffix();
-        String cubesDatabase = tablePrefix + "cubes_" + imageSource.getDatabaseTableName() + Configuration.getDatabaseSuffix();
+        String imagesDatabase = tablePrefix + "images_" + imageSource.getDatabaseTableName();
+        String cubesDatabase = tablePrefix + "cubes_" + imageSource.getDatabaseTableName();
         if(SmallBodyViewConfig.betaMode)
         {
             imagesDatabase += "_beta";
             cubesDatabase += "_beta";
+        }
+        else
+        {
+            imagesDatabase += Configuration.getDatabaseSuffix();
+            cubesDatabase += Configuration.getDatabaseSuffix();
         }
 
         try
