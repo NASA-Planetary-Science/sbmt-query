@@ -3,6 +3,10 @@ package edu.jhuapl.sbmt.query.fixedlist;
 import java.util.List;
 
 import edu.jhuapl.saavtk.metadata.FixedMetadata;
+import edu.jhuapl.saavtk.metadata.Key;
+import edu.jhuapl.saavtk.metadata.Metadata;
+import edu.jhuapl.saavtk.metadata.SettableMetadata;
+import edu.jhuapl.saavtk.metadata.Version;
 import edu.jhuapl.sbmt.model.image.ImageSource;
 import edu.jhuapl.sbmt.query.SearchMetadata;
 import edu.jhuapl.sbmt.query.SearchResultsMetadata;
@@ -14,7 +18,7 @@ import edu.jhuapl.sbmt.query.SearchResultsMetadata;
 public class FixedListQuery extends FixedListQueryBase
 {
     protected String rootPath;
-    protected final boolean multiSource;
+    protected /*final*/ boolean multiSource;
 
     public FixedListQuery()
     {
@@ -84,6 +88,28 @@ public class FixedListQuery extends FixedListQueryBase
     public String getRootPath()
     {
         return rootPath;
+    }
+
+    Key<String> rootPathKey = Key.of("rootPath");
+    Key<Boolean> multiSourceKey = Key.of("multiSource");
+    Key<String> galleryPathKey = Key.of("galleryPath");
+
+    @Override
+    public Metadata store()
+    {
+        SettableMetadata configMetadata = SettableMetadata.of(Version.of(1, 0));
+        write(rootPathKey, rootPath, configMetadata);
+        write(multiSourceKey, multiSource, configMetadata);
+        write(galleryPathKey, galleryPath, configMetadata);
+        return configMetadata;
+    }
+
+    @Override
+    public void retrieve(Metadata source)
+    {
+        rootPath = read(rootPathKey, source);
+        multiSource = read(multiSourceKey, source);
+        galleryPath = read(galleryPathKey, source);
     }
 
 //    @Override

@@ -17,9 +17,10 @@ public class ImageDatabaseSearchMetadata extends DatabaseSearchMetadata
     public static final Key<Boolean> SUM_OF_PRODUCTS = Key.of("Sum of Products Search");
     public static final Key<List<Integer>> CAMERAS_SELECTED = Key.of("Cameras Selected");
     public static final Key<List<Integer>> FILTERS_SELECTED = Key.of("Filters Selected");
-    public static final Key<Range<Double>> RESOLUTION_RANGE = Key.of("Resolution Range");
+    public static final Key<Double> FROM_RESOLUTION = Key.of("From Resolution");
+    public static final Key<Double> TO_RESOLUTION = Key.of("To Resolution");
     public static final Key<TreeSet<Integer>> CUBE_LIST = Key.of("Cube List");
-    public static final Key<ImageSource> IMAGE_SOURCE = Key.of("Image Source");
+    public static final Key<String> IMAGE_SOURCE = Key.of("Image Source");
     public static final Key<Integer> HAS_LIMB = Key.of("Limb Image");
 
 
@@ -53,9 +54,10 @@ public class ImageDatabaseSearchMetadata extends DatabaseSearchMetadata
         metadata.put(SUM_OF_PRODUCTS, sumOfProductsSearch);
         metadata.put(CAMERAS_SELECTED, camerasSelected);
         metadata.put(FILTERS_SELECTED, filtersSelected);
-        metadata.put(RESOLUTION_RANGE, resolutionRange);
+        metadata.put(FROM_RESOLUTION, resolutionRange.lowerEndpoint());
+        metadata.put(TO_RESOLUTION, resolutionRange.upperEndpoint());
         metadata.put(CUBE_LIST, cubeList);
-        metadata.put(IMAGE_SOURCE, imageSource);
+        metadata.put(IMAGE_SOURCE, imageSource.name());
         metadata.put(HAS_LIMB, hasLimb);
         return metadata;
     }
