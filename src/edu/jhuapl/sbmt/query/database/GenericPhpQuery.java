@@ -17,7 +17,8 @@ import edu.jhuapl.sbmt.query.SearchResultsMetadata;
 public class GenericPhpQuery extends DatabaseQueryBase
 {
 
-    private final String tablePrefix;
+    private final String tablePrefixSpc;
+    private final String tablePrefixSpice;
 
     @Override
     public GenericPhpQuery clone()
@@ -30,11 +31,20 @@ public class GenericPhpQuery extends DatabaseQueryBase
         this(rootPath, tablePrefix, null);
     }
 
-    public GenericPhpQuery(String rootPath, String tablePrefix, String galleryPath)
+    public GenericPhpQuery(String rootPath, String tablePrefixSpc, String galleryPath)
     {
         super(galleryPath);
         this.rootPath = rootPath;
-        this.tablePrefix = tablePrefix.toLowerCase();
+        this.tablePrefixSpc = tablePrefixSpc.toLowerCase();
+        this.tablePrefixSpice = tablePrefixSpc.toLowerCase();
+    }
+
+    public GenericPhpQuery(String rootPath, String tablePrefixSpc, String tablePrefixSpice, String galleryPath)
+    {
+        super(galleryPath);
+        this.rootPath = rootPath;
+        this.tablePrefixSpc = tablePrefixSpc.toLowerCase();
+        this.tablePrefixSpice = tablePrefixSpice.toLowerCase();
     }
 
 
@@ -100,8 +110,8 @@ public class GenericPhpQuery extends DatabaseQueryBase
         double maxPhase = Math.max(fromPhase, toPhase);
 
         // Get table name.  Examples: erosimages_gaskell, amicacubes_pds_beta
-        String imagesDatabase = tablePrefix + "images_" + imageSource.getDatabaseTableName();
-        String cubesDatabase = tablePrefix + "cubes_" + imageSource.getDatabaseTableName();
+        String imagesDatabase = getTablePrefix(imageSource) + "images_" + imageSource.getDatabaseTableName();
+        String cubesDatabase = getTablePrefix(imageSource) + "cubes_" + imageSource.getDatabaseTableName();
         if(SmallBodyViewConfig.betaMode)
         {
             imagesDatabase += "_beta";
@@ -361,8 +371,18 @@ public class GenericPhpQuery extends DatabaseQueryBase
 //        return results;
 //    }
 
-    public String getTablePrefix()
+    public String getTablePrefix(ImageSource source)
     {
-        return tablePrefix;
+        return source == ImageSource.SPICE ? tablePrefixSpice : tablePrefixSpc;
+    }
+
+    public String getTablePrefixSpc()
+    {
+        return tablePrefixSpc;
+    }
+
+    public String getTablePrefixSpice()
+    {
+        return tablePrefixSpice;
     }
 }
