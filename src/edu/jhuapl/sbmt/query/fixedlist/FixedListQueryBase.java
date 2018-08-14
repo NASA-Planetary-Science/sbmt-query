@@ -94,10 +94,11 @@ public abstract class FixedListQueryBase extends QueryBase
         File file = FileCache.getFileFromServer(pathToFileListOnServer);
 
         // Let user know that search uses fixed list and ignores search parameters
-        JOptionPane.showMessageDialog(null,
-                "Search uses a fixed list and ignores all but file name search parameters.",
-                "Notification",
-                JOptionPane.INFORMATION_MESSAGE);
+        // TODO - commented out on 1251 to allow for headless version to run
+//        JOptionPane.showMessageDialog(null,
+//                "Search uses a fixed list and ignores all but file name search parameters.",
+//                "Notification",
+//                JOptionPane.INFORMATION_MESSAGE);
 
         if (file.exists())
         {
