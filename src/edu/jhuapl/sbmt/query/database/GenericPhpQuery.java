@@ -10,6 +10,7 @@ import org.joda.time.DateTime;
 import edu.jhuapl.saavtk.metadata.FixedMetadata;
 import edu.jhuapl.sbmt.client.SmallBodyViewConfig;
 import edu.jhuapl.sbmt.model.image.ImageSource;
+import edu.jhuapl.sbmt.query.QueryBase;
 import edu.jhuapl.sbmt.query.SearchMetadata;
 import edu.jhuapl.sbmt.query.SearchResultsMetadata;
 
@@ -124,6 +125,9 @@ public class GenericPhpQuery extends DatabaseQueryBase
             double maxScDistance = Math.max(startDistance, stopDistance);
             double minResolution = Math.min(startResolution, stopResolution) / 1000.0;
             double maxResolution = Math.max(startResolution, stopResolution) / 1000.0;
+
+            boolean tableExists = QueryBase.checkForDatabaseTable(imagesDatabase);
+            if (!tableExists) throw new Exception();
 
             HashMap<String, String> args = new HashMap<>();
             args.put("imagesDatabase", imagesDatabase);

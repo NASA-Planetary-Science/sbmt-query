@@ -72,6 +72,29 @@ public abstract class QueryBase implements Cloneable
         }
     }
 
+    public static boolean checkForDatabaseTable(String data) throws IOException
+    {
+        List<List<String>> results = new ArrayList<>();
+
+        URL u = new URL(Configuration.getQueryRootURL() + "/" + "tableexists.php");
+        URLConnection conn = u.openConnection();
+        conn.setDoOutput(true);
+        conn.setUseCaches(false);
+        conn.setRequestProperty("User-Agent", "Mozilla/4.0");
+
+        OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+        wr.write(data);
+        wr.flush();
+
+        InputStreamReader isr = new InputStreamReader(conn.getInputStream());
+        BufferedReader in = new BufferedReader(isr);
+
+        String line = in.readLine();
+        in.close();
+
+        return Boolean.parseBoolean(line);
+    }
+
     protected List<List<String>> doQuery(String phpScript, String data) throws IOException
     {
         List<List<String>> results = new ArrayList<>();
