@@ -65,7 +65,6 @@ public class FixedListQuery extends FixedListQueryBase
         String dataListPrefix = "";
 
         ImageSource imageSource = ImageSource.valueFor(metadata.get(FixedListSearchMetadata.POINTING_SOURCE));
-        System.out.println(imageSource.name());
         if (imageSource == ImageSource.GASKELL)
             dataListPrefix = "sumfiles";
         if (imageSource == ImageSource.CORRECTED)
