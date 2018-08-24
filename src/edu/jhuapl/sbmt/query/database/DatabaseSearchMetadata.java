@@ -28,7 +28,7 @@ public class DatabaseSearchMetadata implements SearchMetadata
     public static final Key<String> NAME = Key.of("Search Name");
     public static final Key<Long> START_DATE = Key.of("Start Date");
     public static final Key<Long> STOP_DATE = Key.of("Stop Date");
-    public static final Key<Range<Double>> DISTANCE_RANGE = Key.of("Distance Range");
+//    public static final Key<Range<Double>> DISTANCE_RANGE = Key.of("Distance Range");
 //    static final Key<Double> STOP_DISTANCE = Key.of("Stop Distance");
     public static final Key<String> SEARCH_STRING = Key.of("Search String");
     public static final Key<List<Integer>> POLYGON_TYPES = Key.of("Polygon Types");
