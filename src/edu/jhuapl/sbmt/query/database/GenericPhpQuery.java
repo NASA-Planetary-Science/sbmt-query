@@ -13,6 +13,7 @@ import edu.jhuapl.saavtk.metadata.Metadata;
 import edu.jhuapl.saavtk.metadata.MetadataManager;
 import edu.jhuapl.saavtk.metadata.SettableMetadata;
 import edu.jhuapl.saavtk.metadata.Version;
+import edu.jhuapl.saavtk.util.Configuration;
 import edu.jhuapl.sbmt.client.SmallBodyViewConfig;
 import edu.jhuapl.sbmt.model.image.ImageSource;
 import edu.jhuapl.sbmt.query.SearchMetadata;
@@ -21,7 +22,8 @@ import edu.jhuapl.sbmt.query.SearchResultsMetadata;
 public class GenericPhpQuery extends DatabaseQueryBase implements MetadataManager
 {
 
-    private /*final*/ String tablePrefix;
+    private String tablePrefixSpc;
+    private String tablePrefixSpice;
 
     @Override
     public GenericPhpQuery clone()
@@ -39,11 +41,20 @@ public class GenericPhpQuery extends DatabaseQueryBase implements MetadataManage
         this(rootPath, tablePrefix, null);
     }
 
-    public GenericPhpQuery(String rootPath, String tablePrefix, String galleryPath)
+    public GenericPhpQuery(String rootPath, String tablePrefixSpc, String galleryPath)
     {
         super(galleryPath);
         this.rootPath = rootPath;
-        this.tablePrefix = tablePrefix.toLowerCase();
+        this.tablePrefixSpc = tablePrefixSpc.toLowerCase();
+        this.tablePrefixSpice = tablePrefixSpc.toLowerCase();
+    }
+
+    public GenericPhpQuery(String rootPath, String tablePrefixSpc, String tablePrefixSpice, String galleryPath)
+    {
+        super(galleryPath);
+        this.rootPath = rootPath;
+        this.tablePrefixSpc = tablePrefixSpc.toLowerCase();
+        this.tablePrefixSpice = tablePrefixSpice.toLowerCase();
     }
 
 
@@ -109,12 +120,17 @@ public class GenericPhpQuery extends DatabaseQueryBase implements MetadataManage
         double maxPhase = Math.max(fromPhase, toPhase);
 
         // Get table name.  Examples: erosimages_gaskell, amicacubes_pds_beta
-        String imagesDatabase = tablePrefix + "images_" + imageSource.getDatabaseTableName();
-        String cubesDatabase = tablePrefix + "cubes_" + imageSource.getDatabaseTableName();
+        String imagesDatabase = getTablePrefix(imageSource) + "images_" + imageSource.getDatabaseTableName();
+        String cubesDatabase = getTablePrefix(imageSource) + "cubes_" + imageSource.getDatabaseTableName();
         if(SmallBodyViewConfig.betaMode)
         {
             imagesDatabase += "_beta";
             cubesDatabase += "_beta";
+        }
+        else
+        {
+            imagesDatabase += Configuration.getDatabaseSuffix();
+            cubesDatabase += Configuration.getDatabaseSuffix();
         }
 
         try
@@ -365,13 +381,24 @@ public class GenericPhpQuery extends DatabaseQueryBase implements MetadataManage
 //        return results;
 //    }
 
-    public String getTablePrefix()
+    public String getTablePrefix(ImageSource source)
     {
-        return tablePrefix;
+        return source == ImageSource.SPICE ? tablePrefixSpice : tablePrefixSpc;
+    }
+
+    public String getTablePrefixSpc()
+    {
+        return tablePrefixSpc;
+    }
+
+    public String getTablePrefixSpice()
+    {
+        return tablePrefixSpice;
     }
 
     Key<String> rootPathKey = Key.of("rootPath");
-    Key<String> tablePrefixKey = Key.of("tablePrefix");
+    Key<String> tablePrefixSpcKey = Key.of("tablePrefixSpc");
+    Key<String> tablePrefixSpiceKey = Key.of("tablePrefixSpice");
     Key<String> galleryPathKey = Key.of("galleryPath");
 
     @Override
@@ -379,7 +406,8 @@ public class GenericPhpQuery extends DatabaseQueryBase implements MetadataManage
     {
         SettableMetadata configMetadata = SettableMetadata.of(Version.of(1, 0));
         write(rootPathKey, rootPath, configMetadata);
-        write(tablePrefixKey, tablePrefix, configMetadata);
+        write(tablePrefixSpcKey, tablePrefixSpc, configMetadata);
+        write(tablePrefixSpiceKey, tablePrefixSpice, configMetadata);
         write(galleryPathKey, galleryPath, configMetadata);
         return configMetadata;
     }
@@ -388,7 +416,8 @@ public class GenericPhpQuery extends DatabaseQueryBase implements MetadataManage
     public void retrieve(Metadata source)
     {
         rootPath = read(rootPathKey, source);
-        tablePrefix = read(tablePrefixKey, source);
+        tablePrefixSpc = read(tablePrefixSpcKey, source);
+        tablePrefixSpice = read(tablePrefixSpiceKey, source);
         galleryPath = read(galleryPathKey, source);
     }
 
