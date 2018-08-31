@@ -26,21 +26,23 @@ public class DatabaseSearchMetadata implements SearchMetadata
 
     // Metadata keys.
     public static final Key<String> NAME = Key.of("Search Name");
-    public static final Key<DateTime> START_DATE = Key.of("Start Date");
-    public static final Key<DateTime> STOP_DATE = Key.of("Stop Date");
-    public static final Key<Range<Double>> DISTANCE_RANGE = Key.of("Distance Range");
+    public static final Key<Long> START_DATE = Key.of("Start Date");
+    public static final Key<Long> STOP_DATE = Key.of("Stop Date");
+//    public static final Key<Range<Double>> DISTANCE_RANGE = Key.of("Distance Range");
 //    static final Key<Double> STOP_DISTANCE = Key.of("Stop Distance");
     public static final Key<String> SEARCH_STRING = Key.of("Search String");
     public static final Key<List<Integer>> POLYGON_TYPES = Key.of("Polygon Types");
-    public static final Key<Range<Double>> INCIDENCE_RANGE = Key.of("Incidence Range");
-    public static final Key<Range<Double>> EMISSION_RANGE = Key.of("Emission Range");
-    public static final Key<Range<Double>> PHASE_RANGE = Key.of("Phase Range");
-//    static final Key<Double> FROM_INCIDENCE = Key.of("From Incidence");
-//    static final Key<Double> TO_INCIDENCE = Key.of("To Incidence");
-//    static final Key<Double> FROM_EMISSION = Key.of("From Emission");
-//    static final Key<Double> TO_EMISSION = Key.of("To Emission");
-//    static final Key<Double> FROM_PHASE = Key.of("From Incidence");
-//    static final Key<Double> TO_PHASE = Key.of("To Incidence");
+//    public static final Key<Range<Double>> INCIDENCE_RANGE = Key.of("Incidence Range");
+//    public static final Key<Range<Double>> EMISSION_RANGE = Key.of("Emission Range");
+//    public static final Key<Range<Double>> PHASE_RANGE = Key.of("Phase Range");
+    public static final Key<Double> FROM_INCIDENCE = Key.of("From Incidence");
+    public static final Key<Double> TO_INCIDENCE = Key.of("To Incidence");
+    public static final Key<Double> FROM_EMISSION = Key.of("From Emission");
+    public static final Key<Double> TO_EMISSION = Key.of("To Emission");
+    public static final Key<Double> FROM_PHASE = Key.of("From Incidence");
+    public static final Key<Double> TO_PHASE = Key.of("To Incidence");
+    public static final Key<Double> FROM_DISTANCE = Key.of("From Distance");
+    public static final Key<Double> TO_DISTANCE = Key.of("To Distance");
 
 //    static final Key<String> DATA_PATH = Key.of("Data path");
 //    static final Key<String> POINTING_SOURCE = Key.of("Pointing Source");
@@ -71,14 +73,22 @@ public class DatabaseSearchMetadata implements SearchMetadata
         SettableMetadata metadata = SettableMetadata.of(DatabaseSEARCH_DATA_VERSION);
         metadata.put(DatabaseSearchMetadata.NAME, name);
 
-        metadata.put(DatabaseSearchMetadata.START_DATE, startDate);
-        metadata.put(DatabaseSearchMetadata.STOP_DATE, stopDate);
-        metadata.put(DatabaseSearchMetadata.DISTANCE_RANGE, distanceRange);
+        metadata.put(DatabaseSearchMetadata.START_DATE, startDate.getMillis());
+        metadata.put(DatabaseSearchMetadata.STOP_DATE, stopDate.getMillis());
+//        metadata.put(DatabaseSearchMetadata.DISTANCE_RANGE, distanceRange);
+        metadata.put(DatabaseSearchMetadata.FROM_DISTANCE, distanceRange.lowerEndpoint());
+        metadata.put(DatabaseSearchMetadata.TO_DISTANCE, distanceRange.upperEndpoint());
         metadata.put(DatabaseSearchMetadata.SEARCH_STRING, searchString);
         metadata.put(DatabaseSearchMetadata.POLYGON_TYPES, polygonTypes);
-        metadata.put(DatabaseSearchMetadata.INCIDENCE_RANGE, incidenceRange);
-        metadata.put(DatabaseSearchMetadata.EMISSION_RANGE, emissionRange);
-        metadata.put(DatabaseSearchMetadata.PHASE_RANGE, phaseRange);
+        metadata.put(DatabaseSearchMetadata.FROM_INCIDENCE, incidenceRange.lowerEndpoint());
+        metadata.put(DatabaseSearchMetadata.FROM_EMISSION, emissionRange.lowerEndpoint());
+        metadata.put(DatabaseSearchMetadata.FROM_PHASE, phaseRange.lowerEndpoint());
+        metadata.put(DatabaseSearchMetadata.TO_INCIDENCE, incidenceRange.upperEndpoint());
+        metadata.put(DatabaseSearchMetadata.TO_EMISSION, emissionRange.upperEndpoint());
+        metadata.put(DatabaseSearchMetadata.TO_PHASE, phaseRange.upperEndpoint());
+//        metadata.put(DatabaseSearchMetadata.INCIDENCE_RANGE, incidenceRange);
+//        metadata.put(DatabaseSearchMetadata.EMISSION_RANGE, emissionRange);
+//        metadata.put(DatabaseSearchMetadata.PHASE_RANGE, phaseRange);
         return metadata;
 //        return FixedMetadata.of(metadata);
     }

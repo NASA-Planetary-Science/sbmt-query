@@ -8,6 +8,11 @@ import java.util.TreeSet;
 import org.joda.time.DateTime;
 
 import edu.jhuapl.saavtk.metadata.FixedMetadata;
+import edu.jhuapl.saavtk.metadata.Key;
+import edu.jhuapl.saavtk.metadata.Metadata;
+import edu.jhuapl.saavtk.metadata.MetadataManager;
+import edu.jhuapl.saavtk.metadata.SettableMetadata;
+import edu.jhuapl.saavtk.metadata.Version;
 import edu.jhuapl.saavtk.util.Configuration;
 import edu.jhuapl.sbmt.client.SmallBodyViewConfig;
 import edu.jhuapl.sbmt.model.image.ImageSource;
@@ -15,16 +20,21 @@ import edu.jhuapl.sbmt.query.QueryBase;
 import edu.jhuapl.sbmt.query.SearchMetadata;
 import edu.jhuapl.sbmt.query.SearchResultsMetadata;
 
-public class GenericPhpQuery extends DatabaseQueryBase
+public class GenericPhpQuery extends DatabaseQueryBase implements MetadataManager
 {
 
-    private final String tablePrefixSpc;
-    private final String tablePrefixSpice;
+    private String tablePrefixSpc;
+    private String tablePrefixSpice;
 
     @Override
     public GenericPhpQuery clone()
     {
         return (GenericPhpQuery) super.clone();
+    }
+
+    public GenericPhpQuery()
+    {
+        this("", "", null);
     }
 
     public GenericPhpQuery(String rootPath, String tablePrefix)
@@ -60,25 +70,25 @@ public class GenericPhpQuery extends DatabaseQueryBase
     public SearchResultsMetadata runQuery(SearchMetadata queryMetadata)
     {
         FixedMetadata metadata = queryMetadata.getMetadata();
-        double fromIncidence = metadata.get(DatabaseSearchMetadata.INCIDENCE_RANGE).lowerEndpoint();
-        double toIncidence = metadata.get(DatabaseSearchMetadata.INCIDENCE_RANGE).upperEndpoint();
-        double fromEmission = metadata.get(DatabaseSearchMetadata.EMISSION_RANGE).lowerEndpoint();
-        double toEmission = metadata.get(DatabaseSearchMetadata.EMISSION_RANGE).upperEndpoint();
-        double fromPhase = metadata.get(DatabaseSearchMetadata.PHASE_RANGE).lowerEndpoint();
-        double toPhase = metadata.get(DatabaseSearchMetadata.PHASE_RANGE).upperEndpoint();
+        double fromIncidence = metadata.get(DatabaseSearchMetadata.FROM_INCIDENCE);
+        double toIncidence = metadata.get(DatabaseSearchMetadata.TO_INCIDENCE);
+        double fromEmission = metadata.get(DatabaseSearchMetadata.FROM_EMISSION);
+        double toEmission = metadata.get(DatabaseSearchMetadata.TO_EMISSION);
+        double fromPhase = metadata.get(DatabaseSearchMetadata.FROM_PHASE);
+        double toPhase = metadata.get(DatabaseSearchMetadata.TO_PHASE);
         String searchString = metadata.get(DatabaseSearchMetadata.SEARCH_STRING);
-        double startDistance = metadata.get(DatabaseSearchMetadata.DISTANCE_RANGE).lowerEndpoint();
-        double stopDistance = metadata.get(DatabaseSearchMetadata.DISTANCE_RANGE).upperEndpoint();
-        ImageSource imageSource = metadata.get(ImageDatabaseSearchMetadata.IMAGE_SOURCE);
-        double startResolution = metadata.get(ImageDatabaseSearchMetadata.RESOLUTION_RANGE).lowerEndpoint();
-        double stopResolution = metadata.get(ImageDatabaseSearchMetadata.RESOLUTION_RANGE).upperEndpoint();
+        double startDistance = metadata.get(DatabaseSearchMetadata.FROM_DISTANCE);
+        double stopDistance = metadata.get(DatabaseSearchMetadata.TO_DISTANCE);
+        ImageSource imageSource = ImageSource.valueOf(metadata.get(ImageDatabaseSearchMetadata.IMAGE_SOURCE));
+        double startResolution = metadata.get(ImageDatabaseSearchMetadata.FROM_RESOLUTION);
+        double stopResolution = metadata.get(ImageDatabaseSearchMetadata.TO_RESOLUTION);
         boolean sumOfProductsSearch = metadata.get(ImageDatabaseSearchMetadata.SUM_OF_PRODUCTS);
         TreeSet<Integer> cubeList = metadata.get(ImageDatabaseSearchMetadata.CUBE_LIST);
         List<Integer> camerasSelected = metadata.get(ImageDatabaseSearchMetadata.CAMERAS_SELECTED);
         List<Integer> filtersSelected = metadata.get(ImageDatabaseSearchMetadata.FILTERS_SELECTED);
         int limbType = metadata.get(ImageDatabaseSearchMetadata.HAS_LIMB);
-        DateTime startDate = metadata.get(DatabaseSearchMetadata.START_DATE);
-        DateTime stopDate = metadata.get(DatabaseSearchMetadata.STOP_DATE);
+        DateTime startDate = new DateTime(metadata.get(DatabaseSearchMetadata.START_DATE));
+        DateTime stopDate = new DateTime(metadata.get(DatabaseSearchMetadata.STOP_DATE));
 //        List<Integer> polygonTypes = metadata.get(DatabaseSearchMetadata.POLYGON_TYPES);
 
 
@@ -389,4 +399,31 @@ public class GenericPhpQuery extends DatabaseQueryBase
     {
         return tablePrefixSpice;
     }
+
+    Key<String> rootPathKey = Key.of("rootPath");
+    Key<String> tablePrefixSpcKey = Key.of("tablePrefixSpc");
+    Key<String> tablePrefixSpiceKey = Key.of("tablePrefixSpice");
+    Key<String> galleryPathKey = Key.of("galleryPath");
+
+    @Override
+    public Metadata store()
+    {
+        SettableMetadata configMetadata = SettableMetadata.of(Version.of(1, 0));
+        write(rootPathKey, rootPath, configMetadata);
+        write(tablePrefixSpcKey, tablePrefixSpc, configMetadata);
+        write(tablePrefixSpiceKey, tablePrefixSpice, configMetadata);
+        write(galleryPathKey, galleryPath, configMetadata);
+        return configMetadata;
+    }
+
+    @Override
+    public void retrieve(Metadata source)
+    {
+        rootPath = read(rootPathKey, source);
+        tablePrefixSpc = read(tablePrefixSpcKey, source);
+        tablePrefixSpice = read(tablePrefixSpiceKey, source);
+        galleryPath = read(galleryPathKey, source);
+    }
+
+
 }

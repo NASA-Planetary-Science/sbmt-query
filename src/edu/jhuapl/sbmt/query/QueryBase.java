@@ -35,6 +35,10 @@ import org.joda.time.DateTimeZone;
 
 import com.google.common.collect.Lists;
 
+import edu.jhuapl.saavtk.metadata.Key;
+import edu.jhuapl.saavtk.metadata.Metadata;
+import edu.jhuapl.saavtk.metadata.MetadataManager;
+import edu.jhuapl.saavtk.metadata.SettableMetadata;
 import edu.jhuapl.saavtk.util.Configuration;
 import edu.jhuapl.saavtk.util.FileCache;
 import edu.jhuapl.saavtk.util.FileCache.FileInfo;
@@ -47,7 +51,7 @@ import edu.jhuapl.saavtk.util.SafePaths;
  * This class represents a database storing information about all the
  * data. It also provides functions for querying the database.
  */
-public abstract class QueryBase implements Cloneable
+public abstract class QueryBase implements Cloneable, MetadataManager
 {
     protected String galleryPath;
     protected Boolean galleryExists;
@@ -519,5 +523,21 @@ public abstract class QueryBase implements Cloneable
         {
             result.set(0, getDataPath() + "/" + fullPath);
         }
+    }
+
+    protected <T> void write(Key<T> key, T value, SettableMetadata configMetadata)
+    {
+        if (value != null)
+        {
+            configMetadata.put(key, value);
+        }
+    }
+
+    protected <T> T read(Key<T> key, Metadata configMetadata)
+    {
+        T value = configMetadata.get(key);
+        if (value != null)
+            return value;
+        return null;
     }
 }
