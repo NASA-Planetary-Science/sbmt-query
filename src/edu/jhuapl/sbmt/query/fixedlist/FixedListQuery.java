@@ -70,36 +70,28 @@ public class FixedListQuery extends FixedListQueryBase
         rootPath = metadata.get(FixedListSearchMetadata.ROOT_PATH);
 
         String fileListSuffix = null;
-        String dataListPrefix = null;
         ImageSource imageSource = ImageSource.valueFor(metadata.get(FixedListSearchMetadata.POINTING_SOURCE));
         switch (imageSource)
         {
             case GASKELL:
                 fileListSuffix = "sum";
-                dataListPrefix = "sumfiles";
-                break;
+            break;
             case CORRECTED:
                 fileListSuffix = "sum";
-                dataListPrefix = "sumfiles-corrected";
-                break;
+            break;
             case SPICE:
                 fileListSuffix = "info";
-                dataListPrefix = "infofiles";
-                break;
+            break;
             case CORRECTED_SPICE:
                 fileListSuffix = "info";
-                dataListPrefix = "infofiles-corrected";
-                break;
+            break;
             default:
                 // No pointing-specific suffix, use a blank.
                 fileListSuffix = "";
-                dataListPrefix = "";
-                break;
+            break;
         }
         String fileList = getFileList(fileListRoot, fileListSuffix);
 
-        System.out.println("FixedListQuery: runQuery: rootpath " + rootPath);
-        System.out.println("FixedListQuery: runQuery (prefix, filelist, datapath): " + dataListPrefix + " " + fileList + " " + dataPath);
         List<List<String>> results = getResultsFromFileListOnServer(rootPath + "/" /*+ dataListPrefix + "/"*/ + fileList, rootPath + "/" + dataPath + "/", getGalleryPath());
 
         return SearchResultsMetadata.of("", results);   //"" should really be a query name here, if applicable
