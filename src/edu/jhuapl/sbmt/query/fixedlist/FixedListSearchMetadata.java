@@ -122,11 +122,6 @@ public class FixedListSearchMetadata implements SearchMetadata
         return new FixedListSearchMetadata(getMetadata().copy());
     }
 
-    public String getFilelist()
-    {
-        return getMetadata().get(FILE_LIST);
-    }
-
     public String getDatapath()
     {
         return getMetadata().get(DATA_PATH);

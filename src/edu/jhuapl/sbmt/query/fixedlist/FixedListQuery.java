@@ -7,6 +7,8 @@ import edu.jhuapl.saavtk.metadata.Key;
 import edu.jhuapl.saavtk.metadata.Metadata;
 import edu.jhuapl.saavtk.metadata.SettableMetadata;
 import edu.jhuapl.saavtk.metadata.Version;
+import edu.jhuapl.saavtk.util.FileCache;
+import edu.jhuapl.saavtk.util.SafePaths;
 import edu.jhuapl.sbmt.model.image.ImageSource;
 import edu.jhuapl.sbmt.query.SearchMetadata;
 import edu.jhuapl.sbmt.query.SearchResultsMetadata;
@@ -63,25 +65,63 @@ public class FixedListQuery extends FixedListQueryBase
     public SearchResultsMetadata runQuery(SearchMetadata queryMetadata)
     {
         FixedMetadata metadata = queryMetadata.getMetadata();
-        String fileList = metadata.get(FixedListSearchMetadata.FILE_LIST);
+        String fileListRoot = metadata.get(FixedListSearchMetadata.FILE_LIST);
         String dataPath = metadata.get(FixedListSearchMetadata.DATA_PATH);
         rootPath = metadata.get(FixedListSearchMetadata.ROOT_PATH);
-        String dataListPrefix = "";
 
+        String fileListSuffix = null;
+        String dataListPrefix = null;
         ImageSource imageSource = ImageSource.valueFor(metadata.get(FixedListSearchMetadata.POINTING_SOURCE));
-        if (imageSource == ImageSource.GASKELL)
-            dataListPrefix = "sumfiles";
-        if (imageSource == ImageSource.CORRECTED)
-            dataListPrefix = "sumfiles-corrected";
-        if (imageSource == ImageSource.SPICE)
-            dataListPrefix = "infofiles";
-        else if (imageSource == ImageSource.CORRECTED_SPICE)
-            dataListPrefix = "infofiles-corrected";
+        switch (imageSource)
+        {
+            case GASKELL:
+                fileListSuffix = "sum";
+                dataListPrefix = "sumfiles";
+                break;
+            case CORRECTED:
+                fileListSuffix = "sum";
+                dataListPrefix = "sumfiles-corrected";
+                break;
+            case SPICE:
+                fileListSuffix = "info";
+                dataListPrefix = "infofiles";
+                break;
+            case CORRECTED_SPICE:
+                fileListSuffix = "info";
+                dataListPrefix = "infofiles-corrected";
+                break;
+            default:
+                // No pointing-specific suffix, use a blank.
+                fileListSuffix = "";
+                dataListPrefix = "";
+                break;
+        }
+        String fileList = getFileList(fileListRoot, fileListSuffix);
+
         System.out.println("FixedListQuery: runQuery: rootpath " + rootPath);
         System.out.println("FixedListQuery: runQuery (prefix, filelist, datapath): " + dataListPrefix + " " + fileList + " " + dataPath);
         List<List<String>> results = getResultsFromFileListOnServer(rootPath + "/" /*+ dataListPrefix + "/"*/ + fileList, rootPath + "/" + dataPath + "/", getGalleryPath());
 
         return SearchResultsMetadata.of("", results);   //"" should really be a query name here, if applicable
+    }
+
+    private String getFileList(String fileListRoot, String fileListSuffix)
+    {
+        final String fileListWithoutSuffix = fileListRoot + ".txt";
+
+        if (!fileListSuffix.isEmpty())
+        {
+            final String fileListWithSuffix = fileListRoot + "-" + fileListSuffix + ".txt";
+            if (FileCache.isFileGettable(SafePaths.getString(rootPath, fileListWithSuffix)))
+            {
+                return fileListWithSuffix;
+            }
+            else
+            {
+                System.out.println("Could not find " + fileListWithSuffix + ". Using " + fileListWithoutSuffix + " instead");
+            }
+        }
+        return fileListWithoutSuffix;
     }
 
     public String getRootPath()
