@@ -105,8 +105,37 @@ public class FixedListQuery extends FixedListQueryBase
         return SearchResultsMetadata.of("", results);   //"" should really be a query name here, if applicable
     }
 
-    private String getFileList(String fileListRoot, String fileListSuffix)
+    private String getFileList(final String fileList, String fileListSuffix)
     {
+        // -----------------------------------------------
+        // This whole section is just for backward compatibility with early (indirect) callers of this method. Need to
+        // accept the following variations:
+        // fileList == "imgagelist-sum.txt", "imagelist-sum", "imagelist.txt"
+        String fileListRoot = fileList;
+        if (fileListRoot.endsWith(".txt"))
+        {
+            fileListRoot = fileListRoot.substring(0, fileListRoot.length() - ".txt".length());
+        }
+        if (fileListRoot.endsWith("-info"))
+        {
+            if (!fileListSuffix.equals("info"))
+            {
+                throw new IllegalArgumentException("Mismatch between pointing type (" + fileListSuffix + ") and name of file list: " + fileList);
+            }
+            fileListRoot = fileListRoot.substring(0, fileListRoot.length() - "-info".length());
+        }
+        else if (fileListRoot.endsWith("-sum"))
+        {
+            if (!fileListSuffix.equals("sum"))
+            {
+                throw new IllegalArgumentException("Mismatch between pointing type (" + fileListSuffix + ") and name of file list: " + fileList);
+            }
+            fileListRoot = fileListRoot.substring(0, fileListRoot.length() - "-sum".length());
+        }
+        // End backward-compatibility section.
+        // -----------------------------------------------
+
+        // This is the "real" guts of this method.
         final String fileListWithoutSuffix = fileListRoot + ".txt";
 
         if (!fileListSuffix.isEmpty())
