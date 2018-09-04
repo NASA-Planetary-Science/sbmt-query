@@ -76,10 +76,8 @@ public abstract class QueryBase implements Cloneable, MetadataManager
         }
     }
 
-    public static boolean checkForDatabaseTable(String data) throws IOException
+    public static boolean checkForDatabaseTable(String tableName) throws IOException
     {
-        List<List<String>> results = new ArrayList<>();
-
         URL u = new URL(Configuration.getQueryRootURL() + "/" + "tableexists.php");
         URLConnection conn = u.openConnection();
         conn.setDoOutput(true);
@@ -87,7 +85,7 @@ public abstract class QueryBase implements Cloneable, MetadataManager
         conn.setRequestProperty("User-Agent", "Mozilla/4.0");
 
         OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-        wr.write(data);
+        wr.write("tableName=" + tableName);
         wr.flush();
 
         InputStreamReader isr = new InputStreamReader(conn.getInputStream());
@@ -96,7 +94,15 @@ public abstract class QueryBase implements Cloneable, MetadataManager
         String line = in.readLine();
         in.close();
 
-        return Boolean.parseBoolean(line);
+        if (line == null)
+        {
+            throw new NullPointerException("No database available");
+        }
+        else if (!line.equalsIgnoreCase("true") && !line.equalsIgnoreCase("false"))
+        {
+            throw new RuntimeException(line);
+        }
+        return line.equalsIgnoreCase("true");
     }
 
     protected List<List<String>> doQuery(String phpScript, String data) throws IOException
