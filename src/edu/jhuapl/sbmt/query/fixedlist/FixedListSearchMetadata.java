@@ -1,7 +1,5 @@
 package edu.jhuapl.sbmt.query.fixedlist;
 
-import java.util.regex.Pattern;
-
 import com.google.common.base.Preconditions;
 
 import edu.jhuapl.saavtk.metadata.FixedMetadata;
@@ -14,12 +12,6 @@ import edu.jhuapl.sbmt.query.SearchMetadata;
 public class FixedListSearchMetadata implements SearchMetadata
 {
     private static final Version FIXEDLISTSEARCH_DATA_VERSION = Version.of(1, 0);
-    /*
-     * This Pattern will match on either quoted text or text between commas,
-     * including whitespace, and accounting for beginning and end of line. Cribbed
-     * from a Stacktrace post.
-     */
-    private static final Pattern CSV_PATTERN = Pattern.compile("\"([^\"]*)\"|(?<=,|^)([^,]*)(?:,|$)");
 
     // Metadata keys.
     static final Key<String> NAME = Key.of("Search Name");
@@ -63,6 +55,7 @@ public class FixedListSearchMetadata implements SearchMetadata
         this.loadFailed = false;
     }
 
+    @Override
     public FixedMetadata getMetadata()
     {
         return metadata;
@@ -122,19 +115,9 @@ public class FixedListSearchMetadata implements SearchMetadata
         return new FixedListSearchMetadata(getMetadata().copy());
     }
 
-    public String getFilelist()
-    {
-        return getMetadata().get(FILE_LIST);
-    }
-
     public String getDatapath()
     {
         return getMetadata().get(DATA_PATH);
-    }
-
-    public String getRootpath()
-    {
-        return getMetadata().get(ROOT_PATH);
     }
 
     public ImageSource getPointingSource()
