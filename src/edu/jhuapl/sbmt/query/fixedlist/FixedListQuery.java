@@ -8,6 +8,7 @@ import edu.jhuapl.saavtk.metadata.Metadata;
 import edu.jhuapl.saavtk.metadata.SettableMetadata;
 import edu.jhuapl.saavtk.metadata.Version;
 import edu.jhuapl.saavtk.util.FileCache;
+import edu.jhuapl.saavtk.util.FileCache.UnauthorizedAccessException;
 import edu.jhuapl.saavtk.util.SafePaths;
 import edu.jhuapl.sbmt.model.image.ImageSource;
 import edu.jhuapl.sbmt.query.SearchMetadata;
@@ -133,13 +134,20 @@ public class FixedListQuery extends FixedListQueryBase
         if (!fileListSuffix.isEmpty())
         {
             final String fileListWithSuffix = fileListRoot + "-" + fileListSuffix + ".txt";
-            if (FileCache.isFileGettable(SafePaths.getString(rootPath, fileListWithSuffix)))
+            try
             {
-                return fileListWithSuffix;
+                if (FileCache.isFileGettable(SafePaths.getString(rootPath, fileListWithSuffix)))
+                {
+                    return fileListWithSuffix;
+                }
+                else
+                {
+                    System.out.println("Could not find " + fileListWithSuffix + ". Trying " + fileListWithoutSuffix + " instead");
+                }
             }
-            else
+            catch (@SuppressWarnings("unused") UnauthorizedAccessException e)
             {
-                System.out.println("Could not find " + fileListWithSuffix + ". Using " + fileListWithoutSuffix + " instead");
+                System.out.println("Could not access " + fileListWithSuffix + ". Trying " + fileListWithoutSuffix + " instead");
             }
         }
         return fileListWithoutSuffix;

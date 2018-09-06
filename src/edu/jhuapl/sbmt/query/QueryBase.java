@@ -43,6 +43,7 @@ import edu.jhuapl.saavtk.util.Configuration;
 import edu.jhuapl.saavtk.util.FileCache;
 import edu.jhuapl.saavtk.util.FileCache.FileInfo;
 import edu.jhuapl.saavtk.util.FileCache.FileInfo.YesOrNo;
+import edu.jhuapl.saavtk.util.FileCache.UnauthorizedAccessException;
 import edu.jhuapl.saavtk.util.FileUtil;
 import edu.jhuapl.saavtk.util.SafePaths;
 
@@ -96,11 +97,11 @@ public abstract class QueryBase implements Cloneable, MetadataManager
 
         if (line == null)
         {
-            throw new NullPointerException("No database available");
+            throw new IOException("No database available");
         }
         else if (!line.equalsIgnoreCase("true") && !line.equalsIgnoreCase("false"))
         {
-            throw new RuntimeException(line);
+            throw new IOException(line);
         }
         return line.equalsIgnoreCase("true");
     }
@@ -108,6 +109,11 @@ public abstract class QueryBase implements Cloneable, MetadataManager
     protected List<List<String>> doQuery(String phpScript, String data) throws IOException
     {
         List<List<String>> results = new ArrayList<>();
+
+        if (!checkAuthorizedAccess())
+        {
+            return results;
+        }
 
         URL u = new URL(Configuration.getQueryRootURL() + "/" + phpScript);
         URLConnection conn = u.openConnection();
@@ -148,6 +154,24 @@ public abstract class QueryBase implements Cloneable, MetadataManager
         return results;
     }
 
+    protected boolean checkAuthorizedAccess()
+    {
+        try
+        {
+            return FileCache.isFileGettable(getDataPath());
+        }
+        catch (UnauthorizedAccessException e)
+        {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null,
+                    "You are not authorized to access this data.",
+                    "Warning",
+                    JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+
+
+    }
     protected String constructUrlArguments(HashMap<String, String> args)
     {
         String str = "";
