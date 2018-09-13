@@ -3,6 +3,13 @@ package edu.jhuapl.sbmt.query.fixedlist;
 import java.util.List;
 
 import edu.jhuapl.saavtk.metadata.FixedMetadata;
+import edu.jhuapl.saavtk.metadata.Key;
+import edu.jhuapl.saavtk.metadata.Metadata;
+import edu.jhuapl.saavtk.metadata.SettableMetadata;
+import edu.jhuapl.saavtk.metadata.Version;
+import edu.jhuapl.saavtk.util.FileCache;
+import edu.jhuapl.saavtk.util.FileCache.UnauthorizedAccessException;
+import edu.jhuapl.saavtk.util.SafePaths;
 import edu.jhuapl.sbmt.model.image.ImageSource;
 import edu.jhuapl.sbmt.query.SearchMetadata;
 import edu.jhuapl.sbmt.query.SearchResultsMetadata;
@@ -14,7 +21,7 @@ import edu.jhuapl.sbmt.query.SearchResultsMetadata;
 public class FixedListQuery extends FixedListQueryBase
 {
     protected String rootPath;
-    protected final boolean multiSource;
+    protected /*final*/ boolean multiSource;
 
     public FixedListQuery()
     {
@@ -59,30 +66,118 @@ public class FixedListQuery extends FixedListQueryBase
     public SearchResultsMetadata runQuery(SearchMetadata queryMetadata)
     {
         FixedMetadata metadata = queryMetadata.getMetadata();
-        String fileList = metadata.get(FixedListSearchMetadata.FILE_LIST);
+        String fileListRoot = metadata.get(FixedListSearchMetadata.FILE_LIST);
         String dataPath = metadata.get(FixedListSearchMetadata.DATA_PATH);
         rootPath = metadata.get(FixedListSearchMetadata.ROOT_PATH);
-        String dataListPrefix = "";
 
+        String fileListSuffix = null;
         ImageSource imageSource = ImageSource.valueFor(metadata.get(FixedListSearchMetadata.POINTING_SOURCE));
-        if (imageSource == ImageSource.GASKELL)
-            dataListPrefix = "sumfiles";
-        if (imageSource == ImageSource.CORRECTED)
-            dataListPrefix = "sumfiles-corrected";
-        if (imageSource == ImageSource.SPICE)
-            dataListPrefix = "infofiles";
-        else if (imageSource == ImageSource.CORRECTED_SPICE)
-            dataListPrefix = "infofiles-corrected";
-        System.out.println("FixedListQuery: runQuery: rootpath " + rootPath);
-        System.out.println("FixedListQuery: runQuery (prefix, filelist, datapath): " + dataListPrefix + " " + fileList + " " + dataPath);
+        switch (imageSource)
+        {
+            case GASKELL:
+                fileListSuffix = "sum";
+            break;
+            case CORRECTED:
+                fileListSuffix = "sum";
+            break;
+            case SPICE:
+                fileListSuffix = "info";
+            break;
+            case CORRECTED_SPICE:
+                fileListSuffix = "info";
+            break;
+            default:
+                // No pointing-specific suffix, use a blank.
+                fileListSuffix = "";
+            break;
+        }
+        String fileList = getFileList(fileListRoot, fileListSuffix);
+
         List<List<String>> results = getResultsFromFileListOnServer(rootPath + "/" /*+ dataListPrefix + "/"*/ + fileList, rootPath + "/" + dataPath + "/", getGalleryPath());
 
         return SearchResultsMetadata.of("", results);   //"" should really be a query name here, if applicable
     }
 
+    private String getFileList(final String fileList, String fileListSuffix)
+    {
+        // -----------------------------------------------
+        // This whole section is just for backward compatibility with early (indirect) callers of this method. Need to
+        // accept the following variations:
+        // fileList == "imgagelist-sum.txt", "imagelist-sum", "imagelist.txt"
+        String fileListRoot = fileList;
+        if (fileListRoot.endsWith(".txt"))
+        {
+            fileListRoot = fileListRoot.substring(0, fileListRoot.length() - ".txt".length());
+        }
+        if (fileListRoot.endsWith("-info"))
+        {
+            if (!fileListSuffix.equals("info"))
+            {
+                throw new IllegalArgumentException("Mismatch between pointing type (" + fileListSuffix + ") and name of file list: " + fileList);
+            }
+            fileListRoot = fileListRoot.substring(0, fileListRoot.length() - "-info".length());
+        }
+        else if (fileListRoot.endsWith("-sum"))
+        {
+            if (!fileListSuffix.equals("sum"))
+            {
+                throw new IllegalArgumentException("Mismatch between pointing type (" + fileListSuffix + ") and name of file list: " + fileList);
+            }
+            fileListRoot = fileListRoot.substring(0, fileListRoot.length() - "-sum".length());
+        }
+        // End backward-compatibility section.
+        // -----------------------------------------------
+
+        // This is the "real" guts of this method.
+        final String fileListWithoutSuffix = fileListRoot + ".txt";
+
+        if (!fileListSuffix.isEmpty())
+        {
+            final String fileListWithSuffix = fileListRoot + "-" + fileListSuffix + ".txt";
+            try
+            {
+                if (FileCache.isFileGettable(SafePaths.getString(rootPath, fileListWithSuffix)))
+                {
+                    return fileListWithSuffix;
+                }
+                else
+                {
+                    System.out.println("Could not find " + fileListWithSuffix + ". Trying " + fileListWithoutSuffix + " instead");
+                }
+            }
+            catch (@SuppressWarnings("unused") UnauthorizedAccessException e)
+            {
+                System.out.println("Could not access " + fileListWithSuffix + ". Trying " + fileListWithoutSuffix + " instead");
+            }
+        }
+        return fileListWithoutSuffix;
+    }
+
     public String getRootPath()
     {
         return rootPath;
+    }
+
+    Key<String> rootPathKey = Key.of("rootPath");
+    Key<Boolean> multiSourceKey = Key.of("multiSource");
+    Key<String> galleryPathKey = Key.of("galleryPath");
+
+    @Override
+    public Metadata store()
+    {
+        SettableMetadata configMetadata = SettableMetadata.of(Version.of(1, 0));
+        write(rootPathKey, rootPath, configMetadata);
+        write(multiSourceKey, multiSource, configMetadata);
+        write(galleryPathKey, galleryPath, configMetadata);
+        return configMetadata;
+    }
+
+    @Override
+    public void retrieve(Metadata source)
+    {
+        rootPath = read(rootPathKey, source);
+        multiSource = read(multiSourceKey, source);
+        galleryPath = read(galleryPathKey, source);
     }
 
 //    @Override

@@ -35,10 +35,15 @@ import org.joda.time.DateTimeZone;
 
 import com.google.common.collect.Lists;
 
+import edu.jhuapl.saavtk.metadata.Key;
+import edu.jhuapl.saavtk.metadata.Metadata;
+import edu.jhuapl.saavtk.metadata.MetadataManager;
+import edu.jhuapl.saavtk.metadata.SettableMetadata;
 import edu.jhuapl.saavtk.util.Configuration;
 import edu.jhuapl.saavtk.util.FileCache;
 import edu.jhuapl.saavtk.util.FileCache.FileInfo;
 import edu.jhuapl.saavtk.util.FileCache.FileInfo.YesOrNo;
+import edu.jhuapl.saavtk.util.FileCache.UnauthorizedAccessException;
 import edu.jhuapl.saavtk.util.FileUtil;
 import edu.jhuapl.saavtk.util.SafePaths;
 
@@ -47,7 +52,7 @@ import edu.jhuapl.saavtk.util.SafePaths;
  * This class represents a database storing information about all the
  * data. It also provides functions for querying the database.
  */
-public abstract class QueryBase implements Cloneable
+public abstract class QueryBase implements Cloneable, MetadataManager
 {
     protected String galleryPath;
     protected Boolean galleryExists;
@@ -76,9 +81,43 @@ public abstract class QueryBase implements Cloneable
         }
     }
 
+    public static boolean checkForDatabaseTable(String tableName) throws IOException
+    {
+        URL u = new URL(Configuration.getQueryRootURL() + "/" + "tableexists.php");
+        URLConnection conn = u.openConnection();
+        conn.setDoOutput(true);
+        conn.setUseCaches(false);
+        conn.setRequestProperty("User-Agent", "Mozilla/4.0");
+
+        OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+        wr.write("tableName=" + tableName);
+        wr.flush();
+
+        InputStreamReader isr = new InputStreamReader(conn.getInputStream());
+        BufferedReader in = new BufferedReader(isr);
+
+        String line = in.readLine();
+        in.close();
+
+        if (line == null)
+        {
+            throw new IOException("No database available");
+        }
+        else if (!line.equalsIgnoreCase("true") && !line.equalsIgnoreCase("false"))
+        {
+            throw new IOException(line);
+        }
+        return line.equalsIgnoreCase("true");
+    }
+
     protected List<List<String>> doQuery(String phpScript, String data) throws IOException
     {
         List<List<String>> results = new ArrayList<>();
+
+        if (!checkAuthorizedAccess())
+        {
+            return results;
+        }
 
         URL u = new URL(Configuration.getQueryRootURL() + "/" + phpScript);
         URLConnection conn = u.openConnection();
@@ -119,6 +158,24 @@ public abstract class QueryBase implements Cloneable
         return results;
     }
 
+    protected boolean checkAuthorizedAccess()
+    {
+        try
+        {
+            return FileCache.isFileGettable(getDataPath());
+        }
+        catch (UnauthorizedAccessException e)
+        {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null,
+                    "You are not authorized to access this data.",
+                    "Warning",
+                    JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+
+
+    }
     protected String constructUrlArguments(HashMap<String, String> args)
     {
         String str = "";
@@ -351,7 +408,7 @@ public abstract class QueryBase implements Cloneable
         {
             // We will reach this if SBMT is unable to connect to server
             JOptionPane.showMessageDialog(null,
-                    "SBMT had a problem while performing the search. Ignoring search parameters and listing all cached data products.",
+                "Unable to perform online search. Ignoring search parameters and listing all cached data products.",
                     "Warning",
                     JOptionPane.WARNING_MESSAGE);
         }
@@ -503,5 +560,21 @@ public abstract class QueryBase implements Cloneable
         {
             result.set(0, getDataPath() + "/" + fullPath);
         }
+    }
+
+    protected <T> void write(Key<T> key, T value, SettableMetadata configMetadata)
+    {
+        if (value != null)
+        {
+            configMetadata.put(key, value);
+        }
+    }
+
+    protected <T> T read(Key<T> key, Metadata configMetadata)
+    {
+        T value = configMetadata.get(key);
+        if (value != null)
+            return value;
+        return null;
     }
 }

@@ -84,8 +84,11 @@ public abstract class FixedListQueryBase extends QueryBase
 
         List<List<String>> results = new ArrayList<>();
 
-        System.out.println(
-                "FixedListQueryBase: getResultsFromFileListOnServer: path is " + pathToFileListOnServer);
+        if (!checkAuthorizedAccess())
+        {
+            return results;
+        }
+
         FileInfo info = FileCache.getFileInfoFromServer(pathToFileListOnServer);
         if (!info.isURLAccessAuthorized().equals(YesOrNo.YES) || !info.isExistsOnServer().equals(YesOrNo.YES))
         {
