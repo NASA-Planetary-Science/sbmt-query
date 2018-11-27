@@ -9,7 +9,7 @@ import edu.jhuapl.saavtk.metadata.SettableMetadata;
 import edu.jhuapl.saavtk.metadata.Version;
 import edu.jhuapl.saavtk.util.FileCache;
 import edu.jhuapl.saavtk.util.FileCache.UnauthorizedAccessException;
-import edu.jhuapl.saavtk.util.SafePaths;
+import edu.jhuapl.saavtk.util.SafeURLPaths;
 import edu.jhuapl.sbmt.model.image.ImageSource;
 import edu.jhuapl.sbmt.query.SearchMetadata;
 import edu.jhuapl.sbmt.query.SearchResultsMetadata;
@@ -136,7 +136,7 @@ public class FixedListQuery extends FixedListQueryBase
             final String fileListWithSuffix = fileListRoot + "-" + fileListSuffix + ".txt";
             try
             {
-                if (FileCache.isFileGettable(SafePaths.getString(rootPath, fileListWithSuffix)))
+                if (FileCache.isFileGettable(SafeURLPaths.instance().getString(rootPath, fileListWithSuffix)))
                 {
                     return fileListWithSuffix;
                 }
