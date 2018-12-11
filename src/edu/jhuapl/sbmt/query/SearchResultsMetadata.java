@@ -5,10 +5,10 @@ import java.util.regex.Pattern;
 
 import com.google.common.base.Preconditions;
 
-import edu.jhuapl.saavtk.metadata.FixedMetadata;
-import edu.jhuapl.saavtk.metadata.Key;
-import edu.jhuapl.saavtk.metadata.SettableMetadata;
-import edu.jhuapl.saavtk.metadata.Version;
+import edu.jhuapl.saavtk.metadata.api.Key;
+import edu.jhuapl.saavtk.metadata.api.Version;
+import edu.jhuapl.saavtk.metadata.impl.FixedMetadata;
+import edu.jhuapl.saavtk.metadata.impl.SettableMetadata;
 
 public class SearchResultsMetadata implements SearchMetadata
 {

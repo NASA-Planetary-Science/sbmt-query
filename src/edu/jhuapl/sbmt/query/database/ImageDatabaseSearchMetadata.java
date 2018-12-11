@@ -7,9 +7,9 @@ import org.joda.time.DateTime;
 
 import com.google.common.collect.Range;
 
-import edu.jhuapl.saavtk.metadata.FixedMetadata;
-import edu.jhuapl.saavtk.metadata.Key;
-import edu.jhuapl.saavtk.metadata.SettableMetadata;
+import edu.jhuapl.saavtk.metadata.api.Key;
+import edu.jhuapl.saavtk.metadata.impl.FixedMetadata;
+import edu.jhuapl.saavtk.metadata.impl.SettableMetadata;
 import edu.jhuapl.sbmt.model.image.ImageSource;
 
 public class ImageDatabaseSearchMetadata extends DatabaseSearchMetadata

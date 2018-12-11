@@ -1,6 +1,6 @@
 package edu.jhuapl.sbmt.query.database;
 
-import edu.jhuapl.saavtk.metadata.FixedMetadata;
+import edu.jhuapl.saavtk.metadata.impl.FixedMetadata;
 
 public class LidarDatabaseSearchMetadata extends DatabaseSearchMetadata
 {

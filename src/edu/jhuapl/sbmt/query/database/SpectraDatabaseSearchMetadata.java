@@ -7,9 +7,9 @@ import org.joda.time.DateTime;
 
 import com.google.common.collect.Range;
 
-import edu.jhuapl.saavtk.metadata.FixedMetadata;
-import edu.jhuapl.saavtk.metadata.Key;
-import edu.jhuapl.saavtk.metadata.SettableMetadata;
+import edu.jhuapl.saavtk.metadata.api.Key;
+import edu.jhuapl.saavtk.metadata.impl.FixedMetadata;
+import edu.jhuapl.saavtk.metadata.impl.SettableMetadata;
 
 public class SpectraDatabaseSearchMetadata extends DatabaseSearchMetadata
 {
