@@ -35,14 +35,16 @@ import org.joda.time.DateTimeZone;
 
 import com.google.common.collect.Lists;
 
-import edu.jhuapl.saavtk.metadata.api.Key;
-import edu.jhuapl.saavtk.metadata.api.Metadata;
-import edu.jhuapl.saavtk.metadata.api.MetadataManager;
-import edu.jhuapl.saavtk.metadata.impl.SettableMetadata;
 import edu.jhuapl.saavtk.util.Configuration;
 import edu.jhuapl.saavtk.util.FileCache;
 import edu.jhuapl.saavtk.util.FileCache.FileInfo;
 import edu.jhuapl.saavtk.util.FileCache.FileInfo.YesOrNo;
+
+import crucible.crust.metadata.api.Key;
+import crucible.crust.metadata.api.Metadata;
+import crucible.crust.metadata.api.MetadataManager;
+import crucible.crust.metadata.impl.SettableMetadata;
+
 import edu.jhuapl.saavtk.util.FileCache.UnauthorizedAccessException;
 import edu.jhuapl.saavtk.util.FileUtil;
 import edu.jhuapl.saavtk.util.SafeURLPaths;

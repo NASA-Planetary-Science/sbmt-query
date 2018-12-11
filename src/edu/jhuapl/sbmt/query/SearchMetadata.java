@@ -1,6 +1,6 @@
 package edu.jhuapl.sbmt.query;
 
-import edu.jhuapl.saavtk.metadata.impl.FixedMetadata;
+import crucible.crust.metadata.impl.FixedMetadata;
 
 public interface SearchMetadata
 {

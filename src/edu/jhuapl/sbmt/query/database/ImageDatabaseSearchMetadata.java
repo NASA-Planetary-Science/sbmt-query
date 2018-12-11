@@ -7,10 +7,11 @@ import org.joda.time.DateTime;
 
 import com.google.common.collect.Range;
 
-import edu.jhuapl.saavtk.metadata.api.Key;
-import edu.jhuapl.saavtk.metadata.impl.FixedMetadata;
-import edu.jhuapl.saavtk.metadata.impl.SettableMetadata;
 import edu.jhuapl.sbmt.model.image.ImageSource;
+
+import crucible.crust.metadata.api.Key;
+import crucible.crust.metadata.impl.FixedMetadata;
+import crucible.crust.metadata.impl.SettableMetadata;
 
 public class ImageDatabaseSearchMetadata extends DatabaseSearchMetadata
 {
