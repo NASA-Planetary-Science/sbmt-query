@@ -45,7 +45,7 @@ import edu.jhuapl.saavtk.util.FileCache.FileInfo;
 import edu.jhuapl.saavtk.util.FileCache.FileInfo.YesOrNo;
 import edu.jhuapl.saavtk.util.FileCache.UnauthorizedAccessException;
 import edu.jhuapl.saavtk.util.FileUtil;
-import edu.jhuapl.saavtk.util.SafePaths;
+import edu.jhuapl.saavtk.util.SafeURLPaths;
 
 
 /**
@@ -439,7 +439,7 @@ public abstract class QueryBase implements Cloneable, MetadataManager
     {
         String dataPath = getDataPath();
         if (dataPath == null) return null;
-        return SafePaths.getString(Configuration.getCacheDir(), "dataInventory.txt");
+        return SafeURLPaths.instance().getString(Configuration.getCacheDir(), "dataInventory.txt");
     }
 
     /**
