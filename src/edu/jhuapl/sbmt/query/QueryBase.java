@@ -52,7 +52,7 @@ import edu.jhuapl.saavtk.util.SafeURLPaths;
  * This class represents a database storing information about all the
  * data. It also provides functions for querying the database.
  */
-public abstract class QueryBase implements Cloneable, MetadataManager
+public abstract class QueryBase implements Cloneable, MetadataManager, IQueryBase
 {
     protected String galleryPath;
     protected Boolean galleryExists;
@@ -530,7 +530,7 @@ public abstract class QueryBase implements Cloneable, MetadataManager
      * query request, which is also encapsulated in a metadata bundle.
      *
      */
-    public abstract SearchResultsMetadata runQuery(SearchMetadata queryMetadata);
+    public abstract ISearchResultsMetadata runQuery(SearchMetadata queryMetadata);
 
 
     public String getGalleryPath()

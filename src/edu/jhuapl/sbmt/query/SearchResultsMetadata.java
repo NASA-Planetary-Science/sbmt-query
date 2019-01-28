@@ -10,7 +10,7 @@ import edu.jhuapl.saavtk.metadata.Key;
 import edu.jhuapl.saavtk.metadata.SettableMetadata;
 import edu.jhuapl.saavtk.metadata.Version;
 
-public class SearchResultsMetadata implements SearchMetadata
+public class SearchResultsMetadata implements SearchMetadata, ISearchResultsMetadata
 {
     private static final Version FIXEDLISTRESULTS_DATA_VERSION = Version.of(1, 0);
     /*

@@ -11,6 +11,7 @@ import edu.jhuapl.saavtk.util.FileCache;
 import edu.jhuapl.saavtk.util.FileCache.UnauthorizedAccessException;
 import edu.jhuapl.saavtk.util.SafeURLPaths;
 import edu.jhuapl.sbmt.model.image.ImageSource;
+import edu.jhuapl.sbmt.query.ISearchResultsMetadata;
 import edu.jhuapl.sbmt.query.SearchMetadata;
 import edu.jhuapl.sbmt.query.SearchResultsMetadata;
 
@@ -63,7 +64,7 @@ public class FixedListQuery extends FixedListQueryBase
     }
 
     @Override
-    public SearchResultsMetadata runQuery(SearchMetadata queryMetadata)
+    public ISearchResultsMetadata runQuery(SearchMetadata queryMetadata)
     {
         FixedMetadata metadata = queryMetadata.getMetadata();
         String fileListRoot = metadata.get(FixedListSearchMetadata.FILE_LIST);
