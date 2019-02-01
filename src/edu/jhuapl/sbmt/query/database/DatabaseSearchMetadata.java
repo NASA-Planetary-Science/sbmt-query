@@ -8,11 +8,12 @@ import org.joda.time.DateTime;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Range;
 
-import edu.jhuapl.saavtk.metadata.FixedMetadata;
-import edu.jhuapl.saavtk.metadata.Key;
-import edu.jhuapl.saavtk.metadata.SettableMetadata;
-import edu.jhuapl.saavtk.metadata.Version;
 import edu.jhuapl.sbmt.query.SearchMetadata;
+
+import crucible.crust.metadata.api.Key;
+import crucible.crust.metadata.api.Version;
+import crucible.crust.metadata.impl.FixedMetadata;
+import crucible.crust.metadata.impl.SettableMetadata;
 
 public class DatabaseSearchMetadata implements SearchMetadata
 {
