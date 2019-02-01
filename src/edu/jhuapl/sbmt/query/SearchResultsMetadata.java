@@ -10,7 +10,7 @@ import crucible.crust.metadata.api.Version;
 import crucible.crust.metadata.impl.FixedMetadata;
 import crucible.crust.metadata.impl.SettableMetadata;
 
-public class SearchResultsMetadata implements SearchMetadata
+public class SearchResultsMetadata implements SearchMetadata, ISearchResultsMetadata
 {
     private static final Version FIXEDLISTRESULTS_DATA_VERSION = Version.of(1, 0);
     /*
