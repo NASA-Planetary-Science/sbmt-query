@@ -5,12 +5,12 @@ import java.util.regex.Pattern;
 
 import com.google.common.base.Preconditions;
 
-import edu.jhuapl.saavtk.metadata.FixedMetadata;
-import edu.jhuapl.saavtk.metadata.Key;
-import edu.jhuapl.saavtk.metadata.SettableMetadata;
-import edu.jhuapl.saavtk.metadata.Version;
+import crucible.crust.metadata.api.Key;
+import crucible.crust.metadata.api.Version;
+import crucible.crust.metadata.impl.FixedMetadata;
+import crucible.crust.metadata.impl.SettableMetadata;
 
-public class SearchResultsMetadata implements SearchMetadata
+public class SearchResultsMetadata implements SearchMetadata, ISearchResultsMetadata
 {
     private static final Version FIXEDLISTRESULTS_DATA_VERSION = Version.of(1, 0);
     /*
