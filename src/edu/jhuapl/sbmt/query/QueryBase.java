@@ -37,14 +37,6 @@ import com.google.common.collect.Lists;
 
 import edu.jhuapl.saavtk.util.Configuration;
 import edu.jhuapl.saavtk.util.FileCache;
-import edu.jhuapl.saavtk.util.FileCache.FileInfo;
-import edu.jhuapl.saavtk.util.FileCache.FileInfo.YesOrNo;
-
-import crucible.crust.metadata.api.Key;
-import crucible.crust.metadata.api.Metadata;
-import crucible.crust.metadata.api.MetadataManager;
-import crucible.crust.metadata.impl.SettableMetadata;
-
 import edu.jhuapl.saavtk.util.FileCache.UnauthorizedAccessException;
 import edu.jhuapl.saavtk.util.FileUtil;
 import edu.jhuapl.saavtk.util.SafeURLPaths;
@@ -237,12 +229,11 @@ public abstract class QueryBase implements Cloneable, MetadataManager, IQueryBas
         if (pathToGalleryFolderOnServer != null && !pathToGalleryFolderOnServer.endsWith("/"))
             pathToGalleryFolderOnServer += "/";
 
-        List<List<String>> results = new ArrayList<>();
-        FileInfo info = FileCache.getFileInfoFromServer(pathToFileListOnServer);
-        if (!info.isURLAccessAuthorized().equals(YesOrNo.YES) || !info.isExistsOnServer().equals(YesOrNo.YES))
+        if (!FileCache.isFileGettable(pathToFileListOnServer))
         {
             return getCachedResults(getDataPath());
         }
+        List<List<String>> results = new ArrayList<>();
         File file = FileCache.getFileFromServer(pathToFileListOnServer);
 
         // Let user know that search uses fixed list and ignores search parameters
@@ -547,8 +538,7 @@ public abstract class QueryBase implements Cloneable, MetadataManager, IQueryBas
             galleryExists = Boolean.FALSE;
             if (galleryPath != null)
             {
-                FileInfo info = FileCache.getFileInfoFromServer(galleryPath);
-                if (info.isExistsLocally() || info.isExistsOnServer().equals(YesOrNo.YES))
+                if (FileCache.isFileGettable(galleryPath))
                 {
                     galleryExists = Boolean.TRUE;
                 }
