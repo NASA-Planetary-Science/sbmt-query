@@ -36,8 +36,8 @@ import org.joda.time.DateTimeZone;
 import com.google.common.collect.Lists;
 
 import edu.jhuapl.saavtk.util.Configuration;
+import edu.jhuapl.saavtk.util.DownloadableFileInfo.DownloadableFileState;
 import edu.jhuapl.saavtk.util.FileCache;
-import edu.jhuapl.saavtk.util.FileCache.UnauthorizedAccessException;
 import edu.jhuapl.saavtk.util.FileUtil;
 import edu.jhuapl.saavtk.util.SafeURLPaths;
 
@@ -54,13 +54,11 @@ import crucible.crust.metadata.impl.SettableMetadata;
 public abstract class QueryBase implements Cloneable, MetadataManager, IQueryBase
 {
     protected String galleryPath;
-    protected Boolean galleryExists;
     private boolean headless = false;
 
     protected QueryBase(String galleryPath)
     {
         this.galleryPath = galleryPath;
-        this.galleryExists = null;
         if (System.getProperty("java.awt.headless") != null && System.getProperty("java.awt.headless").equalsIgnoreCase("true"))
             headless = true;
     }
@@ -159,21 +157,21 @@ public abstract class QueryBase implements Cloneable, MetadataManager, IQueryBas
 
     protected boolean checkAuthorizedAccess()
     {
-        try
+        DownloadableFileState state = FileCache.instance().query(getDataPath(), false).getState();
+
+        if (state.isAccessible())
         {
-            return FileCache.isFileGettable(getDataPath());
+            return true;
         }
-        catch (UnauthorizedAccessException e)
+        else if (state.isUrlUnauthorized())
         {
-            e.printStackTrace();
             JOptionPane.showMessageDialog(null,
                     "You are not authorized to access this data.",
                     "Warning",
                     JOptionPane.WARNING_MESSAGE);
-            return false;
         }
 
-
+        return false;
     }
     protected String constructUrlArguments(HashMap<String, String> args)
     {
@@ -229,7 +227,7 @@ public abstract class QueryBase implements Cloneable, MetadataManager, IQueryBas
         if (pathToGalleryFolderOnServer != null && !pathToGalleryFolderOnServer.endsWith("/"))
             pathToGalleryFolderOnServer += "/";
 
-        if (!FileCache.isFileGettable(pathToFileListOnServer))
+        if (!FileCache.instance().isAccessible(pathToFileListOnServer))
         {
             return getCachedResults(getDataPath());
         }
@@ -530,21 +528,9 @@ public abstract class QueryBase implements Cloneable, MetadataManager, IQueryBas
      */
     public abstract ISearchResultsMetadata runQuery(SearchMetadata queryMetadata);
 
-
     public String getGalleryPath()
     {
-        if (galleryExists == null)
-        {
-            galleryExists = Boolean.FALSE;
-            if (galleryPath != null)
-            {
-                if (FileCache.isFileGettable(galleryPath))
-                {
-                    galleryExists = Boolean.TRUE;
-                }
-            }
-        }
-        return galleryExists ? galleryPath : null;
+        return galleryPath != null && FileCache.instance().isAccessible(galleryPath) ? galleryPath : null;
     }
 
     // Convert the 0th element of the result (the path to the data)

@@ -27,7 +27,6 @@ public abstract class FixedListQueryBase extends QueryBase
     {
         super(galleryPath);
         this.galleryPath = galleryPath;
-        this.galleryExists = null;
     }
 
     @Override
@@ -87,7 +86,7 @@ public abstract class FixedListQueryBase extends QueryBase
             return results;
         }
 
-        if (!FileCache.isFileGettable(pathToFileListOnServer))
+        if (!FileCache.instance().isAccessible(pathToFileListOnServer))
         {
             return getCachedResults(getDataPath());
         }

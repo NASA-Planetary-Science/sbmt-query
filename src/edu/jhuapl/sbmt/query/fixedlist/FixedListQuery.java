@@ -138,7 +138,7 @@ public class FixedListQuery extends FixedListQueryBase
             final String fileListWithSuffix = fileListRoot + "-" + fileListSuffix + ".txt";
             try
             {
-                if (FileCache.isFileGettable(SafeURLPaths.instance().getString(rootPath, fileListWithSuffix)))
+                if (FileCache.instance().isAccessible(SafeURLPaths.instance().getString(rootPath, fileListWithSuffix)))
                 {
                     return fileListWithSuffix;
                 }
