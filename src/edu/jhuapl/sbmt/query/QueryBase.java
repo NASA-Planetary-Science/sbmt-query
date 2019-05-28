@@ -157,7 +157,7 @@ public abstract class QueryBase implements Cloneable, MetadataManager, IQueryBas
 
     protected boolean checkAuthorizedAccess()
     {
-        DownloadableFileState state = FileCache.instance().query(getDataPath()).getState();
+        DownloadableFileState state = FileCache.instance().query(getDataPath(), false);
 
         if (state.isAccessible())
         {
