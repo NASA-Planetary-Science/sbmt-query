@@ -14,8 +14,6 @@ import org.joda.time.DateTimeZone;
 import com.google.common.collect.Lists;
 
 import edu.jhuapl.saavtk.util.FileCache;
-import edu.jhuapl.saavtk.util.FileCache.FileInfo;
-import edu.jhuapl.saavtk.util.FileCache.FileInfo.YesOrNo;
 import edu.jhuapl.saavtk.util.FileUtil;
 import edu.jhuapl.sbmt.query.QueryBase;
 
@@ -29,7 +27,6 @@ public abstract class FixedListQueryBase extends QueryBase
     {
         super(galleryPath);
         this.galleryPath = galleryPath;
-        this.galleryExists = null;
     }
 
     @Override
@@ -89,8 +86,7 @@ public abstract class FixedListQueryBase extends QueryBase
             return results;
         }
 
-        FileInfo info = FileCache.getFileInfoFromServer(pathToFileListOnServer);
-        if (!info.isURLAccessAuthorized().equals(YesOrNo.YES) || !info.isExistsOnServer().equals(YesOrNo.YES))
+        if (!FileCache.instance().isAccessible(pathToFileListOnServer))
         {
             return getCachedResults(getDataPath());
         }
