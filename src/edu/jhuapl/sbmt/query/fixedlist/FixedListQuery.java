@@ -20,7 +20,7 @@ import crucible.crust.metadata.impl.SettableMetadata;
  * A query which simply returns a fixed list of images. No actual search is done.
  * Useful for getting a quick search working without having to update the database.
  */
-public class FixedListQuery extends FixedListQueryBase
+public class FixedListQuery<T> extends FixedListQueryBase
 {
     protected String rootPath;
     protected /*final*/ boolean multiSource;
@@ -53,9 +53,9 @@ public class FixedListQuery extends FixedListQueryBase
     }
 
     @Override
-    public FixedListQuery clone()
+    public FixedListQuery<T> clone()
     {
-        return (FixedListQuery) super.clone();
+        return (FixedListQuery<T>) super.clone();
     }
 
     @Override
@@ -65,7 +65,7 @@ public class FixedListQuery extends FixedListQueryBase
     }
 
     @Override
-    public ISearchResultsMetadata runQuery(SearchMetadata queryMetadata)
+    public ISearchResultsMetadata<T> runQuery(SearchMetadata queryMetadata)
     {
         FixedMetadata metadata = queryMetadata.getMetadata();
         String fileListRoot = metadata.get(FixedListSearchMetadata.FILE_LIST);

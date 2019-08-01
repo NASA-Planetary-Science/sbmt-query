@@ -4,11 +4,11 @@ import java.util.List;
 
 import crucible.crust.metadata.impl.FixedMetadata;
 
-public interface ISearchResultsMetadata
+public interface ISearchResultsMetadata<T>
 {
 
 	FixedMetadata getMetadata();
 
-	List<List<String>> getResultlist();
+	List<T> getResultlist();
 
 }
