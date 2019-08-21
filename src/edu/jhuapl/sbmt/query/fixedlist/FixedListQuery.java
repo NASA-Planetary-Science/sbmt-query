@@ -179,7 +179,8 @@ public class FixedListQuery extends FixedListQueryBase
     {
         rootPath = read(rootPathKey, source);
         multiSource = read(multiSourceKey, source);
-        galleryPath = read(galleryPathKey, source);
+        if (source.hasKey(galleryPathKey))
+        	galleryPath = read(galleryPathKey, source);
     }
 
 //    @Override
