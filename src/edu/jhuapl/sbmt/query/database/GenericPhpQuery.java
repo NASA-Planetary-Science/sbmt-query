@@ -429,7 +429,14 @@ public class GenericPhpQuery extends DatabaseQueryBase implements MetadataManage
         rootPath = read(rootPathKey, source);
         tablePrefixSpc = read(tablePrefixSpcKey, source);
         tablePrefixSpice = read(tablePrefixSpiceKey, source);
-        galleryPath = read(galleryPathKey, source);
+        try
+        {
+            galleryPath = read(galleryPathKey, source);
+        }
+        catch (IllegalArgumentException iae)
+        {
+
+        }
     }
 
 
