@@ -9,7 +9,7 @@ import edu.jhuapl.sbmt.query.QueryBase;
 public abstract class DatabaseQueryBase extends QueryBase
 {
     protected String rootPath;
-    protected /*final*/ String galleryPath;
+//    protected /*final*/ String galleryPath;
     protected Boolean galleryExists;
 
     protected DatabaseQueryBase(String galleryPath)
