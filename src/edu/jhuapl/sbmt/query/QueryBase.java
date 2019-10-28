@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -560,4 +561,25 @@ public abstract class QueryBase implements Cloneable, MetadataManager, IQueryBas
             return value;
         return null;
     }
+
+
+	@Override
+	public int hashCode()
+	{
+		return Objects.hash(galleryPath, headless);
+	}
+
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		QueryBase other = (QueryBase) obj;
+		return Objects.equals(galleryPath, other.galleryPath) && headless == other.headless;
+	}
 }
