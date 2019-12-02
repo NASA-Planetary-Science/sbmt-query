@@ -117,4 +117,9 @@ public class SearchResultsMetadata implements SearchMetadata, ISearchResultsMeta
     {
         return getMetadata().get(RESULT_LIST);
     }
+
+	public boolean isLoadFailed()
+	{
+		return loadFailed;
+	}
 }
