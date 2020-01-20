@@ -228,7 +228,7 @@ public class GenericPhpQuery extends DatabaseQueryBase implements MetadataManage
         {
 //            e.printStackTrace();
             System.err.println("GenericPhpQuery: runQuery: falling back to image list");
-            String imageSourceType = (imageSource == ImageSource.SPICE) ? "sum" : "info";
+            String imageSourceType = (imageSource.equals(ImageSource.GASKELL)) ? "sum" : "info";
             results = getResultsFromFileListOnServer(rootPath + "/imagelist-" + imageSourceType + ".txt", getDataPath(), getGalleryPath(), searchString);
         }
         catch (IOException e)
