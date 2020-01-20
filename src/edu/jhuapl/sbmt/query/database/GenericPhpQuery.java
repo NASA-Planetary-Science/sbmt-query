@@ -135,11 +135,12 @@ public class GenericPhpQuery extends DatabaseQueryBase implements MetadataManage
             imagesDatabase += Configuration.getDatabaseSuffix();
             cubesDatabase += Configuration.getDatabaseSuffix();
         }
-
+        System.out.println("GenericPhpQuery: runQuery: image database " + imagesDatabase);
         try
         {
             if (searchString != null)
             {
+            	System.out.println("GenericPhpQuery: runQuery: searchstring is " + searchString);
                 HashMap<String, String> args = new HashMap<>();
                 args.put("imagesDatabase", imagesDatabase);
                 args.put("searchString", searchString);
@@ -227,11 +228,14 @@ public class GenericPhpQuery extends DatabaseQueryBase implements MetadataManage
         catch (RuntimeException e)
         {
             e.printStackTrace();
-            results = getResultsFromFileListOnServer(rootPath + "/imagelist.txt", getDataPath(), getGalleryPath(), searchString);
+            System.out.println("GenericPhpQuery: runQuery: falling back to image list");
+            String imageSourceType = (imageSource == ImageSource.SPICE) ? "sum" : "info";
+            results = getResultsFromFileListOnServer(rootPath + "/imagelist-" + imageSourceType + ".txt", getDataPath(), getGalleryPath(), searchString);
         }
         catch (IOException e)
         {
             e.printStackTrace();
+            System.out.println("GenericPhpQuery: runQuery: falling back to cached results");
             results = getCachedResults(getDataPath());
         }
 
