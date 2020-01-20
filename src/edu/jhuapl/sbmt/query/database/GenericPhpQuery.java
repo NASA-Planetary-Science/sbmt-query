@@ -25,8 +25,8 @@ import crucible.crust.metadata.impl.SettableMetadata;
 public class GenericPhpQuery extends DatabaseQueryBase implements MetadataManager
 {
 
-    private String tablePrefixSpc;
-    private String tablePrefixSpice;
+    String tablePrefixSpc;
+    String tablePrefixSpice;
 
     @Override
     public GenericPhpQuery clone()
@@ -135,12 +135,11 @@ public class GenericPhpQuery extends DatabaseQueryBase implements MetadataManage
             imagesDatabase += Configuration.getDatabaseSuffix();
             cubesDatabase += Configuration.getDatabaseSuffix();
         }
-        System.out.println("GenericPhpQuery: runQuery: image database " + imagesDatabase);
+
         try
         {
             if (searchString != null)
             {
-            	System.out.println("GenericPhpQuery: runQuery: searchstring is " + searchString);
                 HashMap<String, String> args = new HashMap<>();
                 args.put("imagesDatabase", imagesDatabase);
                 args.put("searchString", searchString);
@@ -227,15 +226,15 @@ public class GenericPhpQuery extends DatabaseQueryBase implements MetadataManage
         }
         catch (RuntimeException e)
         {
-            e.printStackTrace();
-            System.out.println("GenericPhpQuery: runQuery: falling back to image list");
+//            e.printStackTrace();
+            System.err.println("GenericPhpQuery: runQuery: falling back to image list");
             String imageSourceType = (imageSource == ImageSource.SPICE) ? "sum" : "info";
             results = getResultsFromFileListOnServer(rootPath + "/imagelist-" + imageSourceType + ".txt", getDataPath(), getGalleryPath(), searchString);
         }
         catch (IOException e)
         {
-            e.printStackTrace();
-            System.out.println("GenericPhpQuery: runQuery: falling back to cached results");
+//            e.printStackTrace();
+            System.err.println("GenericPhpQuery: runQuery: Can't reach database server, or some other database access failure; falling back to cached results");
             results = getCachedResults(getDataPath());
         }
 
