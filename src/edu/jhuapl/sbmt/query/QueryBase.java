@@ -228,12 +228,14 @@ public abstract class QueryBase implements Cloneable, MetadataManager, IQueryBas
         if (pathToGalleryFolderOnServer != null && !pathToGalleryFolderOnServer.endsWith("/"))
             pathToGalleryFolderOnServer += "/";
 
+        List<List<String>> results = new ArrayList<>();
+        File file = FileCache.getFileFromServer(pathToFileListOnServer);
+
         if (!FileCache.instance().isAccessible(pathToFileListOnServer))
         {
             return getCachedResults(getDataPath());
         }
-        List<List<String>> results = new ArrayList<>();
-        File file = FileCache.getFileFromServer(pathToFileListOnServer);
+
 
         // Let user know that search uses fixed list and ignores search parameters
         JOptionPane.showMessageDialog(null,
