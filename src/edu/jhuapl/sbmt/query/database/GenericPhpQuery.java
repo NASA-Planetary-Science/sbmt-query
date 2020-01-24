@@ -139,6 +139,9 @@ public class GenericPhpQuery extends DatabaseQueryBase implements MetadataManage
 
         try
         {
+        	boolean tableExists = QueryBase.checkForDatabaseTable(imagesDatabase);
+            if (!tableExists) throw new RuntimeException("Database table " + imagesDatabase + " is not available now.");
+
             if (searchString != null)
             {
                 HashMap<String, String> args = new HashMap<>();
@@ -154,9 +157,6 @@ public class GenericPhpQuery extends DatabaseQueryBase implements MetadataManage
             double maxScDistance = Math.max(startDistance, stopDistance);
             double minResolution = Math.min(startResolution, stopResolution) / 1000.0;
             double maxResolution = Math.max(startResolution, stopResolution) / 1000.0;
-
-            boolean tableExists = QueryBase.checkForDatabaseTable(imagesDatabase);
-            if (!tableExists) throw new RuntimeException("Database table " + imagesDatabase + " is not available now.");
 
             HashMap<String, String> args = new HashMap<>();
             args.put("imagesDatabase", imagesDatabase);
@@ -236,8 +236,6 @@ public class GenericPhpQuery extends DatabaseQueryBase implements MetadataManage
             	if (!FileCache.instance().isAccessible(rootPath + "/" + imageListName))
             		imageListName = "imagelist.txt";
             }
-//            String imageSourceType = (imageSource.equals(ImageSource.GASKELL)) ? "sum" : "info";
-//            results = getResultsFromFileListOnServer(rootPath + "/imagelist-" + imageSourceType + ".txt", getDataPath(), getGalleryPath(), searchString);
             results = getResultsFromFileListOnServer(rootPath + "/" + imageListName, getDataPath(), getGalleryPath(), searchString);
         }
         catch (IOException e)
