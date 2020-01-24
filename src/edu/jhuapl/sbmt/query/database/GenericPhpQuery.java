@@ -9,6 +9,7 @@ import java.util.TreeSet;
 import org.joda.time.DateTime;
 
 import edu.jhuapl.saavtk.util.Configuration;
+import edu.jhuapl.saavtk.util.FileCache;
 import edu.jhuapl.sbmt.client.SmallBodyViewConfig;
 import edu.jhuapl.sbmt.model.image.ImageSource;
 import edu.jhuapl.sbmt.query.QueryBase;
@@ -228,8 +229,16 @@ public class GenericPhpQuery extends DatabaseQueryBase implements MetadataManage
         {
 //            e.printStackTrace();
             System.err.println("GenericPhpQuery: runQuery: falling back to image list");
-            String imageSourceType = (imageSource.equals(ImageSource.GASKELL)) ? "sum" : "info";
-            results = getResultsFromFileListOnServer(rootPath + "/imagelist-" + imageSourceType + ".txt", getDataPath(), getGalleryPath(), searchString);
+            String imageListName = "imagelist-info.txt";
+            if (imageSource.equals(ImageSource.GASKELL))
+            {
+            	imageListName = "imagelist-sum.txt";
+            	if (!FileCache.instance().isAccessible(rootPath + "/" + imageListName))
+            		imageListName = "imagelist.txt";
+            }
+//            String imageSourceType = (imageSource.equals(ImageSource.GASKELL)) ? "sum" : "info";
+//            results = getResultsFromFileListOnServer(rootPath + "/imagelist-" + imageSourceType + ".txt", getDataPath(), getGalleryPath(), searchString);
+            results = getResultsFromFileListOnServer(rootPath + "/" + imageListName, getDataPath(), getGalleryPath(), searchString);
         }
         catch (IOException e)
         {
