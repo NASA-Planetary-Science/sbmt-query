@@ -167,7 +167,7 @@ public abstract class QueryBase implements Cloneable, MetadataManager, IQueryBas
         else if (state.isUrlUnauthorized())
         {
             JOptionPane.showMessageDialog(null,
-                    "You are not authorized to access this data.",
+                    "You are not authorized to access these data.",
                     "Warning",
                     JOptionPane.WARNING_MESSAGE);
         }
