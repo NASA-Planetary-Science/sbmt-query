@@ -37,7 +37,7 @@ import org.joda.time.DateTimeZone;
 import com.google.common.collect.Lists;
 
 import edu.jhuapl.saavtk.util.Configuration;
-import edu.jhuapl.saavtk.util.DownloadableFileInfo.DownloadableFileState;
+import edu.jhuapl.saavtk.util.DownloadableFileState;
 import edu.jhuapl.saavtk.util.FileCache;
 import edu.jhuapl.saavtk.util.FileUtil;
 import edu.jhuapl.saavtk.util.SafeURLPaths;
