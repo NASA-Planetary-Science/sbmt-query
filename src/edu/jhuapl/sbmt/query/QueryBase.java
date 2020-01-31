@@ -41,6 +41,7 @@ import edu.jhuapl.saavtk.util.DownloadableFileState;
 import edu.jhuapl.saavtk.util.FileCache;
 import edu.jhuapl.saavtk.util.FileUtil;
 import edu.jhuapl.saavtk.util.SafeURLPaths;
+import edu.jhuapl.saavtk.util.UrlInfo.UrlStatus;
 
 import crucible.crust.metadata.api.Key;
 import crucible.crust.metadata.api.Metadata;
@@ -222,21 +223,36 @@ public abstract class QueryBase implements Cloneable, MetadataManager, IQueryBas
             String pathToImageFolderOnServer,
             String pathToGalleryFolderOnServer)
     {
+    	DownloadableFileState state = FileCache.refreshStateInfo(pathToFileListOnServer);
+    	if (state.getUrlState().getStatus() != UrlStatus.ACCESSIBLE)
+    	{
+    		return getCachedResults(getDataPath());
+    	}
+
         if (!pathToImageFolderOnServer.endsWith("/"))
             pathToImageFolderOnServer += "/";
 
         if (pathToGalleryFolderOnServer != null && !pathToGalleryFolderOnServer.endsWith("/"))
             pathToGalleryFolderOnServer += "/";
 
-        if (!FileCache.instance().isAccessible(pathToFileListOnServer))
-        {
-            return getCachedResults(getDataPath());
-        }
         List<List<String>> results = new ArrayList<>();
+
+        if (!checkAuthorizedAccess())
+        {
+            return results;
+        }
+
         File file = FileCache.getFileFromServer(pathToFileListOnServer);
 
+//        if (!FileCache.instance().isAccessible(pathToFileListOnServer))
+//        {
+//            return getCachedResults(getDataPath());
+//        }
+
+
         // Let user know that search uses fixed list and ignores search parameters
-        JOptionPane.showMessageDialog(null,
+        if (!Boolean.parseBoolean(System.getProperty("java.awt.headless")))
+        	JOptionPane.showMessageDialog(null,
                 "Search uses a fixed list and ignores all but file name search parameters.",
                 "Notification",
                 JOptionPane.INFORMATION_MESSAGE);

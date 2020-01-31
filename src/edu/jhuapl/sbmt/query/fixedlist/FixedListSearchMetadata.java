@@ -20,6 +20,7 @@ public class FixedListSearchMetadata implements SearchMetadata
     static final Key<String> DATA_PATH = Key.of("Data path");
     static final Key<String> ROOT_PATH = Key.of("Root path");
     static final Key<String> POINTING_SOURCE = Key.of("Pointing Source");
+    static final Key<String> SEARCH_STRING = Key.of("Search String");
 
     FixedMetadata searchMetadata;
 
@@ -27,6 +28,12 @@ public class FixedListSearchMetadata implements SearchMetadata
     public static FixedListSearchMetadata of(String name, String filelist, String datapath, String rootPath, ImageSource pointingSource)
     {
         FixedMetadata metadata = createMetadata(name, filelist, datapath, rootPath, pointingSource);
+        return new FixedListSearchMetadata(metadata);
+    }
+
+    public static FixedListSearchMetadata of(String name, String filelist, String datapath, String rootPath, ImageSource pointingSource, String searchString)
+    {
+        FixedMetadata metadata = createMetadata(name, filelist, datapath, rootPath, pointingSource, searchString);
         return new FixedListSearchMetadata(metadata);
     }
 
@@ -44,6 +51,26 @@ public class FixedListSearchMetadata implements SearchMetadata
         metadata.put(FixedListSearchMetadata.DATA_PATH, datapath);
         metadata.put(FixedListSearchMetadata.ROOT_PATH, rootPath);
         metadata.put(FixedListSearchMetadata.POINTING_SOURCE, pointingSource.toString());
+        metadata.put(FixedListSearchMetadata.SEARCH_STRING, null);
+        return FixedMetadata.of(metadata);
+    }
+
+    private static FixedMetadata createMetadata(String name, String filelist, String datapath, String rootPath, ImageSource pointingSource, String searchString)
+    {
+    	if (searchString == null) return createMetadata(name, filelist, datapath, rootPath, pointingSource);
+        Preconditions.checkNotNull(name);
+        Preconditions.checkNotNull(filelist);
+        Preconditions.checkNotNull(datapath);
+        Preconditions.checkNotNull(pointingSource);
+
+        SettableMetadata metadata = SettableMetadata.of(FIXEDLISTSEARCH_DATA_VERSION);
+        metadata.put(FixedListSearchMetadata.NAME, name);
+
+        metadata.put(FixedListSearchMetadata.FILE_LIST, filelist);
+        metadata.put(FixedListSearchMetadata.DATA_PATH, datapath);
+        metadata.put(FixedListSearchMetadata.ROOT_PATH, rootPath);
+        metadata.put(FixedListSearchMetadata.POINTING_SOURCE, pointingSource.toString());
+        metadata.put(FixedListSearchMetadata.SEARCH_STRING, searchString);
         return FixedMetadata.of(metadata);
     }
 
