@@ -9,6 +9,7 @@ import java.util.TreeSet;
 import org.joda.time.DateTime;
 
 import edu.jhuapl.saavtk.util.Configuration;
+import edu.jhuapl.saavtk.util.FileCache;
 import edu.jhuapl.sbmt.client.SmallBodyViewConfig;
 import edu.jhuapl.sbmt.model.image.ImageSource;
 import edu.jhuapl.sbmt.query.QueryBase;
@@ -25,8 +26,8 @@ import crucible.crust.metadata.impl.SettableMetadata;
 public class GenericPhpQuery extends DatabaseQueryBase implements MetadataManager
 {
 
-    private String tablePrefixSpc;
-    private String tablePrefixSpice;
+    String tablePrefixSpc;
+    String tablePrefixSpice;
 
     @Override
     public GenericPhpQuery clone()
@@ -138,6 +139,9 @@ public class GenericPhpQuery extends DatabaseQueryBase implements MetadataManage
 
         try
         {
+        	boolean tableExists = QueryBase.checkForDatabaseTable(imagesDatabase);
+            if (!tableExists) throw new RuntimeException("Database table " + imagesDatabase + " is not available now.");
+
             if (searchString != null)
             {
                 HashMap<String, String> args = new HashMap<>();
@@ -153,9 +157,6 @@ public class GenericPhpQuery extends DatabaseQueryBase implements MetadataManage
             double maxScDistance = Math.max(startDistance, stopDistance);
             double minResolution = Math.min(startResolution, stopResolution) / 1000.0;
             double maxResolution = Math.max(startResolution, stopResolution) / 1000.0;
-
-            boolean tableExists = QueryBase.checkForDatabaseTable(imagesDatabase);
-            if (!tableExists) throw new RuntimeException("Database table " + imagesDatabase + " is not available now.");
 
             HashMap<String, String> args = new HashMap<>();
             args.put("imagesDatabase", imagesDatabase);
@@ -226,12 +227,21 @@ public class GenericPhpQuery extends DatabaseQueryBase implements MetadataManage
         }
         catch (RuntimeException e)
         {
-            e.printStackTrace();
-            results = getResultsFromFileListOnServer(rootPath + "/imagelist.txt", getDataPath(), getGalleryPath(), searchString);
+//            e.printStackTrace();
+            System.err.println("GenericPhpQuery: runQuery: falling back to image list");
+            String imageListName = "imagelist-info.txt";
+            if (imageSource.equals(ImageSource.GASKELL))
+            {
+            	imageListName = "imagelist-sum.txt";
+            	if (!FileCache.instance().isAccessible(rootPath + "/" + imageListName))
+            		imageListName = "imagelist.txt";
+            }
+            results = getResultsFromFileListOnServer(rootPath + "/" + imageListName, getDataPath(), getGalleryPath(), searchString);
         }
         catch (IOException e)
         {
-            e.printStackTrace();
+//            e.printStackTrace();
+            System.err.println("GenericPhpQuery: runQuery: Can't reach database server, or some other database access failure; falling back to cached results");
             results = getCachedResults(getDataPath());
         }
 

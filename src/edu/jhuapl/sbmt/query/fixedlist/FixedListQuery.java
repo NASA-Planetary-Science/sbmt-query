@@ -70,6 +70,7 @@ public class FixedListQuery<T> extends FixedListQueryBase
         FixedMetadata metadata = queryMetadata.getMetadata();
         String fileListRoot = metadata.get(FixedListSearchMetadata.FILE_LIST);
         String dataPath = metadata.get(FixedListSearchMetadata.DATA_PATH);
+        String searchString = metadata.get(FixedListSearchMetadata.SEARCH_STRING);
         rootPath = metadata.get(FixedListSearchMetadata.ROOT_PATH);
 
         String fileListSuffix = null;
@@ -96,7 +97,7 @@ public class FixedListQuery<T> extends FixedListQueryBase
         String fileList = getFileList(fileListRoot, fileListSuffix);
 
         List<List<String>> results;
-       	results = getResultsFromFileListOnServer(rootPath + "/" /*+ dataListPrefix + "/"*/ + fileList, rootPath + "/" + dataPath + "/", getGalleryPath());
+       	results = getResultsFromFileListOnServer(rootPath + "/" /*+ dataListPrefix + "/"*/ + fileList, rootPath + "/" + dataPath + "/", getGalleryPath(), searchString);
 
         return SearchResultsMetadata.of("", results);   //"" should really be a query name here, if applicable
     }
