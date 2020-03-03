@@ -226,7 +226,7 @@ public abstract class QueryBase implements Cloneable, MetadataManager, IQueryBas
     	DownloadableFileState state = FileCache.refreshStateInfo(pathToFileListOnServer);
     	if (state.getUrlState().getStatus() != UrlStatus.ACCESSIBLE)
     	{
-    		return getCachedResults(getDataPath());
+    		return getCachedResults(getDataPath(), null);
     	}
 
         if (!pathToImageFolderOnServer.endsWith("/"))
@@ -414,7 +414,8 @@ public abstract class QueryBase implements Cloneable, MetadataManager, IQueryBas
      * @return the image list
      */
     protected List<List<String>> getCachedResults(
-            String pathToDataFolder
+            String pathToDataFolder,
+            String searchString
             )
     {
         if (headless  == false)
@@ -434,14 +435,29 @@ public abstract class QueryBase implements Cloneable, MetadataManager, IQueryBas
             filesFound.put(path, file);
         }
 
-        final List<List<String>> result = new ArrayList<>();
+        final List<List<String>> results = new ArrayList<>();
         SortedMap<String, List<String>> inventory = getDataInventory();
         for (Entry<String, List<String>> each: inventory.entrySet())
         {
             if (filesFound.containsKey(each.getKey()))
-                result.add(each.getValue());
+                results.add(each.getValue());
         }
-        return result;
+        if (searchString != null && !searchString.isEmpty())
+        {
+            searchString = wildcardToPathRegex(searchString);
+            List<List<String>> unfilteredResults = results;
+            List<List<String>> filteredResults = new ArrayList<>();
+            for (List<String> result : unfilteredResults)
+            {
+                String name = result.get(0);
+                if (name.matches(searchString))
+                {
+                    filteredResults.add(result);
+                }
+            }
+            return filteredResults;
+        }
+        return results;
     }
 
     /**
