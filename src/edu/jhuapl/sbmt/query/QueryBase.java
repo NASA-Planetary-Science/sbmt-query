@@ -41,7 +41,7 @@ import edu.jhuapl.saavtk.util.DownloadableFileState;
 import edu.jhuapl.saavtk.util.FileCache;
 import edu.jhuapl.saavtk.util.FileUtil;
 import edu.jhuapl.saavtk.util.SafeURLPaths;
-import edu.jhuapl.saavtk.util.UrlInfo.UrlStatus;
+import edu.jhuapl.saavtk.util.UrlStatus;
 
 import crucible.crust.metadata.api.Key;
 import crucible.crust.metadata.api.Metadata;
