@@ -1,5 +1,7 @@
 package edu.jhuapl.sbmt.query;
 
+import java.util.List;
+
 import crucible.crust.metadata.api.MetadataManager;
 
 public interface IQueryBase extends MetadataManager
@@ -18,5 +20,12 @@ public interface IQueryBase extends MetadataManager
 	String getGalleryPath();
 
 	public IQueryBase clone();
+
+	public String getRootPath();
+
+	public List<List<String>> getResultsFromFileListOnServer(
+            String pathToFileListOnServer,
+            String pathToImageFolderOnServer,
+            String pathToGalleryFolderOnServer);
 
 }

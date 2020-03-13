@@ -218,7 +218,7 @@ public abstract class QueryBase implements Cloneable, MetadataManager, IQueryBas
         return results;
     }
 
-    protected List<List<String>> getResultsFromFileListOnServer(
+    public List<List<String>> getResultsFromFileListOnServer(
             String pathToFileListOnServer,
             String pathToImageFolderOnServer,
             String pathToGalleryFolderOnServer)
