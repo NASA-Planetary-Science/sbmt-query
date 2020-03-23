@@ -223,6 +223,15 @@ public abstract class QueryBase implements Cloneable, MetadataManager, IQueryBas
             String pathToImageFolderOnServer,
             String pathToGalleryFolderOnServer)
     {
+    	return getResultsFromFileListOnServer(pathToFileListOnServer, pathToImageFolderOnServer, pathToGalleryFolderOnServer, true);
+    }
+
+    public List<List<String>> getResultsFromFileListOnServer(
+            String pathToFileListOnServer,
+            String pathToImageFolderOnServer,
+            String pathToGalleryFolderOnServer,
+            boolean showFixedListPrompt)
+    {
     	DownloadableFileState state = FileCache.refreshStateInfo(pathToFileListOnServer);
     	if (state.getUrlState().getStatus() != UrlStatus.ACCESSIBLE)
     	{
@@ -251,7 +260,7 @@ public abstract class QueryBase implements Cloneable, MetadataManager, IQueryBas
 
 
         // Let user know that search uses fixed list and ignores search parameters
-        if (!Boolean.parseBoolean(System.getProperty("java.awt.headless")))
+        if (!Boolean.parseBoolean(System.getProperty("java.awt.headless")) && showFixedListPrompt)
         	JOptionPane.showMessageDialog(null,
                 "Search uses a fixed list and ignores all but file name search parameters.",
                 "Notification",

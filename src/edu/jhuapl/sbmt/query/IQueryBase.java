@@ -28,4 +28,10 @@ public interface IQueryBase extends MetadataManager
             String pathToImageFolderOnServer,
             String pathToGalleryFolderOnServer);
 
+	public List<List<String>> getResultsFromFileListOnServer(
+            String pathToFileListOnServer,
+            String pathToImageFolderOnServer,
+            String pathToGalleryFolderOnServer,
+            boolean showFixedListPrompt);
+
 }
