@@ -242,7 +242,7 @@ public class GenericPhpQuery extends DatabaseQueryBase implements MetadataManage
         {
 //            e.printStackTrace();
             System.err.println("GenericPhpQuery: runQuery: Can't reach database server, or some other database access failure; falling back to cached results");
-            results = getCachedResults(getDataPath());
+            results = getCachedResults(getDataPath(), searchString);
         }
 
         return SearchResultsMetadata.of("", results);   //"" should really be a query name here, if applicable
