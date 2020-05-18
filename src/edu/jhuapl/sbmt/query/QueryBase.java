@@ -41,7 +41,7 @@ import edu.jhuapl.saavtk.util.DownloadableFileState;
 import edu.jhuapl.saavtk.util.FileCache;
 import edu.jhuapl.saavtk.util.FileUtil;
 import edu.jhuapl.saavtk.util.SafeURLPaths;
-import edu.jhuapl.saavtk.util.UrlInfo.UrlStatus;
+import edu.jhuapl.saavtk.util.UnauthorizedAccessException;
 
 import crucible.crust.metadata.api.Key;
 import crucible.crust.metadata.api.Metadata;
@@ -159,22 +159,20 @@ public abstract class QueryBase implements Cloneable, MetadataManager, IQueryBas
 
     protected boolean checkAuthorizedAccess()
     {
-        DownloadableFileState state = FileCache.instance().query(getDataPath(), false);
-
-        if (state.isAccessible())
+        try
         {
-            return true;
+            return FileCache.isFileGettable(getDataPath());
         }
-        else if (state.isUrlUnauthorized())
+        catch (UnauthorizedAccessException e)
         {
             JOptionPane.showMessageDialog(null,
                     "You are not authorized to access these data.",
                     "Warning",
                     JOptionPane.WARNING_MESSAGE);
+            return false;
         }
-
-        return false;
     }
+
     protected String constructUrlArguments(HashMap<String, String> args)
     {
         String str = "";
@@ -233,7 +231,7 @@ public abstract class QueryBase implements Cloneable, MetadataManager, IQueryBas
             boolean showFixedListPrompt)
     {
     	DownloadableFileState state = FileCache.refreshStateInfo(pathToFileListOnServer);
-    	if (state.getUrlState().getStatus() != UrlStatus.ACCESSIBLE)
+    	if (!state.isAccessible())
     	{
     		return getCachedResults(getDataPath(), null);
     	}
