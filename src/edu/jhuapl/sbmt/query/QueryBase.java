@@ -36,6 +36,7 @@ import org.joda.time.DateTimeZone;
 
 import com.google.common.collect.Lists;
 
+import edu.jhuapl.saavtk.util.CloseableUrlConnection;
 import edu.jhuapl.saavtk.util.Configuration;
 import edu.jhuapl.saavtk.util.DownloadableFileState;
 import edu.jhuapl.saavtk.util.FileCache;
@@ -133,11 +134,22 @@ public abstract class QueryBase implements Cloneable, MetadataManager, IQueryBas
 
         String line;
 
+        boolean firstLine = true;
+
         while ((line = in.readLine()) != null)
         {
             line = line.trim();
             if (line.length() == 0)
                 continue;
+
+            if (firstLine)
+            {
+                if (CloseableUrlConnection.detectRejectionMessages(line))
+                {
+                    throw new IOException("Server rejected query to URL " + u);
+                }
+            }
+            firstLine = false;
 
             String[] tokens = line.split("\\s+");
             List<String> words = new ArrayList<>();
