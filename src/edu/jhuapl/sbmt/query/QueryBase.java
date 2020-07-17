@@ -173,7 +173,13 @@ public abstract class QueryBase implements Cloneable, MetadataManager, IQueryBas
     {
         try
         {
-            return FileCache.isFileGettable(getDataPath());
+        	if (getDataPath() != null)
+    		{
+        		boolean isGettable = FileCache.isFileGettable(getDataPath());
+        		if (isGettable == true) return true;
+        		else return FileCache.isFileGettable(getRootPath());
+    		}
+        	else return FileCache.isFileGettable(getRootPath());
         }
         catch (UnauthorizedAccessException e)
         {

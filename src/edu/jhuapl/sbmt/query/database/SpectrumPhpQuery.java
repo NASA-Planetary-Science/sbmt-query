@@ -1,5 +1,7 @@
 package edu.jhuapl.sbmt.query.database;
 
+import edu.jhuapl.sbmt.query.fixedlist.FixedListQuery;
+
 import crucible.crust.metadata.api.Key;
 import crucible.crust.metadata.api.Metadata;
 import crucible.crust.metadata.api.MetadataManager;
@@ -11,6 +13,7 @@ public abstract class SpectrumPhpQuery extends DatabaseQueryBase implements Meta
 
     protected String spectraTableName;
     protected String cubeTableName;
+    private FixedListQuery fixedListQuery;
 
     @Override
     public SpectrumPhpQuery clone()
@@ -34,6 +37,13 @@ public abstract class SpectrumPhpQuery extends DatabaseQueryBase implements Meta
         this.rootPath = rootPath;
         this.spectraTableName = spectrumTable.toLowerCase();
         this.cubeTableName = cubeTable.toLowerCase();
+        fixedListQuery = new FixedListQuery(rootPath);
+    }
+
+    @Override
+    public String getDataPath()
+    {
+        return rootPath + "/spectra";
     }
 
 //    public SpectrumPhpQuery(String rootPath, String tablePrefixSpc, String tablePrefixSpice, String galleryPath)
@@ -256,5 +266,7 @@ public abstract class SpectrumPhpQuery extends DatabaseQueryBase implements Meta
         cubeTableName = read(cubeTableNameKey, source);
     }
 
-
+	public FixedListQuery getFixedListQuery() {
+		return fixedListQuery;
+	}
 }
