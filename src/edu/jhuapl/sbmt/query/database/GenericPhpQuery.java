@@ -248,11 +248,11 @@ public class GenericPhpQuery extends DatabaseQueryBase implements MetadataManage
 
             if (imageNameTable != null)
             {
-            	System.out.println("GenericPhpQuery: runQuery: image name table " + imageNameTable);
+//            	System.out.println("GenericPhpQuery: runQuery: image name table " + imageNameTable);
             	String visibilityStr = publicOnly ? "public" : "public,private";
             	args.put("imageLocationDatabase", imageNameTable);
             	args.put("visibilityStr", visibilityStr);
-            	results = doQuery("searchimages2.php", constructUrlArguments(args));
+            	results = doQuery("searchimages2.php", constructUrlArguments(args), true);
             	results.forEach(result -> System.out.println("GenericPhpQuery: runQuery: results " + result) );
             }
             else

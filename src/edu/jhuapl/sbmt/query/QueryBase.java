@@ -112,6 +112,11 @@ public abstract class QueryBase implements Cloneable, MetadataManager, IQueryBas
 
     protected List<List<String>> doQuery(String phpScript, String data) throws IOException
     {
+    	return doQuery(phpScript, data, false);
+    }
+
+    protected List<List<String>> doQuery(String phpScript, String data, boolean forcePrepend) throws IOException
+    {
         List<List<String>> results = new ArrayList<>();
 
         if (!checkAuthorizedAccess())
@@ -161,7 +166,7 @@ public abstract class QueryBase implements Cloneable, MetadataManager, IQueryBas
         in.close();
         for (List<String> res : results)
         {
-            changeDataPathToFullPath(res);
+            changeDataPathToFullPath(res, forcePrepend);
         }
 
         updateDataInventory(results);
@@ -596,8 +601,13 @@ public abstract class QueryBase implements Cloneable, MetadataManager, IQueryBas
     // a full path.
     protected void changeDataPathToFullPath(List<String> result)
     {
+    	changeDataPathToFullPath(result, false);
+    }
+
+    protected void changeDataPathToFullPath(List<String> result, boolean forcePrepend)
+    {
         String fullPath = result.get(0);
-        if (!fullPath.contains("/"))
+        if (!fullPath.contains("/") || forcePrepend)
         {
             result.set(0, getDataPath() + "/" + fullPath);
         }
