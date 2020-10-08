@@ -119,10 +119,10 @@ public abstract class QueryBase implements Cloneable, MetadataManager, IQueryBas
     {
         List<List<String>> results = new ArrayList<>();
 
-        if (!checkAuthorizedAccess())
-        {
-            return results;
-        }
+//        if (!checkAuthorizedAccess())
+//        {
+//            return results;
+//        }
 
         URL u = new URL(Configuration.getQueryRootURL() + "/" + phpScript);
         URLConnection conn = u.openConnection();
