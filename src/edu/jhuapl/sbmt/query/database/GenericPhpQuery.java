@@ -114,12 +114,12 @@ public class GenericPhpQuery extends DatabaseQueryBase implements MetadataManage
                     rootPath + "/images/", galleryPath, searchString);
             return SearchResultsMetadata.of("", resultsFromFileListOnServer);   //"" should really be a query name here, if applicable
         }
-        else if (imageSource == ImageSource.CORRECTED_SPICE)
-        {
-            List<List<String>> resultsFromFileListOnServer = getResultsFromFileListOnServer(rootPath + "/infofiles-corrected/imagelist.txt",
-                    rootPath + "/images/", galleryPath, searchString);
-            return SearchResultsMetadata.of("", resultsFromFileListOnServer);   //"" should really be a query name here, if applicable
-        }
+//        else if (imageSource == ImageSource.CORRECTED_SPICE)
+//        {
+//            List<List<String>> resultsFromFileListOnServer = getResultsFromFileListOnServer(rootPath + "/infofiles-corrected/imagelist.txt",
+//                    rootPath + "/images/", galleryPath, searchString);
+//            return SearchResultsMetadata.of("", resultsFromFileListOnServer);   //"" should really be a query name here, if applicable
+//        }
         /*else if (imageSource == ImageSource.GASKELL_UPDATED)
         {
             return getResultsFromFileListOnServer(rootPath + "/sumfiles_to_be_delivered/imagelist.txt",
