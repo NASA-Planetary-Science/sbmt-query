@@ -609,10 +609,7 @@ public abstract class QueryBase implements MetadataManager, IQueryBase
 
     protected <T> T read(Key<T> key, Metadata configMetadata)
     {
-        T value = configMetadata.get(key);
-        if (value != null)
-            return value;
-        return null;
+        return configMetadata.hasKey(key) ? configMetadata.get(key) : null;
     }
 
 
