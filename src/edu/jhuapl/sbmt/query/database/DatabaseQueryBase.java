@@ -10,7 +10,7 @@ public abstract class DatabaseQueryBase extends QueryBase
 {
     protected String rootPath;
 
-    protected DatabaseQueryBase(String galleryPath)
+    protected DatabaseQueryBase(String rootPath, String galleryPath)
     {
         super(galleryPath);
         this.rootPath = null;

@@ -10,6 +10,7 @@ import org.joda.time.DateTime;
 
 import edu.jhuapl.saavtk.util.Configuration;
 import edu.jhuapl.saavtk.util.FileCache;
+import edu.jhuapl.saavtk.util.SafeURLPaths;
 import edu.jhuapl.sbmt.client.SmallBodyViewConfig;
 import edu.jhuapl.sbmt.model.image.ImageSource;
 import edu.jhuapl.sbmt.query.QueryBase;
@@ -26,6 +27,7 @@ import crucible.crust.metadata.impl.SettableMetadata;
 public class GenericPhpQuery extends DatabaseQueryBase implements MetadataManager
 {
 
+    private String dataPath;
     private String tablePrefixSpc;
     private String tablePrefixSpice;
     private boolean publicOnly = false;
@@ -33,23 +35,28 @@ public class GenericPhpQuery extends DatabaseQueryBase implements MetadataManage
 
     public GenericPhpQuery()
     {
-        this("", "", "", null);
+        this("", "", "", null, null);
     }
 
     public GenericPhpQuery(String rootPath, String tablePrefix)
     {
-        this(rootPath, tablePrefix, "", null);
+        this(rootPath, tablePrefix, "", null, null);
     }
 
     public GenericPhpQuery(String rootPath, String tablePrefixSpc, String galleryPath)
     {
-        this(rootPath, tablePrefixSpc, tablePrefixSpc, galleryPath);
+        this(rootPath, tablePrefixSpc, tablePrefixSpc, galleryPath, null);
     }
 
     public GenericPhpQuery(String rootPath, String tablePrefixSpc, String tablePrefixSpice, String galleryPath)
     {
-        super(galleryPath);
-        this.rootPath = rootPath;
+        this(rootPath, tablePrefixSpc, tablePrefixSpc, galleryPath, null);
+    }
+
+    public GenericPhpQuery(String rootPath, String tablePrefixSpc, String tablePrefixSpice, String galleryPath, String dataPath)
+    {
+        super(rootPath, galleryPath);
+        this.dataPath = dataPath != null ? dataPath : SafeURLPaths.instance().getString(rootPath, "images");
         this.tablePrefixSpc = tablePrefixSpc.toLowerCase();
         this.tablePrefixSpice = tablePrefixSpice.toLowerCase();
     }
@@ -57,7 +64,7 @@ public class GenericPhpQuery extends DatabaseQueryBase implements MetadataManage
     @Override
     public GenericPhpQuery copy()
     {
-        return new GenericPhpQuery(rootPath, tablePrefixSpc, tablePrefixSpice, galleryPath);
+        return new GenericPhpQuery(rootPath, tablePrefixSpc, tablePrefixSpice, galleryPath, dataPath);
     }
 
     public void setPublicOnly(boolean publicOnly)
@@ -75,7 +82,7 @@ public class GenericPhpQuery extends DatabaseQueryBase implements MetadataManage
     @Override
     public String getDataPath()
     {
-        return rootPath + "/images";
+        return dataPath;
     }
 
     @Override
@@ -450,18 +457,20 @@ public class GenericPhpQuery extends DatabaseQueryBase implements MetadataManage
         return tablePrefixSpice;
     }
 
-    Key<String> rootPathKey = Key.of("rootPath");
-    Key<String> tablePrefixSpcKey = Key.of("tablePrefixSpc");
-    Key<String> tablePrefixSpiceKey = Key.of("tablePrefixSpice");
-    Key<String> galleryPathKey = Key.of("galleryPath");
-    Key<String> imageNameTableKey = Key.of("imageNameTable");
-    Key<Boolean> publicOnlyKey = Key.of("publicOnly");
+    private static final Key<String> rootPathKey = Key.of("rootPath");
+    private static final Key<String> dataPathKey = Key.of("dataPath");
+    private static final Key<String> tablePrefixSpcKey = Key.of("tablePrefixSpc");
+    private static final Key<String> tablePrefixSpiceKey = Key.of("tablePrefixSpice");
+    private static final Key<String> galleryPathKey = Key.of("galleryPath");
+    private static final Key<String> imageNameTableKey = Key.of("imageNameTable");
+    private static final Key<Boolean> publicOnlyKey = Key.of("publicOnly");
 
     @Override
     public Metadata store()
     {
-        SettableMetadata configMetadata = SettableMetadata.of(Version.of(1, 0));
+        SettableMetadata configMetadata = SettableMetadata.of(Version.of(1, 1));
         write(rootPathKey, rootPath, configMetadata);
+        write(dataPathKey, dataPath, configMetadata);
         write(tablePrefixSpcKey, tablePrefixSpc, configMetadata);
         write(tablePrefixSpiceKey, tablePrefixSpice, configMetadata);
         write(galleryPathKey, galleryPath, configMetadata);
@@ -475,6 +484,8 @@ public class GenericPhpQuery extends DatabaseQueryBase implements MetadataManage
     public void retrieve(Metadata source)
     {
         rootPath = read(rootPathKey, source);
+        String dataPath = read(dataPathKey, source);
+        this.dataPath = dataPath != null ? dataPath : SafeURLPaths.instance().getString(rootPath, "images");
         tablePrefixSpc = read(tablePrefixSpcKey, source);
         tablePrefixSpice = read(tablePrefixSpiceKey, source);
         if (source.hasKey(galleryPathKey)) galleryPath = read(galleryPathKey, source);

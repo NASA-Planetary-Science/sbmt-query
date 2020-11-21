@@ -27,8 +27,7 @@ public abstract class SpectrumPhpQuery extends DatabaseQueryBase implements Meta
 
     public SpectrumPhpQuery(String rootPath, String spectrumTable, String cubeTable)
     {
-        super("");
-        this.rootPath = rootPath;
+        super(rootPath, "");
         this.spectraTableName = spectrumTable.toLowerCase();
         this.cubeTableName = cubeTable.toLowerCase();
         fixedListQuery = new FixedListQuery(rootPath);
