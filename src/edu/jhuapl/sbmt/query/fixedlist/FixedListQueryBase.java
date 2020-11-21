@@ -11,21 +11,6 @@ public abstract class FixedListQueryBase extends QueryBase
     protected FixedListQueryBase(String galleryPath)
     {
         super(galleryPath);
-        this.galleryPath = galleryPath;
-    }
-
-    @Override
-    public FixedListQueryBase clone()
-    {
-//        try
-//        {
-            return (FixedListQueryBase) super.clone();
-//        }
-//        catch (CloneNotSupportedException e)
-//        {
-//            // Can't happen.
-//            throw new AssertionError(e);
-//        }
     }
 
 //    protected List<List<String>> getResultsFromFileListOnServer(

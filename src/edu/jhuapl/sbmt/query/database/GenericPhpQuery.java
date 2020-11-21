@@ -26,33 +26,24 @@ import crucible.crust.metadata.impl.SettableMetadata;
 public class GenericPhpQuery extends DatabaseQueryBase implements MetadataManager
 {
 
-    String tablePrefixSpc;
-    String tablePrefixSpice;
-    boolean publicOnly = false;
-    String imageNameTable = null;
-
-    @Override
-    public GenericPhpQuery clone()
-    {
-        return (GenericPhpQuery) super.clone();
-    }
+    private String tablePrefixSpc;
+    private String tablePrefixSpice;
+    private boolean publicOnly = false;
+    private String imageNameTable = null;
 
     public GenericPhpQuery()
     {
-        this("", "", null);
+        this("", "", null, null);
     }
 
     public GenericPhpQuery(String rootPath, String tablePrefix)
     {
-        this(rootPath, tablePrefix, null);
+        this(rootPath, tablePrefix, null, null);
     }
 
     public GenericPhpQuery(String rootPath, String tablePrefixSpc, String galleryPath)
     {
-        super(galleryPath);
-        this.rootPath = rootPath;
-        this.tablePrefixSpc = tablePrefixSpc.toLowerCase();
-        this.tablePrefixSpice = tablePrefixSpc.toLowerCase();
+        this(rootPath, tablePrefixSpc, tablePrefixSpc, galleryPath);
     }
 
     public GenericPhpQuery(String rootPath, String tablePrefixSpc, String tablePrefixSpice, String galleryPath)
@@ -61,6 +52,12 @@ public class GenericPhpQuery extends DatabaseQueryBase implements MetadataManage
         this.rootPath = rootPath;
         this.tablePrefixSpc = tablePrefixSpc.toLowerCase();
         this.tablePrefixSpice = tablePrefixSpice.toLowerCase();
+    }
+
+    @Override
+    public GenericPhpQuery copy()
+    {
+        return new GenericPhpQuery(rootPath, tablePrefixSpc, tablePrefixSpice, galleryPath);
     }
 
     public void setPublicOnly(boolean publicOnly)

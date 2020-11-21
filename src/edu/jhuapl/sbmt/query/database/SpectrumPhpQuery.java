@@ -15,12 +15,6 @@ public abstract class SpectrumPhpQuery extends DatabaseQueryBase implements Meta
     protected String cubeTableName;
     private FixedListQuery fixedListQuery;
 
-    @Override
-    public SpectrumPhpQuery clone()
-    {
-        return (SpectrumPhpQuery) super.clone();
-    }
-
     public SpectrumPhpQuery()
     {
         this("", "", null);
