@@ -33,12 +33,12 @@ public class GenericPhpQuery extends DatabaseQueryBase implements MetadataManage
 
     public GenericPhpQuery()
     {
-        this("", "", null, null);
+        this("", "", "", null);
     }
 
     public GenericPhpQuery(String rootPath, String tablePrefix)
     {
-        this(rootPath, tablePrefix, null, null);
+        this(rootPath, tablePrefix, "", null);
     }
 
     public GenericPhpQuery(String rootPath, String tablePrefixSpc, String galleryPath)
