@@ -593,7 +593,7 @@ public abstract class QueryBase implements Cloneable, MetadataManager, IQueryBas
 
     public String getGalleryPath()
     {
-        return galleryPath != null && FileCache.instance().isAccessible(galleryPath) ? galleryPath : null;
+        return galleryPath;
     }
 
     // Convert the 0th element of the result (the path to the data)
