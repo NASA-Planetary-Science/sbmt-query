@@ -75,15 +75,17 @@ public abstract class QueryBase implements MetadataManager, IQueryBase
         conn.setUseCaches(false);
         conn.setRequestProperty("User-Agent", "Mozilla/4.0");
 
-        OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-        wr.write("tableName=" + tableName);
-        wr.flush();
+        try (OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream()))
+        {
+            wr.write("tableName=" + tableName);
+            wr.flush();
+        }
 
-        InputStreamReader isr = new InputStreamReader(conn.getInputStream());
-        BufferedReader in = new BufferedReader(isr);
-
-        String line = in.readLine();
-        in.close();
+        String line;
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream())))
+        {
+            line = in.readLine();
+        }
 
         if (line == null)
         {
@@ -93,6 +95,7 @@ public abstract class QueryBase implements MetadataManager, IQueryBase
         {
             throw new IOException(line);
         }
+
         return line.equalsIgnoreCase("true");
     }
 
@@ -116,40 +119,41 @@ public abstract class QueryBase implements MetadataManager, IQueryBase
         conn.setUseCaches(false);
         conn.setRequestProperty("User-Agent", "Mozilla/4.0");
 
-        OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-        wr.write(data);
-        wr.flush();
-
-        InputStreamReader isr = new InputStreamReader(conn.getInputStream());
-        BufferedReader in = new BufferedReader(isr);
-
-        String line;
-
-        boolean firstLine = true;
-
-        while ((line = in.readLine()) != null)
+        try (OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream()))
         {
-            line = line.trim();
-            if (line.length() == 0)
-                continue;
-
-            if (firstLine)
-            {
-                if (CloseableUrlConnection.detectRejectionMessages(line))
-                {
-                    throw new IOException("Server rejected query to URL " + u);
-                }
-            }
-            firstLine = false;
-
-            String[] tokens = line.split("\\s+");
-            List<String> words = new ArrayList<>();
-            for (String word : tokens)
-                words.add(word);
-            results.add(words);
+            wr.write(data);
+            wr.flush();
         }
 
-        in.close();
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream())))
+        {
+            String line;
+
+            boolean firstLine = true;
+
+            while ((line = in.readLine()) != null)
+            {
+                line = line.trim();
+                if (line.length() == 0)
+                    continue;
+
+                if (firstLine)
+                {
+                    if (CloseableUrlConnection.detectRejectionMessages(line))
+                    {
+                        throw new IOException("Server rejected query to URL " + u);
+                    }
+                }
+                firstLine = false;
+
+                String[] tokens = line.split("\\s+");
+                List<String> words = new ArrayList<>();
+                for (String word : tokens)
+                    words.add(word);
+                results.add(words);
+            }
+        }
+
         for (List<String> res : results)
         {
             changeDataPathToFullPath(res, forcePrepend);
