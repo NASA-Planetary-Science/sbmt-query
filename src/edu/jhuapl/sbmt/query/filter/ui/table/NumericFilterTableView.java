@@ -159,7 +159,7 @@ public class NumericFilterTableView extends JPanel
 		tmpComposer.setEditor(FilterColumnLookup.FILTER_HIGH, new DefaultCellEditor(new JTextField()));
 
 		tmpComposer.getItem(FilterColumnLookup.FILTER_NAME).defaultSize *= 3;
-		tmpComposer.getItem(FilterColumnLookup.FILTER_TYPE).defaultSize *= 2;
+//		tmpComposer.getItem(FilterColumnLookup.FILTER_TYPE).defaultSize *= 2;
 		tmpComposer.getItem(FilterColumnLookup.FILTER_LOW).defaultSize *= 3;
 		tmpComposer.getItem(FilterColumnLookup.FILTER_HIGH).defaultSize *= 3;
 		tmpComposer.getItem(FilterColumnLookup.FILTER_UNITS).defaultSize *= 3;
@@ -193,7 +193,7 @@ public class NumericFilterTableView extends JPanel
 		tmpComposer.setEditor(FilterColumnLookup.FILTER_RANGE, new CustomComboBoxEditor(filterModel2));
 
 		tmpComposer.getItem(FilterColumnLookup.FILTER_NAME).defaultSize *= 3;
-		tmpComposer.getItem(FilterColumnLookup.FILTER_TYPE).defaultSize *= 2;
+//		tmpComposer.getItem(FilterColumnLookup.FILTER_TYPE).defaultSize *= 2;
 		tmpComposer.getItem(FilterColumnLookup.FILTER_RANGE).defaultSize *= 5;
 
 		filterTableHandler2 = new NumericFilterItemHandler(filterModel2, tmpComposer);
