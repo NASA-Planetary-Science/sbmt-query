@@ -1,5 +1,9 @@
 package edu.jhuapl.sbmt.query.filter.ui.table;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
 import edu.jhuapl.sbmt.query.filter.model.FilterModel;
 import edu.jhuapl.sbmt.query.filter.model.FilterType;
 
@@ -20,9 +24,10 @@ public class NumericFilterItemHandler extends BasicItemHandler<FilterType, Filte
 	@Override
 	public Object getColumnValue(FilterType type, FilterColumnLookup aEnum)
 	{
-		//TODO: Switch to using an index so the get all items doesn't take so long to look up
 		switch (aEnum)
 		{
+			case FILTER_ENABLED:
+				return type.isEnabled();
 			case FILTER_NAME:
 				return type.name();
 			case FILTER_TYPE:
@@ -35,6 +40,15 @@ public class NumericFilterItemHandler extends BasicItemHandler<FilterType, Filte
 				return type.getSelectedRangeValue();
 			case FILTER_UNITS:
 				return type.getUnit().name();
+			case FILTER_START_DATE:
+				return ((LocalDateTime)type.getRangeMin()).toLocalDate();
+			case FILTER_START_TIME:
+				return ((LocalDateTime)type.getRangeMin()).toLocalTime();
+			case FILTER_END_DATE:
+				return ((LocalDateTime)type.getRangeMax()).toLocalDate();
+			case FILTER_END_TIME:
+				return ((LocalDateTime)type.getRangeMax()).toLocalTime();
+
 			default:
 				break;
 		}
@@ -45,7 +59,11 @@ public class NumericFilterItemHandler extends BasicItemHandler<FilterType, Filte
 	@Override
 	public void setColumnValue(FilterType type, FilterColumnLookup aEnum, Object aValue)
 	{
-		if (aEnum == FilterColumnLookup.FILTER_LOW)
+		if (aEnum == FilterColumnLookup.FILTER_ENABLED)
+		{
+			type.setEnabled((Boolean)aValue);
+		}
+		else if (aEnum == FilterColumnLookup.FILTER_LOW)
 		{
 			type.getRange().set(0, aValue);
 		}
@@ -56,6 +74,34 @@ public class NumericFilterItemHandler extends BasicItemHandler<FilterType, Filte
 		else if (aEnum == FilterColumnLookup.FILTER_RANGE)
 		{
 			type.setSelectedRangeValue(aValue);
+		}
+		else if (aEnum == FilterColumnLookup.FILTER_START_DATE)
+		{
+			LocalDateTime startDate = (LocalDateTime)type.getRangeMin();
+			var newDate = (LocalDate)aValue;
+			startDate = startDate.with(newDate);
+			type.setRangeMin(startDate);
+		}
+		else if (aEnum == FilterColumnLookup.FILTER_START_TIME)
+		{
+			LocalDateTime startDate = (LocalDateTime)type.getRangeMin();
+			var newTime = (LocalTime)aValue;
+			startDate = startDate.with(newTime);
+			type.setRangeMin(startDate);
+		}
+		else if (aEnum == FilterColumnLookup.FILTER_END_DATE)
+		{
+			LocalDateTime endDate = (LocalDateTime)type.getRangeMax();
+			var newDate = (LocalDate)aValue;
+			endDate = endDate.with(newDate);
+			type.setRangeMax(endDate);
+		}
+		else if (aEnum == FilterColumnLookup.FILTER_END_TIME)
+		{
+			LocalDateTime endDate = (LocalDateTime)type.getRangeMax();
+			var newDate = (LocalTime)aValue;
+			endDate = endDate.with(newDate);
+			type.setRangeMax(endDate);
 		}
 		else
 			throw new UnsupportedOperationException("Column is not supported. Enum: " + aEnum);
