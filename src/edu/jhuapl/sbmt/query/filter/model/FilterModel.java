@@ -29,9 +29,9 @@ public class FilterModel extends BaseItemManager<FilterType>
 			{
 				String key = iterator.next();
 				queryString += key + "=" + filter.getSQLArguments().get(key);
-				if (iterator.hasNext()) queryString += "&";
+				if (iterator.hasNext()) queryString += " AND ";
 			}
-			if (filterIterator.hasNext()) queryString += "&";
+			if (filterIterator.hasNext()) queryString += " AND ";
 		}
 		System.out.println("FilterModel: getSQLQueryString: query string is " + queryString);
 		return queryString;
