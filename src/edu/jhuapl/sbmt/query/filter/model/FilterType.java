@@ -12,6 +12,8 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.base.Preconditions;
 
+import edu.jhuapl.sbmt.util.TimeUtil;
+
 public final class FilterType<C> implements Cloneable
 {
 	private static final Map<String, FilterType> FILTER_TYPE_IDENTIFIERS = new HashMap<>();
@@ -170,7 +172,7 @@ public final class FilterType<C> implements Cloneable
     public static final FilterType<Double> SC_ALTITUDE = create("SC Altitude",  Optional.of(FilterTypeUnit.KM), Double.class, Pair.of(0.0, 1000.0), "ScAltitude");
     public static final FilterType<String> LIMB = create("Limb", String.class, new String[] {"with only", "without only", "with or without"}, "limbType");
     public static final FilterType<String> IMAGE_POINTING = create("Image Pointing", String.class, new String[] {"SPC Derived", "SPICE Derivied"}, "Pointing");
-    public static final FilterType<LocalDateTime> TIME_WINDOW = create("Time Window", Optional.of(FilterTypeUnit.provide("Time Window")), LocalDateTime.class, Pair.of(LocalDateTime.now(), LocalDateTime.now()), "Date");	//TODO: replace the low bound with a good default
+    public static final FilterType<LocalDateTime> TIME_WINDOW = create("Time Window", Optional.of(FilterTypeUnit.provide("Time Window")), LocalDateTime.class, Pair.of(LocalDateTime.now(), LocalDateTime.now()), "tdb");	//TODO: replace the low bound with a good default
 
 
     private final String identifier;
@@ -182,6 +184,7 @@ public final class FilterType<C> implements Cloneable
     private String queryBaseString;
     private boolean enabled = false;
     private UUID index;
+//    private Function<Pair, Pair> converter;
 
     private FilterType(String identifier)
     {
@@ -341,8 +344,20 @@ public final class FilterType<C> implements Cloneable
 		else
 		{
 			ArrayList<C> range = dynamicValues.getCurrentValues();
-			args.put("min" + queryBaseString, String.valueOf(range.get(0)));
-			args.put("max" + queryBaseString, String.valueOf(range.get(1)));
+			Object minValue = range.get(0);
+			Object maxValue = range.get(1);
+			if (type == LocalDateTime.class)
+			{
+				LocalDateTime startTime = (LocalDateTime)range.get(0);
+				System.out.println("FilterType: getSQLArguments: start time is " + startTime.toString());
+				LocalDateTime stopTime = (LocalDateTime)range.get(1);
+				minValue = TimeUtil.str2et(startTime.toString());
+				maxValue = TimeUtil.str2et(stopTime.toString());
+			}
+
+
+			args.put("min" + queryBaseString, String.valueOf(minValue));
+			args.put("max" + queryBaseString, String.valueOf(maxValue));
 		}
 		return args;
 	}
@@ -361,6 +376,11 @@ public final class FilterType<C> implements Cloneable
 	public void setEnabled(boolean enabled)
 	{
 		this.enabled = enabled;
+	}
+
+	public String getQueryBaseString()
+	{
+		return queryBaseString;
 	}
 
 	@Override
