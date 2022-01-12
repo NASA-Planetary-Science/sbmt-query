@@ -82,6 +82,8 @@ public class FilterTypeUnit
     public static final FilterTypeUnit DEGREES = create("deg");
     public static final FilterTypeUnit KM = create("km");
     public static final FilterTypeUnit METERS_PER_PIXEL = create("mpp");
+    public static final FilterTypeUnit NONE = create("none");
+    public static final FilterTypeUnit SECONDS = create("sec");
 
     private final String identifier;
 

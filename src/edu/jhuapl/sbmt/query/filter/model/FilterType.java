@@ -3,13 +3,17 @@ package edu.jhuapl.sbmt.query.filter.model;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.apache.commons.lang3.tuple.Pair;
 
+import com.beust.jcommander.internal.Lists;
 import com.google.common.base.Preconditions;
 
 import edu.jhuapl.sbmt.util.TimeUtil;
@@ -26,7 +30,7 @@ public final class FilterType<C> implements Cloneable
      * @param identifier of the FilterType object
      * @return the FilterType object
      */
-    public static <C> FilterType<C> provideDynamic(String identifier, Class<C> filterType, DynamicFilterValues<C> dynamicValues, String queryBaseString)
+    public static <C> FilterType<C> provideDynamic(String identifier, Class<C> filterType, DynamicFilterValues<C> dynamicValues, String queryBaseString, boolean useByDefault)
     {
         Preconditions.checkNotNull(identifier);
 
@@ -37,7 +41,7 @@ public final class FilterType<C> implements Cloneable
 //            for (C val : dynamicValues.getCurrentValues()) rangeArray.add(val);
 //            System.out.println("FilterType: provideDynamic: number of values " + rangeArray.size());
 //            result = new FilterType<C>(identifier, filterType, rangeArray, Optional.ofNullable(null), queryBaseString);
-            result = new FilterType<C>(identifier, filterType, dynamicValues, Optional.ofNullable(null), queryBaseString);
+            result = new FilterType<C>(identifier, filterType, dynamicValues, Optional.ofNullable(null), queryBaseString, useByDefault);
             FILTER_TYPE_IDENTIFIERS.put(identifier, result);
         }
 
@@ -103,7 +107,18 @@ public final class FilterType<C> implements Cloneable
 
     public static Collection<FilterType> getRegisteredFilters()
     {
-    	return FILTER_TYPE_IDENTIFIERS.values();
+    	List vals = Lists.newArrayList();
+    	vals.addAll(FILTER_TYPE_IDENTIFIERS.values());
+    	Collections.sort(vals, new Comparator<FilterType>()
+		{
+
+			@Override
+			public int compare(FilterType arg0, FilterType arg1)
+			{
+				return arg0.toString().compareTo(arg1.toString());
+			}
+		});
+    	return vals;
     }
 
     /**
@@ -115,15 +130,15 @@ public final class FilterType<C> implements Cloneable
      * @throws IllegalArgumentException if there is already a FilterType object
      *             associated with the identifier
      */
-    private static <C> FilterType<C> create(String identifier, Optional<FilterTypeUnit> unit, Class<C> filterType, Pair<C, C> range, String queryBaseString)
+    public static <C> FilterType<C> create(String identifier, Optional<FilterTypeUnit> unit, Class<C> filterType, Pair<C, C> range, String queryBaseString, boolean useByDefault)
     {
         Preconditions.checkNotNull(identifier);
         Preconditions.checkArgument(!FILTER_TYPE_IDENTIFIERS.containsKey(identifier), "Already have a Filter Type object for identifier " + identifier);
 
-        var rangeArray = new ArrayList<C>();
+        ArrayList<C> rangeArray = new ArrayList<C>();
         rangeArray.add(range.getLeft());
         rangeArray.add(range.getRight());
-        FilterType<C> result = new FilterType<C>(identifier, filterType, rangeArray, unit, queryBaseString);
+        FilterType<C> result = new FilterType<C>(identifier, filterType, rangeArray, unit, queryBaseString, useByDefault);
         FILTER_TYPE_IDENTIFIERS.put(identifier, result);
 
         return result;
@@ -138,14 +153,15 @@ public final class FilterType<C> implements Cloneable
      * @throws IllegalArgumentException if there is already a FilterType object
      *             associated with the identifier
      */
-    private static <C> FilterType<C> create(String identifier, Class<C> filterType, C[] values, String queryBaseString)
+    public static <C> FilterType<C> create(String identifier, Class<C> filterType, C[] values, String queryBaseString, boolean useByDefault)
     {
         Preconditions.checkNotNull(identifier);
         Preconditions.checkArgument(!FILTER_TYPE_IDENTIFIERS.containsKey(identifier), "Already have a Filter Type object for identifier " + identifier);
 
-        var rangeArray = new ArrayList<C>();
+        ArrayList<C> rangeArray = new ArrayList<C>();
         for (C val : values) rangeArray.add(val);
-        FilterType<C> result = new FilterType<C>(identifier, filterType, rangeArray, Optional.ofNullable(null), queryBaseString);
+        FilterType<C> result = new FilterType<C>(identifier, filterType, rangeArray, Optional.ofNullable(null), queryBaseString, useByDefault);
+        result.unit = FilterTypeUnit.NONE;
         FILTER_TYPE_IDENTIFIERS.put(identifier, result);
 
         return result;
@@ -160,19 +176,20 @@ public final class FilterType<C> implements Cloneable
     public static FilterType createInstance(String identifier) throws CloneNotSupportedException
     {
     	Preconditions.checkNotNull(identifier);
-        Preconditions.checkArgument(FILTER_TYPE_IDENTIFIERS.containsKey(identifier), "No suck identifier " + identifier);
-        return (FilterType)(FILTER_TYPE_IDENTIFIERS.get(identifier).clone());
+        Preconditions.checkArgument(FILTER_TYPE_IDENTIFIERS.containsKey(identifier), "No such identifier " + identifier);
+//        return (FilterType)(FILTER_TYPE_IDENTIFIERS.get(identifier).clone());
+        return new FilterType(FILTER_TYPE_IDENTIFIERS.get(identifier));
     }
 
-    public static final FilterType<Double> INCIDENCE_ANGLE = create("Incidence Angle", Optional.of(FilterTypeUnit.DEGREES), Double.class, Pair.of(0.0, 180.0), "Incidence");
-    public static final FilterType<Double> EMISSION_ANGLE = create("Emission Angle",  Optional.of(FilterTypeUnit.DEGREES), Double.class, Pair.of(0.0, 180.0), "Emission");
-    public static final FilterType<Double> PHASE_ANGLE = create("Phase Angle",  Optional.of(FilterTypeUnit.DEGREES), Double.class, Pair.of(0.0, 180.0), "Phase");
-    public static final FilterType<Double> RESOLUTION = create("Image Resolution",  Optional.of(FilterTypeUnit.METERS_PER_PIXEL), Double.class, Pair.of(0.0, 50.0), "Resolution");
-    public static final FilterType<Double> SC_DISTANCE = create("SC Distance",  Optional.of(FilterTypeUnit.KM), Double.class, Pair.of(0.0, 1000.0), "ScDistance");
-    public static final FilterType<Double> SC_ALTITUDE = create("SC Altitude",  Optional.of(FilterTypeUnit.KM), Double.class, Pair.of(0.0, 1000.0), "ScAltitude");
-    public static final FilterType<String> LIMB = create("Limb", String.class, new String[] {"with only", "without only", "with or without"}, "limbType");
-    public static final FilterType<String> IMAGE_POINTING = create("Image Pointing", String.class, new String[] {"SPC Derived", "SPICE Derivied"}, "Pointing");
-    public static final FilterType<LocalDateTime> TIME_WINDOW = create("Time Window", Optional.of(FilterTypeUnit.provide("Time Window")), LocalDateTime.class, Pair.of(LocalDateTime.now(), LocalDateTime.now()), "tdb");	//TODO: replace the low bound with a good default
+//    public static final FilterType<Double> INCIDENCE_ANGLE = create("Incidence Angle", Optional.of(FilterTypeUnit.DEGREES), Double.class, Pair.of(0.0, 180.0), "incidence");
+//    public static final FilterType<Double> EMISSION_ANGLE = create("Emission Angle",  Optional.of(FilterTypeUnit.DEGREES), Double.class, Pair.of(0.0, 180.0), "emission");
+//    public static final FilterType<Double> PHASE_ANGLE = create("Phase Angle",  Optional.of(FilterTypeUnit.DEGREES), Double.class, Pair.of(0.0, 180.0), "Phase");
+//    public static final FilterType<Double> RESOLUTION = create("Image Resolution",  Optional.of(FilterTypeUnit.METERS_PER_PIXEL), Double.class, Pair.of(0.0, 50.0), "resolution");
+//    public static final FilterType<Double> SC_DISTANCE = create("SC Distance",  Optional.of(FilterTypeUnit.KM), Double.class, Pair.of(0.0, 1000.0), "range");
+//    public static final FilterType<Double> SC_ALTITUDE = create("SC Altitude",  Optional.of(FilterTypeUnit.KM), Double.class, Pair.of(0.0, 1000.0), "altitude");
+//    public static final FilterType<String> LIMB = create("Limb", String.class, new String[] {"with only", "without only", "with or without"}, "limbType");
+//    public static final FilterType<String> IMAGE_POINTING = create("Image Pointing", String.class, new String[] {"SPC Derived", "SPICE Derivied"}, "Pointing");
+//    public static final FilterType<LocalDateTime> TIME_WINDOW = create("Time Window", Optional.of(FilterTypeUnit.provide("Time Window")), LocalDateTime.class, Pair.of(LocalDateTime.now(), LocalDateTime.now()), "tdb");	//TODO: replace the low bound with a good default
 
 
     private final String identifier;
@@ -184,6 +201,7 @@ public final class FilterType<C> implements Cloneable
     private String queryBaseString;
     private boolean enabled = false;
     private UUID index;
+    private boolean useByDefault;
 //    private Function<Pair, Pair> converter;
 
     private FilterType(String identifier)
@@ -244,16 +262,17 @@ public final class FilterType<C> implements Cloneable
 		return true;
 	}
 
-	private FilterType(String identifier, Class<C> type, DynamicFilterValues<C> dynamicValues, Optional<FilterTypeUnit> unit, String queryBaseString)
+	private FilterType(String identifier, Class<C> type, DynamicFilterValues<C> dynamicValues, Optional<FilterTypeUnit> unit, String queryBaseString, boolean useByDefault)
     {
         this(identifier, type);
         this.dynamicValues = dynamicValues;
         this.range = dynamicValues.getCurrentValues();
         unit.ifPresent(filterUnit -> this.unit = filterUnit);
         this.queryBaseString = queryBaseString;
+        this.useByDefault = useByDefault;
     }
 
-    private FilterType(String identifier, Class<C> type, ArrayList<C> range, Optional<FilterTypeUnit> unit, String queryBaseString)
+    private FilterType(String identifier, Class<C> type, ArrayList<C> range, Optional<FilterTypeUnit> unit, String queryBaseString, boolean useByDefault)
     {
         this(identifier, type);
         this.dynamicValues = new DynamicFilterValues<C>()
@@ -267,6 +286,7 @@ public final class FilterType<C> implements Cloneable
         this.range = range;
         unit.ifPresent(filterUnit -> this.unit = filterUnit);
         this.queryBaseString = queryBaseString;
+        this.useByDefault = useByDefault;
     }
 
     public String name()
@@ -337,6 +357,8 @@ public final class FilterType<C> implements Cloneable
 	public HashMap<String, String> getSQLArguments()
 	{
 		HashMap<String, String> args = new HashMap<>();
+		if (isUseByDefault() == false) return args;
+
 		if (selectedRangeValue != null)
 		{
 			args.put(queryBaseString, String.valueOf(selectedRangeValue));
@@ -344,22 +366,32 @@ public final class FilterType<C> implements Cloneable
 		else
 		{
 			ArrayList<C> range = dynamicValues.getCurrentValues();
-			Object minValue = range.get(0);
-			Object maxValue = range.get(1);
+			C minValue = (C)range.get(0);
+			C maxValue = (C)range.get(1);
+//			System.out.println("FilterType: getSQLArguments: max value type " + maxValue.getClass() + " for type " + type + " ident " + identifier + " range " + range.getClass());
 			if (type == LocalDateTime.class)
 			{
 				LocalDateTime startTime = (LocalDateTime)range.get(0);
-				System.out.println("FilterType: getSQLArguments: start time is " + startTime.toString());
 				LocalDateTime stopTime = (LocalDateTime)range.get(1);
-				minValue = TimeUtil.str2et(startTime.toString());
-				maxValue = TimeUtil.str2et(stopTime.toString());
+				args.put("min" + queryBaseString, ""+TimeUtil.str2et(startTime.toString()));
+				args.put("max" + queryBaseString, ""+TimeUtil.str2et(stopTime.toString()));
 			}
-
-
-			args.put("min" + queryBaseString, String.valueOf(minValue));
-			args.put("max" + queryBaseString, String.valueOf(maxValue));
+			else
+			{
+				args.put("min" + queryBaseString, String.valueOf(convertIfNeeded(minValue)));
+				args.put("max" + queryBaseString, String.valueOf(convertIfNeeded(maxValue)));
+			}
 		}
 		return args;
+	}
+
+	private C convertIfNeeded(C value)
+	{
+		if (unit == FilterTypeUnit.DEGREES) {
+			Double inRadians = Math.toRadians((Double)value);
+			return (C)inRadians;
+		}
+		else return value;
 	}
 
 	/**
@@ -383,16 +415,55 @@ public final class FilterType<C> implements Cloneable
 		return queryBaseString;
 	}
 
-	@Override
-	protected Object clone() throws CloneNotSupportedException
+	public boolean isUseByDefault()
 	{
-		FilterType<C> filter = new FilterType<C>(identifier, type, dynamicValues, Optional.ofNullable(unit), queryBaseString);
-//		if (unit != null) filter = new FilterType<C>(identifier, type, dynamicValues, Optional.ofNullable(unit), queryBaseString);
-//		else filter = new FilterType<C>(identifier, type, dynamicValues, queryBaseString);
-	    filter.selectedRangeValue = selectedRangeValue;
-	    filter.enabled = enabled;
-	    filter.range = new ArrayList();
-	    filter.range.addAll(range);
-		return filter;
+		return useByDefault;
 	}
+
+	public void setUseByDefault(boolean useByDefault)
+	{
+		this.useByDefault = useByDefault;
+	}
+
+	public FilterType(FilterType<C> type)
+	{
+		this.index = UUID.randomUUID();
+		this.identifier = type.identifier;
+		this.type = type.type;
+//		this.dynamicValues = type.dynamicValues;
+        this.range = new ArrayList<C>();
+        if (!type.getRange().isEmpty())
+        {
+        	for (int i=0; i<type.getRange().size(); i++)
+        		this.range.add(type.getRange().get(i));
+        }
+//        		type.dynamicValues.getCurrentValues();
+        this.dynamicValues = new DynamicFilterValues<C>()
+		{
+        	@Override
+        	public ArrayList<C> getCurrentValues()
+        	{
+        		return FilterType.this.range;
+        	}
+		};
+        this.unit = type.unit;
+        this.queryBaseString = type.queryBaseString;
+        this.selectedRangeValue = (C)type.getSelectedRangeValue();
+        this.enabled = type.enabled;
+        this.useByDefault = type.useByDefault;
+	}
+
+//	@Override
+//	protected Object clone() throws CloneNotSupportedException
+//	{
+//		FilterType<C> filter = new FilterType<C>(identifier, type, dynamicValues, Optional.ofNullable(unit), queryBaseString);
+////		if (unit != null) filter = new FilterType<C>(identifier, type, dynamicValues, Optional.ofNullable(unit), queryBaseString);
+////		else filter = new FilterType<C>(identifier, type, dynamicValues, queryBaseString);
+//	    filter.selectedRangeValue = selectedRangeValue;
+//	    filter.enabled = enabled;
+//	    filter.range = new ArrayList();
+//	    for (C val : range) filter.range.add((C)(val.clone()));
+//	    filter.range.addAll(range);
+//		return filter;
+//	}
 }

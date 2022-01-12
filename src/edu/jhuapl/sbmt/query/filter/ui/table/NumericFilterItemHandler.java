@@ -65,11 +65,17 @@ public class NumericFilterItemHandler extends BasicItemHandler<FilterType, Filte
 		}
 		else if (aEnum == FilterColumnLookup.FILTER_LOW)
 		{
-			type.getRange().set(0, aValue);
+			if (type.getType() == Double.class)
+				type.getRange().set(0, Double.parseDouble(""+aValue));
+			else
+				type.getRange().set(0, aValue);
 		}
 		else if (aEnum == FilterColumnLookup.FILTER_HIGH)
 		{
-			type.getRange().set(1, aValue);
+			if (type.getType() == Double.class)
+				type.getRange().set(1, Double.parseDouble(""+aValue));
+			else
+				type.getRange().set(1, aValue);
 		}
 		else if (aEnum == FilterColumnLookup.FILTER_RANGE)
 		{
@@ -80,6 +86,7 @@ public class NumericFilterItemHandler extends BasicItemHandler<FilterType, Filte
 			LocalDateTime startDate = (LocalDateTime)type.getRangeMin();
 			var newDate = (LocalDate)aValue;
 			startDate = startDate.with(newDate);
+			type.getRange().set(0, startDate);
 			type.setRangeMin(startDate);
 		}
 		else if (aEnum == FilterColumnLookup.FILTER_START_TIME)
@@ -87,6 +94,7 @@ public class NumericFilterItemHandler extends BasicItemHandler<FilterType, Filte
 			LocalDateTime startDate = (LocalDateTime)type.getRangeMin();
 			var newTime = (LocalTime)aValue;
 			startDate = startDate.with(newTime);
+			type.getRange().set(0, startDate);
 			type.setRangeMin(startDate);
 		}
 		else if (aEnum == FilterColumnLookup.FILTER_END_DATE)
@@ -94,6 +102,7 @@ public class NumericFilterItemHandler extends BasicItemHandler<FilterType, Filte
 			LocalDateTime endDate = (LocalDateTime)type.getRangeMax();
 			var newDate = (LocalDate)aValue;
 			endDate = endDate.with(newDate);
+			type.getRange().set(1, endDate);
 			type.setRangeMax(endDate);
 		}
 		else if (aEnum == FilterColumnLookup.FILTER_END_TIME)
@@ -101,6 +110,7 @@ public class NumericFilterItemHandler extends BasicItemHandler<FilterType, Filte
 			LocalDateTime endDate = (LocalDateTime)type.getRangeMax();
 			var newDate = (LocalTime)aValue;
 			endDate = endDate.with(newDate);
+			type.getRange().set(1, endDate);
 			type.setRangeMax(endDate);
 		}
 		else

@@ -81,9 +81,12 @@ public class NumericFilterTableView extends JPanel
 
 		JButton sqlDebug = new JButton("SQL");
 		sqlDebug.addActionListener(e -> {
-			String debugSQL = filterModel.getSQLQueryString();
-			String debugSQL2 = filterModel2.getSQLQueryString();
-			String debugSQL3 = filterModel3.getSQLQueryString();
+			String debugSQL = "";
+			filterModel.getSQLQueryString().stream().reduce(debugSQL, (s1, s2) -> { return s1 + " AND " + s2;});
+			String debugSQL2 = "";
+			filterModel2.getSQLQueryString().stream().reduce(debugSQL2, (s1, s2) -> { return s1 + " AND " + s2;});
+			String debugSQL3 = "";
+			filterModel3.getSQLQueryString().stream().reduce(debugSQL3, (s1, s2) -> { return s1 + " AND " + s2;});
 		});
 
 		comboPanel.add(sqlDebug);

@@ -17,13 +17,16 @@ public class FilterModel extends BaseItemManager<FilterType>
 		setAllItems(allItems);
 	}
 
-	public String getSQLQueryString()
+	public List<String> getSQLQueryString()
 	{
+		List<String> queryElements = Lists.newArrayList();
 		String queryString = "";
 		Iterator filterIterator = getAllItems().iterator();
 		while (filterIterator.hasNext())
 		{
+			queryString = "";
 			FilterType filter = (FilterType)filterIterator.next();
+			if (!filter.isEnabled()) continue;
 			Iterator<String> iterator = filter.getSQLArguments().keySet().iterator();
 			while (iterator.hasNext())
 			{
@@ -31,9 +34,11 @@ public class FilterModel extends BaseItemManager<FilterType>
 				queryString += key + "=" + filter.getSQLArguments().get(key);
 				if (iterator.hasNext()) queryString += " AND ";
 			}
-			if (filterIterator.hasNext()) queryString += " AND ";
+			queryElements.add(queryString);
+//			if (filterIterator.hasNext()) queryString += " AND ";
 		}
-		System.out.println("FilterModel: getSQLQueryString: query string is " + queryString);
-		return queryString;
+//		return queryString;
+
+		return queryElements;
 	}
 }
