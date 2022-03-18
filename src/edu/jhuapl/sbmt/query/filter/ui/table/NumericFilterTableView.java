@@ -64,6 +64,20 @@ public class NumericFilterTableView extends JPanel
 	{
 	}
 
+	@Override
+		public void setEnabled(boolean enabled)
+		{
+			numericFilters.setEnabled(enabled);
+			nonNumericFilters.setEnabled(enabled);
+			timeWindowFilters.setEnabled(enabled);
+			removeFilterButton.setEnabled(enabled);
+			filterCombo.setEnabled(enabled);
+			addButton.setEnabled(enabled);
+			filterILP.getTable().setEnabled(enabled);
+			filterILP2.getTable().setEnabled(enabled);
+			filterILP3.getTable().setEnabled(enabled);
+		}
+
 	public void setup(FilterModel filterModel, FilterModel filterModel2, FilterModel filterModel3)
 	{
 		numericFilters = buildTable(filterModel);
