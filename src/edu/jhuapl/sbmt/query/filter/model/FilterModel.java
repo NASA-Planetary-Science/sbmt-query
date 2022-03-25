@@ -7,11 +7,11 @@ import com.github.davidmoten.guavamini.Lists;
 
 import glum.item.BaseItemManager;
 
-public class FilterModel extends BaseItemManager<FilterType>
+public class FilterModel<C> extends BaseItemManager<FilterType<C>>
 {
-	public void addFilter(FilterType filterType)
+	public void addFilter(FilterType<C> filterType)
 	{
-		List<FilterType> allItems = Lists.newArrayList();
+		List<FilterType<C>> allItems = Lists.newArrayList();
 		allItems.addAll(getAllItems());
 		allItems.add(filterType);
 		setAllItems(allItems);
@@ -21,11 +21,11 @@ public class FilterModel extends BaseItemManager<FilterType>
 	{
 		List<String> queryElements = Lists.newArrayList();
 		String queryString = "";
-		Iterator filterIterator = getAllItems().iterator();
+		Iterator<FilterType<C>> filterIterator = getAllItems().iterator();
 		while (filterIterator.hasNext())
 		{
 			queryString = "";
-			FilterType filter = (FilterType)filterIterator.next();
+			FilterType<C> filter = (FilterType<C>)filterIterator.next();
 			if (!filter.isEnabled()) continue;
 			Iterator<String> iterator = filter.getSQLArguments().keySet().iterator();
 			while (iterator.hasNext())
@@ -35,10 +35,7 @@ public class FilterModel extends BaseItemManager<FilterType>
 				if (iterator.hasNext()) queryString += " AND ";
 			}
 			queryElements.add(queryString);
-//			if (filterIterator.hasNext()) queryString += " AND ";
 		}
-//		return queryString;
-
 		return queryElements;
 	}
 }

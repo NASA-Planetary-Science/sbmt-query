@@ -3,8 +3,10 @@ package edu.jhuapl.sbmt.query.filter.ui.table;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -36,31 +38,27 @@ import glum.gui.panel.itemList.query.QueryComposer;
 
 public class NumericFilterTableView extends JPanel
 {
-//	private SpectrumPopupMenu<S> spectrumPopupMenu;
 	protected JTable numericFilters;
 	protected JTable nonNumericFilters;
 	protected JTable timeWindowFilters;
 
 	// for numeric table
-//	private FilterModel filterModel;
 	private ItemListPanel<FilterType> filterILP;
 	private ItemHandler<FilterType> filterTableHandler;
 
 	// for non numeric table
-//	private FilterModel filterModel2;
 	private ItemListPanel<FilterType> filterILP2;
 	private ItemHandler<FilterType> filterTableHandler2;
 
 	// for time window table
-//	private FilterModel filterModel3;
-	private ItemListPanel<FilterType> filterILP3;
-	private ItemHandler<FilterType> filterTableHandler3;
+	private ItemListPanel<FilterType<LocalDateTime>> filterILP3;
+	private ItemHandler<FilterType<LocalDateTime>> filterTableHandler3;
 
 	private JButton addButton;
 	private JComboBox<FilterType> filterCombo;
 	private JButton removeFilterButton;
 
-	public NumericFilterTableView(/*FilterModel model, FilterModel model2, FilterModel model3*/)
+	public NumericFilterTableView()
 	{
 	}
 
@@ -78,7 +76,7 @@ public class NumericFilterTableView extends JPanel
 			filterILP3.getTable().setEnabled(enabled);
 		}
 
-	public void setup(FilterModel filterModel, FilterModel filterModel2, FilterModel filterModel3)
+	public void setup(FilterModel filterModel, FilterModel filterModel2, FilterModel<LocalDateTime> filterModel3)
 	{
 		numericFilters = buildTable(filterModel);
 		nonNumericFilters = buildTable2(filterModel2);
@@ -96,11 +94,17 @@ public class NumericFilterTableView extends JPanel
 		JButton sqlDebug = new JButton("SQL");
 		sqlDebug.addActionListener(e -> {
 			String debugSQL = "";
-			filterModel.getSQLQueryString().stream().reduce(debugSQL, (s1, s2) -> { return s1 + " AND " + s2;});
+			if (filterModel.getSQLQueryString().size() == 1) debugSQL = (String)filterModel.getSQLQueryString().get(0);
+			else debugSQL = (String)filterModel.getSQLQueryString().stream().collect(Collectors.joining(" AND "));
+			System.out.println("NumericFilterTableView: setup: numeric SQL " + debugSQL);
 			String debugSQL2 = "";
-			filterModel2.getSQLQueryString().stream().reduce(debugSQL2, (s1, s2) -> { return s1 + " AND " + s2;});
+			if (filterModel2.getSQLQueryString().size() == 1) debugSQL2 = (String)filterModel2.getSQLQueryString().get(0);
+			else debugSQL2 = (String)filterModel2.getSQLQueryString().stream().collect(Collectors.joining(" AND "));
+			System.out.println("NumericFilterTableView: setup: nonNumeric SQL " + debugSQL2);
 			String debugSQL3 = "";
-			filterModel3.getSQLQueryString().stream().reduce(debugSQL3, (s1, s2) -> { return s1 + " AND " + s2;});
+			if (filterModel3.getSQLQueryString().size() == 1) debugSQL3 = (String)filterModel3.getSQLQueryString().get(0);
+			else debugSQL3 = filterModel3.getSQLQueryString().stream().collect(Collectors.joining(" OR "));
+			System.out.println("NumericFilterTableView: setup: time window SQL " + debugSQL3);
 		});
 
 		comboPanel.add(sqlDebug);
@@ -117,7 +121,7 @@ public class NumericFilterTableView extends JPanel
 
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
-		panel.add(new JLabel("Numeric Filters:"));
+		panel.add(new JLabel("Numeric Range Filters (AND'ed together):"));
 		panel.add(Box.createHorizontalGlue());
 		add(panel);
 
@@ -129,7 +133,7 @@ public class NumericFilterTableView extends JPanel
 
 		JPanel panel3 = new JPanel();
 		panel3.setLayout(new BoxLayout(panel3, BoxLayout.X_AXIS));
-		panel3.add(new JLabel("Time Window Filters"));
+		panel3.add(new JLabel("Time Window Filters (OR'd together)"));
 		panel3.add(Box.createHorizontalGlue());
 		add(panel3);
 
@@ -142,7 +146,7 @@ public class NumericFilterTableView extends JPanel
 
 		JPanel panel2 = new JPanel();
 		panel2.setLayout(new BoxLayout(panel2, BoxLayout.X_AXIS));
-		panel2.add(new JLabel("Other Filters:"));
+		panel2.add(new JLabel("Other Filters (AND'ed together):"));
 		panel2.add(Box.createHorizontalGlue());
 		add(panel2);
 
@@ -163,20 +167,17 @@ public class NumericFilterTableView extends JPanel
 		QueryComposer<FilterColumnLookup> tmpComposer = new QueryComposer<>();
 		tmpComposer.addAttribute(FilterColumnLookup.FILTER_ENABLED, Boolean.class, "Enabled", null);
 		tmpComposer.addAttribute(FilterColumnLookup.FILTER_NAME, String.class, "Name", null);
-//		tmpComposer.addAttribute(FilterColumnLookup.FILTER_TYPE , String.class, "Type", null);
 		tmpComposer.addAttribute(FilterColumnLookup.FILTER_LOW, Boolean.class, "Low Value", null);
 		tmpComposer.addAttribute(FilterColumnLookup.FILTER_HIGH, Boolean.class, "High Value", null);
 		tmpComposer.addAttribute(FilterColumnLookup.FILTER_UNITS, Boolean.class, "Units", null);
 
 		tmpComposer.setRenderer(FilterColumnLookup.FILTER_ENABLED, new BooleanCellRenderer());
 
-//		tmpComposer.setRenderer(FilterColumnLookup.FILTER_LOW, new DateOrDefaultCellRenderer());
 		tmpComposer.setEditor(FilterColumnLookup.FILTER_ENABLED, new BooleanCellEditor());
 		tmpComposer.setEditor(FilterColumnLookup.FILTER_LOW, new DefaultCellEditor(new JTextField()));
 		tmpComposer.setEditor(FilterColumnLookup.FILTER_HIGH, new DefaultCellEditor(new JTextField()));
 
 		tmpComposer.getItem(FilterColumnLookup.FILTER_NAME).defaultSize *= 3;
-//		tmpComposer.getItem(FilterColumnLookup.FILTER_TYPE).defaultSize *= 2;
 		tmpComposer.getItem(FilterColumnLookup.FILTER_LOW).defaultSize *= 3;
 		tmpComposer.getItem(FilterColumnLookup.FILTER_HIGH).defaultSize *= 3;
 		tmpComposer.getItem(FilterColumnLookup.FILTER_UNITS).defaultSize *= 3;
@@ -188,10 +189,6 @@ public class NumericFilterTableView extends JPanel
 		JTable filterTable = filterILP.getTable();
 		filterTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
-//		spectrumTable.addMouseListener(new SpectrumTablePopupListener<>(spectrumCollection, boundaryCollection,
-//				spectrumPopupMenu, spectrumTable));
-
-
 		return filterTable;
 	}
 
@@ -201,7 +198,6 @@ public class NumericFilterTableView extends JPanel
 		QueryComposer<FilterColumnLookup> tmpComposer = new QueryComposer<>();
 		tmpComposer.addAttribute(FilterColumnLookup.FILTER_ENABLED, Boolean.class, "Enabled", null);
 		tmpComposer.addAttribute(FilterColumnLookup.FILTER_NAME, Boolean.class, "Name", null);
-//		tmpComposer.addAttribute(FilterColumnLookup.FILTER_TYPE , Boolean.class, "Type", null);
 		tmpComposer.addAttribute(FilterColumnLookup.FILTER_RANGE , Boolean.class, "Value", null);
 
 		tmpComposer.setRenderer(FilterColumnLookup.FILTER_ENABLED, new BooleanCellRenderer());
@@ -210,7 +206,6 @@ public class NumericFilterTableView extends JPanel
 		tmpComposer.setEditor(FilterColumnLookup.FILTER_RANGE, new CustomComboBoxEditor(filterModel2));
 
 		tmpComposer.getItem(FilterColumnLookup.FILTER_NAME).defaultSize *= 3;
-//		tmpComposer.getItem(FilterColumnLookup.FILTER_TYPE).defaultSize *= 2;
 		tmpComposer.getItem(FilterColumnLookup.FILTER_RANGE).defaultSize *= 5;
 
 		filterTableHandler2 = new NumericFilterItemHandler(filterModel2, tmpComposer);
@@ -219,14 +214,10 @@ public class NumericFilterTableView extends JPanel
 		filterILP2.setSortingEnabled(true);
 		JTable filterTable = filterILP2.getTable();
 		filterTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-//		spectrumTable.addMouseListener(new SpectrumTablePopupListener<>(spectrumCollection, boundaryCollection,
-//				spectrumPopupMenu, spectrumTable));
-
-
 		return filterTable;
 	}
 
-	private JTable buildTable3(FilterModel filterModel3)
+	private JTable buildTable3(FilterModel<LocalDateTime> filterModel3)
 	{
 		// Table Content
 		QueryComposer<FilterColumnLookup> tmpComposer = new QueryComposer<>();
@@ -251,15 +242,12 @@ public class NumericFilterTableView extends JPanel
 		tmpComposer.getItem(FilterColumnLookup.FILTER_END_DATE).defaultSize *= 2;
 		tmpComposer.getItem(FilterColumnLookup.FILTER_END_TIME).defaultSize *= 2;
 
-		filterTableHandler3 = new NumericFilterItemHandler(filterModel3, tmpComposer);
-		ItemProcessor<FilterType> tmpIP = filterModel3;
+		filterTableHandler3 = new TimeWindowFilterItemHandler(filterModel3, tmpComposer);
+		ItemProcessor<FilterType<LocalDateTime>> tmpIP = filterModel3;
 		filterILP3 = new ItemListPanel<>(filterTableHandler3, tmpIP, true);
 		filterILP3.setSortingEnabled(true);
 		JTable filterTable = filterILP3.getTable();
 		filterTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-//		spectrumTable.addMouseListener(new SpectrumTablePopupListener<>(spectrumCollection, boundaryCollection,
-//				spectrumPopupMenu, spectrumTable));
-
 
 		return filterTable;
 	}
@@ -309,7 +297,7 @@ public class NumericFilterTableView extends JPanel
 				int column)
 		{
 			model.removeAllElements();
-			FilterType filter = filterModel.getAllItems().get(row);
+			FilterType filter = (FilterType)(filterModel.getAllItems().get(row));
 			for (int i=0; i < filter.getRange().size(); i++)
 			{
 				model.addElement(filter.getRange().get(i));
