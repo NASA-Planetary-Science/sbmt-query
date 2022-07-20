@@ -2,7 +2,7 @@ package edu.jhuapl.sbmt.query.fixedlist;
 
 import com.google.common.base.Preconditions;
 
-import edu.jhuapl.sbmt.model.image.ImageSource;
+import edu.jhuapl.sbmt.core.image.ImageSource;
 import edu.jhuapl.sbmt.query.SearchMetadata;
 
 import crucible.crust.metadata.api.Key;
