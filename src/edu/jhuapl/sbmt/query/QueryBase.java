@@ -632,7 +632,10 @@ public abstract class QueryBase implements MetadataManager, IQueryBase
 		if (obj == null)
 			return false;
 		if (getClass() != obj.getClass())
+		{
+			System.out.println("QueryBase: equals: classes unequal");
 			return false;
+		}
 		QueryBase other = (QueryBase) obj;
 		return Objects.equals(galleryPath, other.galleryPath) && headless == other.headless;
 	}
