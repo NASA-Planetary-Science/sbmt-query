@@ -7,7 +7,7 @@ import org.joda.time.DateTime;
 
 import com.google.common.collect.Range;
 
-import edu.jhuapl.sbmt.model.image.ImageSource;
+import edu.jhuapl.sbmt.core.image.ImageSource;
 
 import crucible.crust.metadata.api.Key;
 import crucible.crust.metadata.impl.FixedMetadata;
