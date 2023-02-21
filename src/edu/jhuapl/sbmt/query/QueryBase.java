@@ -30,6 +30,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -272,10 +273,15 @@ public abstract class QueryBase implements MetadataManager, IQueryBase
 
         // Let user know that search uses fixed list and ignores search parameters
         if (!Boolean.parseBoolean(System.getProperty("java.awt.headless")) && showFixedListPrompt)
-        	JOptionPane.showMessageDialog(null,
-                "Search uses a fixed list and ignores all but file name search parameters.",
-                "Notification",
-                JOptionPane.INFORMATION_MESSAGE);
+        {
+        	SwingUtilities.invokeLater(() -> {
+        		JOptionPane.showMessageDialog(null,
+                        "Search uses a fixed list and ignores all but file name search parameters.",
+                        "Notification",
+                        JOptionPane.INFORMATION_MESSAGE);
+        	});
+
+        }
 
         if (file.exists())
         {
