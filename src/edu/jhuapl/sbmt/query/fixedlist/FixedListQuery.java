@@ -5,7 +5,7 @@ import java.util.List;
 import edu.jhuapl.saavtk.util.FileCache;
 import edu.jhuapl.saavtk.util.SafeURLPaths;
 import edu.jhuapl.saavtk.util.UnauthorizedAccessException;
-import edu.jhuapl.sbmt.core.image.ImageSource;
+import edu.jhuapl.sbmt.core.pointing.PointingSource;
 import edu.jhuapl.sbmt.query.ISearchResultsMetadata;
 import edu.jhuapl.sbmt.query.SearchMetadata;
 import edu.jhuapl.sbmt.query.SearchResultsMetadata;
@@ -74,7 +74,7 @@ public class FixedListQuery<T> extends FixedListQueryBase
         rootPath = metadata.get(FixedListSearchMetadata.ROOT_PATH);
 
         String fileListSuffix = null;
-        ImageSource imageSource = ImageSource.valueFor(metadata.get(FixedListSearchMetadata.POINTING_SOURCE));
+        PointingSource imageSource = PointingSource.valueFor(metadata.get(FixedListSearchMetadata.POINTING_SOURCE));
         switch (imageSource)
         {
             case GASKELL:

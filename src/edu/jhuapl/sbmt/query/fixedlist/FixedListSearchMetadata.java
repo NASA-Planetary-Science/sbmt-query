@@ -2,7 +2,7 @@ package edu.jhuapl.sbmt.query.fixedlist;
 
 import com.google.common.base.Preconditions;
 
-import edu.jhuapl.sbmt.core.image.ImageSource;
+import edu.jhuapl.sbmt.core.pointing.PointingSource;
 import edu.jhuapl.sbmt.query.SearchMetadata;
 
 import crucible.crust.metadata.api.Key;
@@ -25,19 +25,19 @@ public class FixedListSearchMetadata implements SearchMetadata
     FixedMetadata searchMetadata;
 
 
-    public static FixedListSearchMetadata of(String name, String filelist, String datapath, String rootPath, ImageSource pointingSource)
+    public static FixedListSearchMetadata of(String name, String filelist, String datapath, String rootPath, PointingSource pointingSource)
     {
         FixedMetadata metadata = createMetadata(name, filelist, datapath, rootPath, pointingSource);
         return new FixedListSearchMetadata(metadata);
     }
 
-    public static FixedListSearchMetadata of(String name, String filelist, String datapath, String rootPath, ImageSource pointingSource, String searchString)
+    public static FixedListSearchMetadata of(String name, String filelist, String datapath, String rootPath, PointingSource pointingSource, String searchString)
     {
         FixedMetadata metadata = createMetadata(name, filelist, datapath, rootPath, pointingSource, searchString);
         return new FixedListSearchMetadata(metadata);
     }
 
-    private static FixedMetadata createMetadata(String name, String filelist, String datapath, String rootPath, ImageSource pointingSource)
+    private static FixedMetadata createMetadata(String name, String filelist, String datapath, String rootPath, PointingSource pointingSource)
     {
         Preconditions.checkNotNull(name);
         Preconditions.checkNotNull(filelist);
@@ -55,7 +55,7 @@ public class FixedListSearchMetadata implements SearchMetadata
         return FixedMetadata.of(metadata);
     }
 
-    private static FixedMetadata createMetadata(String name, String filelist, String datapath, String rootPath, ImageSource pointingSource, String searchString)
+    private static FixedMetadata createMetadata(String name, String filelist, String datapath, String rootPath, PointingSource pointingSource, String searchString)
     {
     	if (searchString == null) return createMetadata(name, filelist, datapath, rootPath, pointingSource);
         Preconditions.checkNotNull(name);
@@ -148,10 +148,10 @@ public class FixedListSearchMetadata implements SearchMetadata
         return getMetadata().get(DATA_PATH);
     }
 
-    public ImageSource getPointingSource()
+    public PointingSource getPointingSource()
     {
         String pointingSourceString = getMetadata().get(POINTING_SOURCE);
-        return ImageSource.valueOf(pointingSourceString);
+        return PointingSource.valueOf(pointingSourceString);
     }
 
 }

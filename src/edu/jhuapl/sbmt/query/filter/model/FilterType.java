@@ -16,7 +16,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import com.beust.jcommander.internal.Lists;
 import com.google.common.base.Preconditions;
 
-import edu.jhuapl.sbmt.util.TimeUtil;
+import edu.jhuapl.sbmt.core.util.TimeUtil;
 
 public final class FilterType<C> implements Cloneable
 {

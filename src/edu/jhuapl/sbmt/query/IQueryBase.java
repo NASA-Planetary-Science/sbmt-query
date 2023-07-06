@@ -3,7 +3,7 @@ package edu.jhuapl.sbmt.query;
 import java.util.List;
 
 import edu.jhuapl.saavtk.model.PolyModel;
-import edu.jhuapl.sbmt.core.image.IImagingInstrument;
+import edu.jhuapl.sbmt.image.interfaces.IImagingInstrument;
 
 /**
  * Interface representing queries for searching for data that match some

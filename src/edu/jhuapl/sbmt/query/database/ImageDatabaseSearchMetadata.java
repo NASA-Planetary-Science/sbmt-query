@@ -7,7 +7,7 @@ import org.joda.time.DateTime;
 
 import com.google.common.collect.Range;
 
-import edu.jhuapl.sbmt.core.image.ImageSource;
+import edu.jhuapl.sbmt.core.pointing.PointingSource;
 
 import crucible.crust.metadata.api.Key;
 import crucible.crust.metadata.impl.FixedMetadata;
@@ -36,7 +36,7 @@ public class ImageDatabaseSearchMetadata extends DatabaseSearchMetadata
             List<Integer> polygonTypes, Range<Double> incidenceRange,
             Range<Double> emissionRange, Range<Double> phaseRange,
             boolean sumOfProductsSearch, List<Integer> camerasSelected, List<Integer> filtersSelected,
-            Range<Double> resolutionRange, TreeSet<Integer> cubeList, ImageSource imageSource, int hasLimb)
+            Range<Double> resolutionRange, TreeSet<Integer> cubeList, PointingSource imageSource, int hasLimb)
     {
         FixedMetadata metadata = FixedMetadata.of(createSettableMetadata(name, startDate, stopDate, distanceRange, searchString,
                                                 polygonTypes, incidenceRange, emissionRange, phaseRange, sumOfProductsSearch, camerasSelected,
@@ -49,7 +49,7 @@ public class ImageDatabaseSearchMetadata extends DatabaseSearchMetadata
             List<Integer> polygonTypes, Range<Double> incidenceRange,
             Range<Double> emissionRange, Range<Double> phaseRange, boolean sumOfProductsSearch,
             List<Integer> camerasSelected, List<Integer> filtersSelected,
-            Range<Double> resolutionRange, TreeSet<Integer> cubeList, ImageSource imageSource, int hasLimb)
+            Range<Double> resolutionRange, TreeSet<Integer> cubeList, PointingSource imageSource, int hasLimb)
     {
         SettableMetadata metadata = createSettableMetadata(name, startDate, stopDate, distanceRange, searchString, polygonTypes, incidenceRange, emissionRange, phaseRange);
         metadata.put(SUM_OF_PRODUCTS, sumOfProductsSearch);

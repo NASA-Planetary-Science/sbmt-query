@@ -11,8 +11,8 @@ import org.joda.time.DateTime;
 import edu.jhuapl.saavtk.util.Configuration;
 import edu.jhuapl.saavtk.util.FileCache;
 import edu.jhuapl.saavtk.util.SafeURLPaths;
-import edu.jhuapl.sbmt.common.client.SmallBodyViewConfig;
-import edu.jhuapl.sbmt.core.image.ImageSource;
+import edu.jhuapl.sbmt.config.SmallBodyViewConfig;
+import edu.jhuapl.sbmt.core.pointing.PointingSource;
 import edu.jhuapl.sbmt.query.QueryBase;
 import edu.jhuapl.sbmt.query.SearchMetadata;
 import edu.jhuapl.sbmt.query.SearchResultsMetadata;
@@ -98,7 +98,7 @@ public class GenericPhpQuery extends DatabaseQueryBase implements MetadataManage
         String searchString = metadata.get(DatabaseSearchMetadata.SEARCH_STRING);
         double startDistance = metadata.get(DatabaseSearchMetadata.FROM_DISTANCE);
         double stopDistance = metadata.get(DatabaseSearchMetadata.TO_DISTANCE);
-        ImageSource imageSource = ImageSource.valueOf(metadata.get(ImageDatabaseSearchMetadata.IMAGE_SOURCE));
+        PointingSource imageSource = PointingSource.valueOf(metadata.get(ImageDatabaseSearchMetadata.IMAGE_SOURCE));
         double startResolution = metadata.get(ImageDatabaseSearchMetadata.FROM_RESOLUTION);
         double stopResolution = metadata.get(ImageDatabaseSearchMetadata.TO_RESOLUTION);
         boolean sumOfProductsSearch = metadata.get(ImageDatabaseSearchMetadata.SUM_OF_PRODUCTS);
@@ -112,7 +112,7 @@ public class GenericPhpQuery extends DatabaseQueryBase implements MetadataManage
 
 
         final String galleryPath = getGalleryPath();
-        if (imageSource == ImageSource.CORRECTED)
+        if (imageSource == PointingSource.CORRECTED)
         {
             List<List<String>> resultsFromFileListOnServer = getResultsFromFileListOnServer(rootPath + "/sumfiles-corrected/imagelist.txt",
                     rootPath + "/images/", galleryPath, searchString);
@@ -270,7 +270,7 @@ public class GenericPhpQuery extends DatabaseQueryBase implements MetadataManage
 //            e.printStackTrace();
             System.err.println("GenericPhpQuery: runQuery: falling back to image list");
             String imageListName = "imagelist-info.txt";
-            if (imageSource.equals(ImageSource.GASKELL))
+            if (imageSource.equals(PointingSource.GASKELL))
             {
             	imageListName = "imagelist-sum.txt";
             	if (!FileCache.instance().isAccessible(rootPath + "/" + imageListName))
@@ -442,9 +442,9 @@ public class GenericPhpQuery extends DatabaseQueryBase implements MetadataManage
 //        return results;
 //    }
 
-    public String getTablePrefix(ImageSource source)
+    public String getTablePrefix(PointingSource source)
     {
-        return source == ImageSource.SPICE ? tablePrefixSpice : tablePrefixSpc;
+        return source == PointingSource.SPICE ? tablePrefixSpice : tablePrefixSpc;
     }
 
     public String getTablePrefixSpc()
