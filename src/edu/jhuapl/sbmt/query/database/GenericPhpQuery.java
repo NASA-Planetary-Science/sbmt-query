@@ -11,11 +11,10 @@ import org.joda.time.DateTime;
 import edu.jhuapl.saavtk.util.Configuration;
 import edu.jhuapl.saavtk.util.FileCache;
 import edu.jhuapl.saavtk.util.SafeURLPaths;
-import edu.jhuapl.sbmt.config.SmallBodyViewConfig;
 import edu.jhuapl.sbmt.core.pointing.PointingSource;
 import edu.jhuapl.sbmt.query.QueryBase;
-import edu.jhuapl.sbmt.query.SearchMetadata;
 import edu.jhuapl.sbmt.query.SearchResultsMetadata;
+import edu.jhuapl.sbmt.query.v2.ISearchMetadata;
 
 import crucible.crust.metadata.api.Key;
 import crucible.crust.metadata.api.Metadata;
@@ -86,7 +85,7 @@ public class GenericPhpQuery extends DatabaseQueryBase implements MetadataManage
     }
 
     @Override
-    public SearchResultsMetadata runQuery(SearchMetadata queryMetadata)
+    public SearchResultsMetadata runQuery(ISearchMetadata queryMetadata)
     {
         FixedMetadata metadata = queryMetadata.getMetadata();
         double fromIncidence = metadata.get(DatabaseSearchMetadata.FROM_INCIDENCE);
@@ -142,16 +141,16 @@ public class GenericPhpQuery extends DatabaseQueryBase implements MetadataManage
         // Get table name.  Examples: erosimages_gaskell, amicacubes_pds_beta
         String imagesDatabase = getTablePrefix(imageSource) + "images_" + imageSource.getDatabaseTableName();
         String cubesDatabase = getTablePrefix(imageSource) + "cubes_" + imageSource.getDatabaseTableName();
-        if(SmallBodyViewConfig.betaMode)
-        {
-            imagesDatabase += "_beta";
-            cubesDatabase += "_beta";
-        }
-        else
-        {
+//        if(SmallBodyViewConfig.betaMode)
+//        {
+//            imagesDatabase += "_beta";
+//            cubesDatabase += "_beta";
+//        }
+//        else
+//        {
             imagesDatabase += Configuration.getDatabaseSuffix();
             cubesDatabase += Configuration.getDatabaseSuffix();
-        }
+//        }
 
         try
         {

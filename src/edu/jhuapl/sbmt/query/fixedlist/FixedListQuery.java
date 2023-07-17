@@ -7,8 +7,8 @@ import edu.jhuapl.saavtk.util.SafeURLPaths;
 import edu.jhuapl.saavtk.util.UnauthorizedAccessException;
 import edu.jhuapl.sbmt.core.pointing.PointingSource;
 import edu.jhuapl.sbmt.query.ISearchResultsMetadata;
-import edu.jhuapl.sbmt.query.SearchMetadata;
 import edu.jhuapl.sbmt.query.SearchResultsMetadata;
+import edu.jhuapl.sbmt.query.v2.ISearchMetadata;
 
 import crucible.crust.metadata.api.Key;
 import crucible.crust.metadata.api.Metadata;
@@ -65,7 +65,7 @@ public class FixedListQuery<T> extends FixedListQueryBase
     }
 
     @Override
-    public ISearchResultsMetadata<T> runQuery(SearchMetadata queryMetadata)
+    public ISearchResultsMetadata<T> runQuery(ISearchMetadata queryMetadata)
     {
         FixedMetadata metadata = queryMetadata.getMetadata();
         String fileListRoot = metadata.get(FixedListSearchMetadata.FILE_LIST);

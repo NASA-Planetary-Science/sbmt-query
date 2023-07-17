@@ -3,27 +3,27 @@ package edu.jhuapl.sbmt.query.fixedlist;
 import com.google.common.base.Preconditions;
 
 import edu.jhuapl.sbmt.core.pointing.PointingSource;
-import edu.jhuapl.sbmt.query.SearchMetadata;
+import edu.jhuapl.sbmt.query.v2.ISearchMetadata;
 
 import crucible.crust.metadata.api.Key;
 import crucible.crust.metadata.api.Version;
 import crucible.crust.metadata.impl.FixedMetadata;
 import crucible.crust.metadata.impl.SettableMetadata;
 
-public class FixedListSearchMetadata implements SearchMetadata
+public class FixedListSearchMetadata implements ISearchMetadata
 {
     private static final Version FIXEDLISTSEARCH_DATA_VERSION = Version.of(1, 0);
 
     // Metadata keys.
-    static final Key<String> NAME = Key.of("Search Name");
+    public static final Key<String> NAME = Key.of("Search Name");
     static final Key<String> FILE_LIST = Key.of("File list");
-    static final Key<String> DATA_PATH = Key.of("Data path");
-    static final Key<String> ROOT_PATH = Key.of("Root path");
+    public static final Key<String> DATA_PATH = Key.of("Data path");
+    public static final Key<String> ROOT_PATH = Key.of("Root path");
     static final Key<String> POINTING_SOURCE = Key.of("Pointing Source");
     static final Key<String> SEARCH_STRING = Key.of("Search String");
 
     FixedMetadata searchMetadata;
-
+    private String searchString = "";
 
     public static FixedListSearchMetadata of(String name, String filelist, String datapath, String rootPath, PointingSource pointingSource)
     {
@@ -153,5 +153,15 @@ public class FixedListSearchMetadata implements SearchMetadata
         String pointingSourceString = getMetadata().get(POINTING_SOURCE);
         return PointingSource.valueOf(pointingSourceString);
     }
+
+    public String getSearchString()
+	{
+		return searchString;
+	}
+
+	public void setSearchString(String searchString)
+	{
+		this.searchString = searchString;
+	}
 
 }

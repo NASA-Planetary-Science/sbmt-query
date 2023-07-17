@@ -2,14 +2,13 @@ package edu.jhuapl.sbmt.query;
 
 import java.util.List;
 
-import edu.jhuapl.saavtk.model.PolyModel;
-import edu.jhuapl.sbmt.image.interfaces.IImagingInstrument;
+import edu.jhuapl.sbmt.query.v2.ISearchMetadata;
 
 /**
  * Interface representing queries for searching for data that match some
  * criteria in an implementation-specific way. Queries are typically in a
- * context defined by a combination of a {@link PolyModel} or other model, an
- * {@link IImagingInstrument} or other instrument, and a query method, such as a
+ * context defined by a combination of a PolyModel or other model, an
+ * IImagingInstrument or other instrument, and a query method, such as a
  * database or a file-based query.
  */
 public interface IQueryBase
@@ -49,7 +48,7 @@ public interface IQueryBase
      * bundle.
      *
      */
-    ISearchResultsMetadata runQuery(SearchMetadata queryMetadata);
+    ISearchResultsMetadata runQuery(ISearchMetadata queryMetadata);
 
     /**
      * This method should be rethought. Most of the arguments seem to be derivable from the results of interface methods.

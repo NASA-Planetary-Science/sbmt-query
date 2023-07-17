@@ -44,6 +44,7 @@ import edu.jhuapl.saavtk.util.FileCache;
 import edu.jhuapl.saavtk.util.FileUtil;
 import edu.jhuapl.saavtk.util.SafeURLPaths;
 import edu.jhuapl.saavtk.util.UnauthorizedAccessException;
+import edu.jhuapl.sbmt.query.v2.ISearchMetadata;
 
 import crucible.crust.metadata.api.Key;
 import crucible.crust.metadata.api.Metadata;
@@ -585,7 +586,7 @@ public abstract class QueryBase implements MetadataManager, IQueryBase
      * query request, which is also encapsulated in a metadata bundle.
      *
      */
-    public abstract ISearchResultsMetadata runQuery(SearchMetadata queryMetadata);
+    public abstract ISearchResultsMetadata runQuery(ISearchMetadata queryMetadata);
 
     public String getGalleryPath()
     {
