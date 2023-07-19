@@ -188,7 +188,7 @@ public abstract class FSHyperTreeNode<T extends FSHyperPoint> implements Dimensi
         return isLeaf;
     }
 
-    protected abstract long getNumberOfPoints();
+    public abstract long getNumberOfPoints();
     protected abstract <S extends FSHyperTreeNode> S createNewChild(int i);
     protected abstract T createNewPoint(DataInputStream stream);
 

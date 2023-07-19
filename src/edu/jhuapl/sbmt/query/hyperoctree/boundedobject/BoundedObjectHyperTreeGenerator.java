@@ -3,14 +3,11 @@ package edu.jhuapl.sbmt.query.hyperoctree.boundedobject;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -18,19 +15,9 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Lists;
 
-import edu.jhuapl.saavtk.model.ShapeModelBody;
-import edu.jhuapl.saavtk.model.ShapeModelType;
-import edu.jhuapl.saavtk.util.BoundingBox;
-import edu.jhuapl.saavtk.util.Configuration;
-import edu.jhuapl.saavtk.util.NativeLibraryLoader;
-import edu.jhuapl.sbmt.client2.SbmtMultiMissionTool;
-import edu.jhuapl.sbmt.config.SmallBodyViewConfig;
-import edu.jhuapl.sbmt.core.body.SmallBodyModel;
 import edu.jhuapl.sbmt.core.io.DataOutputStreamPool;
-import edu.jhuapl.sbmt.model.SbmtModelFactory;
 import edu.jhuapl.sbmt.query.hyperoctree.HyperBox;
 import edu.jhuapl.sbmt.query.hyperoctree.HyperException;
-import edu.jhuapl.sbmt.spectrum.model.hypertree.SpectrumHypertreeGenerator;
 
 public class BoundedObjectHyperTreeGenerator
 {
@@ -161,115 +148,115 @@ public class BoundedObjectHyperTreeGenerator
 
     public static void main(String[] args) throws IOException, HyperException
     {
-        Configuration.setAPLVersion(true);
-        SbmtMultiMissionTool.configureMission();
-
-        // need password to access OREX data
-        Configuration.authenticate();
-
-        SmallBodyViewConfig.initialize();
-
-        if (args.length!=5)
-        {
-            printUsage();
-            return;
-        }
-
-        String instrument = args[0];
-        String type = args[1];
-        String bodyName = args[2];
-        int maxObjectsPerLeaf = Integer.parseInt(args[3]);
-        int maxNumOpenOutputFiles=32;
-
-        /*
-         * Set up
-         */
-        String inputFile = "bounds_" + instrument.toLowerCase() + "_" + type.toLowerCase().replace("/", "") + ".bounds";
-        System.out.println("Input file = "+ inputFile);
-        // make a temp hypertree folder
-        String outputDirectoryString = "temp_hypertree/";
-        new File(outputDirectoryString).mkdirs();
-        System.out.println("Output tree location = " + outputDirectoryString);
-        System.out.println("Max # open output files = " + maxNumOpenOutputFiles);
-
-
-
-        Path outputDirectory = Paths.get(outputDirectoryString);
-        DataOutputStreamPool pool=new DataOutputStreamPool(maxNumOpenOutputFiles);
-
-
-        /*
-         * Get body model
-         */
-        System.setProperty("java.awt.headless", "true");
-        NativeLibraryLoader.loadHeadlessVtkLibraries();
-
-        SmallBodyViewConfig config;
-        if (bodyName.equalsIgnoreCase("EARTH")) {
-            config = SmallBodyViewConfig.getSmallBodyConfig(ShapeModelBody.EARTH, ShapeModelType.OREX);
-        }
-        else if (bodyName.equalsIgnoreCase("BENNU")) {
-            config = SmallBodyViewConfig.getSmallBodyConfig(ShapeModelBody.RQ36, ShapeModelType.OREX);
-        }
-        else {
-            System.err.println("No support for body named " + bodyName);
-            return;
-        }
-        SmallBodyModel body = SbmtModelFactory.createSmallBodyModel(config);
-        BoundingBox bodyBBox = body.getBoundingBox();
-
-
-
-        double today = new Date().getTime();
-
-        BoundedObjectHyperTreeGenerator generator;
-        if (args[4].equalsIgnoreCase("SPECTRA")) {
-            // bounds from input PLUS min/max angles
-            double[] min = {bodyBBox.xmin, bodyBBox.ymin, bodyBBox.zmin, -Double.MAX_VALUE, 0, 0, 0, 0};
-            double[] max = {bodyBBox.xmax, bodyBBox.ymax, bodyBBox.zmax, today,  180, 180, 180, Double.MAX_VALUE};
-            HyperBox hbox = new HyperBox(min, max);
-
-            generator = new SpectrumHypertreeGenerator(outputDirectory, maxObjectsPerLeaf, hbox, maxNumOpenOutputFiles, pool);
-        }
-        else {
-            // bounds from input
-            double[] min = {bodyBBox.xmin, bodyBBox.ymin, bodyBBox.zmin, -Double.MAX_VALUE};
-            double[] max = {bodyBBox.xmax, bodyBBox.ymax, bodyBBox.zmax, today};
-            HyperBox hbox = new HyperBox(min, max);
-
-            generator = new BoundedObjectHyperTreeGenerator(outputDirectory, maxObjectsPerLeaf, hbox, maxNumOpenOutputFiles, pool);
-        }
-
-        if (generator instanceof SpectrumHypertreeGenerator) {
-            ((SpectrumHypertreeGenerator)generator).addAllObjectsFromFile(inputFile);
-        }
-        else {
-            generator.addAllObjectsFromFile(inputFile);
-        }
-        Path fileMapPath = outputDirectory.resolve("fileMap.txt");
-        System.out.print("Writing file map to "+fileMapPath+"... ");
-        FileWriter writer = new FileWriter(fileMapPath.toFile());
-        for (int i : generator.fileMap.inverse().keySet())
-            writer.write(i+" "+generator.fileMap.inverse().get(i)+"\n");
-        writer.close();
-        System.out.println("Done.");
-
-
-        System.out.println("Expanding tree.");
-        System.out.println("Max # pts per leaf="+maxObjectsPerLeaf);
-        generator.expand();
-        System.out.println();
-        generator.commit(); // clean up any empty or open data files
-
-
-
-        // get all non-empty leaf nodes and list the contents
-        List<BoundedObjectHyperTreeNode> nodeList = new ArrayList<BoundedObjectHyperTreeNode>();
-        generator.getAllNonEmptyLeafNodes(generator.getRoot(),nodeList);
-        System.out.println("Number of leaves with files: " + nodeList.size());
-        for(BoundedObjectHyperTreeNode node : nodeList) {
-           System.out.println("Number of objects in node " + node.getPath() + ": " + node.getNumberOfObjects());
-        }
+//        Configuration.setAPLVersion(true);
+//        SbmtMultiMissionTool.configureMission();
+//
+//        // need password to access OREX data
+//        Configuration.authenticate();
+//
+//        SmallBodyViewConfig.initialize();
+//
+//        if (args.length!=5)
+//        {
+//            printUsage();
+//            return;
+//        }
+//
+//        String instrument = args[0];
+//        String type = args[1];
+//        String bodyName = args[2];
+//        int maxObjectsPerLeaf = Integer.parseInt(args[3]);
+//        int maxNumOpenOutputFiles=32;
+//
+//        /*
+//         * Set up
+//         */
+//        String inputFile = "bounds_" + instrument.toLowerCase() + "_" + type.toLowerCase().replace("/", "") + ".bounds";
+//        System.out.println("Input file = "+ inputFile);
+//        // make a temp hypertree folder
+//        String outputDirectoryString = "temp_hypertree/";
+//        new File(outputDirectoryString).mkdirs();
+//        System.out.println("Output tree location = " + outputDirectoryString);
+//        System.out.println("Max # open output files = " + maxNumOpenOutputFiles);
+//
+//
+//
+//        Path outputDirectory = Paths.get(outputDirectoryString);
+//        DataOutputStreamPool pool=new DataOutputStreamPool(maxNumOpenOutputFiles);
+//
+//
+//        /*
+//         * Get body model
+//         */
+//        System.setProperty("java.awt.headless", "true");
+//        NativeLibraryLoader.loadHeadlessVtkLibraries();
+//
+//        SmallBodyViewConfig config;
+//        if (bodyName.equalsIgnoreCase("EARTH")) {
+//            config = SmallBodyViewConfig.getSmallBodyConfig(ShapeModelBody.EARTH, ShapeModelType.OREX);
+//        }
+//        else if (bodyName.equalsIgnoreCase("BENNU")) {
+//            config = SmallBodyViewConfig.getSmallBodyConfig(ShapeModelBody.RQ36, ShapeModelType.OREX);
+//        }
+//        else {
+//            System.err.println("No support for body named " + bodyName);
+//            return;
+//        }
+//        SmallBodyModel body = SbmtModelFactory.createSmallBodyModel(config);
+//        BoundingBox bodyBBox = body.getBoundingBox();
+//
+//
+//
+//        double today = new Date().getTime();
+//
+//        BoundedObjectHyperTreeGenerator generator;
+//        if (args[4].equalsIgnoreCase("SPECTRA")) {
+//            // bounds from input PLUS min/max angles
+//            double[] min = {bodyBBox.xmin, bodyBBox.ymin, bodyBBox.zmin, -Double.MAX_VALUE, 0, 0, 0, 0};
+//            double[] max = {bodyBBox.xmax, bodyBBox.ymax, bodyBBox.zmax, today,  180, 180, 180, Double.MAX_VALUE};
+//            HyperBox hbox = new HyperBox(min, max);
+//
+//            generator = new SpectrumHypertreeGenerator(outputDirectory, maxObjectsPerLeaf, hbox, maxNumOpenOutputFiles, pool);
+//        }
+//        else {
+//            // bounds from input
+//            double[] min = {bodyBBox.xmin, bodyBBox.ymin, bodyBBox.zmin, -Double.MAX_VALUE};
+//            double[] max = {bodyBBox.xmax, bodyBBox.ymax, bodyBBox.zmax, today};
+//            HyperBox hbox = new HyperBox(min, max);
+//
+//            generator = new BoundedObjectHyperTreeGenerator(outputDirectory, maxObjectsPerLeaf, hbox, maxNumOpenOutputFiles, pool);
+//        }
+//
+//        if (generator instanceof SpectrumHypertreeGenerator) {
+//            ((SpectrumHypertreeGenerator)generator).addAllObjectsFromFile(inputFile);
+//        }
+//        else {
+//            generator.addAllObjectsFromFile(inputFile);
+//        }
+//        Path fileMapPath = outputDirectory.resolve("fileMap.txt");
+//        System.out.print("Writing file map to "+fileMapPath+"... ");
+//        FileWriter writer = new FileWriter(fileMapPath.toFile());
+//        for (int i : generator.fileMap.inverse().keySet())
+//            writer.write(i+" "+generator.fileMap.inverse().get(i)+"\n");
+//        writer.close();
+//        System.out.println("Done.");
+//
+//
+//        System.out.println("Expanding tree.");
+//        System.out.println("Max # pts per leaf="+maxObjectsPerLeaf);
+//        generator.expand();
+//        System.out.println();
+//        generator.commit(); // clean up any empty or open data files
+//
+//
+//
+//        // get all non-empty leaf nodes and list the contents
+//        List<BoundedObjectHyperTreeNode> nodeList = new ArrayList<BoundedObjectHyperTreeNode>();
+//        generator.getAllNonEmptyLeafNodes(generator.getRoot(),nodeList);
+//        System.out.println("Number of leaves with files: " + nodeList.size());
+//        for(BoundedObjectHyperTreeNode node : nodeList) {
+//           System.out.println("Number of objects in node " + node.getPath() + ": " + node.getNumberOfObjects());
+//        }
 
     }
 
