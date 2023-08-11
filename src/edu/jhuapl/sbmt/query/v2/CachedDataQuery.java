@@ -284,7 +284,6 @@ public class CachedDataQuery
      */
     protected boolean checkAuthorizedAccess() throws UnauthorizedAccessException
     {
-    	System.out.println("CachedDataQuery: checkAuthorizedAccess: data path " + getDataPath());
     	return FileCache.isFileGettable(getDataPath());
     }
     

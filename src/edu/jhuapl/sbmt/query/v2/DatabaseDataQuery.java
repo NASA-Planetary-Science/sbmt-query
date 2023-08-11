@@ -158,13 +158,13 @@ public class DatabaseDataQuery implements IDataQuery
             throw new QueryException("Error: You Are Not Authorized to Access This Data.",
         			 Severity.ERROR, QueryExceptionReason.FIXED_LIST_NOT_AUTHORIZED);
         }
-        System.out.println("DatabaseDataQuery: doQuery: phpScript is " + phpScript);
+//        System.out.println("DatabaseDataQuery: doQuery: phpScript is " + phpScript);
         try 
         {
 	        URL u = new URL(Configuration.getQueryRootURL() + "/" + phpScript);
-	        System.out.println("DatabaseDataQuery: doQuery: url is " + u);
+//	        System.out.println("DatabaseDataQuery: doQuery: url is " + u);
 	        BufferedReader in = getBufferedReaderForConnectionAtURL(u, args);
-	        System.out.println("DatabaseDataQuery: doQuery: args " + args);
+//	        System.out.println("DatabaseDataQuery: doQuery: args " + args);
 	        String line;
 	
 	        while ((line = in.readLine()) != null)
@@ -193,7 +193,7 @@ public class DatabaseDataQuery implements IDataQuery
         	throw new QueryException("Error: Could not retrieve results from "
         			+ "database", Severity.ERROR, QueryExceptionReason.DB_CONNECTION, ioe);
         }
-        System.out.println("DatabaseDataQuery: doQuery: results size " + results.size());
+//        System.out.println("DatabaseDataQuery: doQuery: results size " + results.size());
         return new FetchedResults("", FetchedResultsType.DATABASE, results);
     }
 	
@@ -276,7 +276,7 @@ public class DatabaseDataQuery implements IDataQuery
 
 	public FetchedResults fallbackQuery(ISearchMetadata queryMetadata) throws QueryException 
 	{
-		System.out.println("DatabaseDataQuery: fallbackQuery: falling back to fixed list");
+//		System.out.println("DatabaseDataQuery: fallbackQuery: falling back to fixed list");
 		return fixedListQuery.runQuery(queryMetadata);
 	}
 	
