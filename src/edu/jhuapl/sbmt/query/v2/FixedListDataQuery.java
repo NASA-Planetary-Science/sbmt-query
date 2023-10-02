@@ -25,6 +25,7 @@ import edu.jhuapl.saavtk.util.FileUtil;
 import edu.jhuapl.saavtk.util.SafeURLPaths;
 import edu.jhuapl.saavtk.util.UnauthorizedAccessException;
 import edu.jhuapl.sbmt.core.pointing.PointingSource;
+import edu.jhuapl.sbmt.query.fixedlist.FixedListSearchMetadata;
 import edu.jhuapl.sbmt.query.v2.QueryException.QueryExceptionReason;
 import edu.jhuapl.sbmt.query.v2.QueryException.Severity;
 
@@ -129,7 +130,6 @@ public class FixedListDataQuery implements IDataQuery
     public FetchedResults getResultsFromFileListOnServer(String dataFileList) throws QueryException
     {
     	String dataListPath = rootPath + "/" + dataFileList;
-    	System.out.println("FixedListDataQuery: getResultsFromFileListOnServer: data list path " + dataListPath);
     	DownloadableFileState state = FileCache.refreshStateInfo(dataListPath);
     	if (!state.isAccessible())
     	{
@@ -254,10 +254,10 @@ public class FixedListDataQuery implements IDataQuery
 	{
 		FixedMetadata metadata = queryMetadata.getMetadata();
         String fileListRoot = metadata.get(DataQuerySourcesMetadata.FILE_LIST);
-        System.out.println("FixedListDataQuery: runQuery: file list root " + fileListRoot);
 //        String searchString = metadata.get(DatabaseSearchMetadata.SEARCH_STRING);
         String searchString = queryMetadata.getSearchString();
-        rootPath = metadata.get(DataQuerySourcesMetadata.DATA_ROOT_PATH);
+//        rootPath = metadata.get(DataQuerySourcesMetadata.DATA_ROOT_PATH);
+        rootPath = metadata.get(FixedListSearchMetadata.ROOT_PATH);
 
         String fileListSuffix = "";
         PointingSource imageSource = PointingSource.valueFor(metadata.get(DataQuerySourcesMetadata.POINTING_SOURCE));
@@ -278,7 +278,6 @@ public class FixedListDataQuery implements IDataQuery
 	                break;
 	        }
         String fileList = getFileList(fileListRoot, fileListSuffix);
-        System.out.println("FixedListDataQuery: runQuery: getting results from file list " + fileList);
 		return getResultsFromFileListOnServerWithSearch(fileList, searchString);
     }
 
