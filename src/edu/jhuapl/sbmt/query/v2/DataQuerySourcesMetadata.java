@@ -41,7 +41,7 @@ public class DataQuerySourcesMetadata implements ISearchMetadata
      * @param galleryPath	the path to the image gallery, if applicable
      * @return
      */
-    public static DataQuerySourcesMetadata of(String rootPath, String dataPath, String spiceDB, String spcDB, 
+    public static DataQuerySourcesMetadata of(String rootPath, String dataPath, String spcDB, String spiceDB, 
     											String galleryPath, PointingSource pointingSource, String dataFileList)
     {	
     	FixedMetadata metadata = 
