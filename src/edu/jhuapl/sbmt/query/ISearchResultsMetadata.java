@@ -2,7 +2,7 @@ package edu.jhuapl.sbmt.query;
 
 import java.util.List;
 
-import crucible.crust.metadata.impl.FixedMetadata;
+import edu.jhuapl.ses.jsqrl.impl.FixedMetadata;
 
 public interface ISearchResultsMetadata<T>
 {
