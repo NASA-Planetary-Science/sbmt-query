@@ -10,11 +10,11 @@ import edu.jhuapl.sbmt.query.ISearchResultsMetadata;
 import edu.jhuapl.sbmt.query.SearchResultsMetadata;
 import edu.jhuapl.sbmt.query.v2.ISearchMetadata;
 
-import crucible.crust.metadata.api.Key;
-import crucible.crust.metadata.api.Metadata;
-import crucible.crust.metadata.api.Version;
-import crucible.crust.metadata.impl.FixedMetadata;
-import crucible.crust.metadata.impl.SettableMetadata;
+import edu.jhuapl.ses.jsqrl.api.Key;
+import edu.jhuapl.ses.jsqrl.api.Metadata;
+import edu.jhuapl.ses.jsqrl.api.Version;
+import edu.jhuapl.ses.jsqrl.impl.FixedMetadata;
+import edu.jhuapl.ses.jsqrl.impl.SettableMetadata;
 
 /**
  * A query which simply returns a fixed list of images. No actual search is done.

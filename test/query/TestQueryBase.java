@@ -15,7 +15,7 @@ package query;
 //import edu.jhuapl.sbmt.client.SmallBodyViewConfig;
 //import edu.jhuapl.sbmt.tools.Authenticator;
 //
-//import crucible.crust.metadata.api.Metadata;
+//import edu.jhuapl.ses.jsqrl.api.Metadata;
 //
 //class TestQueryBase
 //{
