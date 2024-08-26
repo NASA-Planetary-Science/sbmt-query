@@ -1,6 +1,6 @@
 package edu.jhuapl.sbmt.query.database;
 
-import crucible.crust.metadata.impl.FixedMetadata;
+import edu.jhuapl.ses.jsqrl.impl.FixedMetadata;
 
 public class LidarDatabaseSearchMetadata extends DatabaseSearchMetadata
 {
