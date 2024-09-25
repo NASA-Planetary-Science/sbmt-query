@@ -9,7 +9,7 @@
   <organization>
 	<name>Johns Hopkins University Applied Physics Lab</name>
 	<url>https://www.jhuapl.edu</url>
-  </organization>
+  </organization> 
   <distributionManagement>
   	<repository>
 		<id>central</id>
