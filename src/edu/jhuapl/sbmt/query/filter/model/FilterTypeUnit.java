@@ -42,7 +42,8 @@ public class FilterTypeUnit
      * @throws IllegalArgumentException if there is already a FilterTypeUnit object
      *             associated with the identifier
      */
-    private static <C> FilterTypeUnit create(String identifier, Class<C> FilterTypeUnit, Pair<C, C> range)
+    @SuppressWarnings("unused")
+	private static <C> FilterTypeUnit create(String identifier, Class<C> FilterTypeUnit, Pair<C, C> range)
     {
         Preconditions.checkNotNull(identifier);
         Preconditions.checkArgument(!FILTER_TYPE_UNIT_IDENTIFIERS.containsKey(identifier), "Already have a Filter Type object for identifier " + identifier);
